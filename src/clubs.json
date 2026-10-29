@@ -1,5 +1,5 @@
 [
-  {"slug": "old-palm", "name": "Old Palm", "town": "Palm Beach Gardens", "blurb": "Private golf, big estate homes, and a short-game practice area golfers love.", "idx": ""},
+  {"slug": "old-palm", "name": "Old Palm Golf Club", "town": "Palm Beach Gardens", "blurb": "Private golf, big estate homes, and a short-game practice area golfers love.", "idx": ""},
   {"slug": "boca-pointe", "name": "Boca Pointe Country Club", "town": "Boca Raton", "blurb": "Active club life with a range of homes and price points.", "idx": ""},
   {"slug": "bocaire", "name": "Bocaire Country Club", "town": "Boca Raton", "blurb": "A smaller, close-knit golf community.", "idx": ""},
   {"slug": "boca-grove", "name": "Boca Grove", "town": "Boca Raton", "blurb": "Golf, tennis, and a social calendar that stays full.", "idx": ""},
@@ -20,5 +20,9 @@
   {"slug": "wycliffe", "name": "Wycliffe Golf & Country Club", "town": "Lake Worth", "blurb": "A golf community with two courses and a busy social calendar.", "idx": ""},
   {"slug": "aberdeen", "name": "Aberdeen Golf & Country Club", "town": "Boynton Beach", "blurb": "A golf community with a relaxed club life and a range of home prices.", "idx": ""},
   {"slug": "indian-spring", "name": "Indian Spring Country Club", "town": "Boynton Beach", "blurb": "A member-owned club with golf, racquet sports and dining.", "idx": ""},
-  {"slug": "hunters-run", "name": "Hunters Run", "town": "Boynton Beach", "blurb": "A gated, member-owned club with golf, tennis and a big clubhouse.", "idx": ""}
+  {"slug": "hunters-run", "name": "Hunters Run", "town": "Boynton Beach", "blurb": "A gated, member-owned club with golf, tennis and a big clubhouse.", "idx": ""},
+  {"slug": "bear-lakes", "name": "Bear Lakes Country Club", "town": "West Palm Beach", "blurb": "A golf club close to downtown West Palm and the airport.", "idx": ""},
+  {"slug": "the-bears-club", "name": "The Bear's Club", "town": "Jupiter", "blurb": "Jack Nicklaus's private golf club, with large estate homes.", "idx": ""},
+  {"slug": "eastpointe", "name": "Eastpointe Country Club", "town": "Palm Beach Gardens", "blurb": "A gated golf and tennis community with an active club life.", "idx": ""},
+  {"slug": "ibis", "name": "Ibis Golf & Country Club", "town": "West Palm Beach", "blurb": "A large gated community with multiple golf courses and a full clubhouse.", "idx": ""}
 ]
