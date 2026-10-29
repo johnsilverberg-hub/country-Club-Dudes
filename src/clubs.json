@@ -1,0 +1,10 @@
+[
+  {"slug":"old-palm","name":"Old Palm","town":"Palm Beach Gardens","blurb":"Private golf, big estate homes, and a short-game practice area golfers love.","idx":""},
+  {"slug":"boca-pointe","name":"Boca Pointe","town":"Boca Raton","blurb":"Active club life with a range of homes and price points.","idx":""},
+  {"slug":"bocaire","name":"Bocaire","town":"Boca Raton","blurb":"A smaller, close-knit golf community.","idx":""},
+  {"slug":"boca-grove","name":"Boca Grove","town":"Boca Raton","blurb":"Golf, tennis, and a social calendar that stays full.","idx":""},
+  {"slug":"stonebridge","name":"Stonebridge","town":"Boca Raton","blurb":"Gated golf living west of town.","idx":""},
+  {"slug":"woodfield","name":"Woodfield","town":"Boca Raton","blurb":"A large clubhouse with full sports and social amenities.","idx":""},
+  {"slug":"royal-palm","name":"Royal Palm","town":"Boca Raton","blurb":"Waterfront homes and yacht club living near the beach.","idx":""},
+  {"slug":"frenchmans-creek","name":"Frenchman's Creek","town":"Palm Beach Gardens","blurb":"Two courses in a riverfront setting.","idx":""}
+]
