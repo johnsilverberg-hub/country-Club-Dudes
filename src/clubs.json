@@ -1,11 +1,11 @@
 [
   {"slug": "old-palm", "name": "Old Palm", "town": "Palm Beach Gardens", "blurb": "Private golf, big estate homes, and a short-game practice area golfers love.", "idx": ""},
   {"slug": "boca-pointe", "name": "Boca Pointe Country Club", "town": "Boca Raton", "blurb": "Active club life with a range of homes and price points.", "idx": ""},
-  {"slug": "bocaire", "name": "Bocaire", "town": "Boca Raton", "blurb": "A smaller, close-knit golf community.", "idx": ""},
+  {"slug": "bocaire", "name": "Bocaire Country Club", "town": "Boca Raton", "blurb": "A smaller, close-knit golf community.", "idx": ""},
   {"slug": "boca-grove", "name": "Boca Grove", "town": "Boca Raton", "blurb": "Golf, tennis, and a social calendar that stays full.", "idx": ""},
   {"slug": "stonebridge", "name": "Stonebridge Country Club", "town": "Boca Raton", "blurb": "Gated golf living west of town.", "idx": ""},
   {"slug": "woodfield", "name": "Woodfield", "town": "Boca Raton", "blurb": "A large clubhouse with full sports and social amenities.", "idx": ""},
-  {"slug": "royal-palm", "name": "Royal Palm", "town": "Boca Raton", "blurb": "Waterfront homes and yacht club living near the beach.", "idx": ""},
+  {"slug": "royal-palm", "name": "Royal Palm Yacht & Country Club", "town": "Boca Raton", "blurb": "Waterfront homes and yacht club living near the beach.", "idx": ""},
   {"slug": "frenchmans-creek", "name": "Frenchman's Creek", "town": "Palm Beach Gardens", "blurb": "Two courses in a riverfront setting.", "idx": ""},
   {"slug": "st-andrews", "name": "St. Andrews Country Club", "town": "Boca Raton", "blurb": "Gated golf and tennis living in west Boca.", "idx": ""},
   {"slug": "boca-woods", "name": "Boca Woods Country Club", "town": "Boca Raton", "blurb": "A golf community in west Boca with an active club calendar.", "idx": ""},
@@ -13,5 +13,7 @@
   {"slug": "boca-west", "name": "Boca West Country Club", "town": "Boca Raton", "blurb": "One of the largest clubs in Florida, with four golf courses.", "idx": ""},
   {"slug": "broken-sound", "name": "Broken Sound Club", "town": "Boca Raton", "blurb": "Golf, a big fitness and racquet program, and homes of every size.", "idx": ""},
   {"slug": "polo-club", "name": "The Polo Club", "town": "Boca Raton", "blurb": "Golf, tennis and a busy social life in central Boca.", "idx": ""},
-  {"slug": "boca-lago", "name": "Boca Lago Country Club", "town": "Boca Raton", "blurb": "A golf community with an easy-going club life.", "idx": ""}
+  {"slug": "boca-lago", "name": "Boca Lago Country Club", "town": "Boca Raton", "blurb": "A golf community with an easy-going club life.", "idx": ""},
+  {"slug": "delaire", "name": "Delaire Country Club", "town": "Delray Beach", "blurb": "A private, member-owned golf club with lakefront homes.", "idx": ""},
+  {"slug": "addison-reserve", "name": "Addison Reserve Country Club", "town": "Delray Beach", "blurb": "A gated club with larger estate homes and a full resort-style clubhouse.", "idx": ""}
 ]
