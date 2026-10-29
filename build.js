@@ -178,7 +178,7 @@ ${reels.map(([where, title]) => `      <a class="reel" href="https://www.instagr
       <div class="cta-row"><a class="btn primary" href="#match">Start with Club Match</a></div>
     </div>
     <div class="facts">
-      <div><strong>34</strong><span>clubs covered</span></div>
+      <div><strong>${clubs.length}</strong><span>clubs covered</span></div>
       <div><strong>89</strong><span>club reels this year</span></div>
       <div><strong>Delray</strong><span>office at Premier Listings</span></div>
       <div><strong>PBC</strong><span>Boca to Jupiter</span></div>
