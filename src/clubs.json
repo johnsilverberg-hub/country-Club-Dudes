@@ -16,5 +16,9 @@
   {"slug": "boca-lago", "name": "Boca Lago Country Club", "town": "Boca Raton", "blurb": "A golf community with an easy-going club life.", "idx": ""},
   {"slug": "delaire", "name": "Delaire Country Club", "town": "Delray Beach", "blurb": "A private, member-owned golf club with lakefront homes.", "idx": ""},
   {"slug": "addison-reserve", "name": "Addison Reserve Country Club", "town": "Delray Beach", "blurb": "A gated club with larger estate homes and a full resort-style clubhouse.", "idx": ""},
-  {"slug": "gleneagles", "name": "Gleneagles Country Club", "town": "Delray Beach", "blurb": "A golf community in west Delray with an active social calendar.", "idx": ""}
+  {"slug": "gleneagles", "name": "Gleneagles Country Club", "town": "Delray Beach", "blurb": "A golf community in west Delray with an active social calendar.", "idx": ""},
+  {"slug": "wycliffe", "name": "Wycliffe Golf & Country Club", "town": "Lake Worth", "blurb": "A golf community with two courses and a busy social calendar.", "idx": ""},
+  {"slug": "aberdeen", "name": "Aberdeen Golf & Country Club", "town": "Boynton Beach", "blurb": "A golf community with a relaxed club life and a range of home prices.", "idx": ""},
+  {"slug": "indian-spring", "name": "Indian Spring Country Club", "town": "Boynton Beach", "blurb": "A member-owned club with golf, racquet sports and dining.", "idx": ""},
+  {"slug": "hunters-run", "name": "Hunters Run", "town": "Boynton Beach", "blurb": "A gated, member-owned club with golf, tennis and a big clubhouse.", "idx": ""}
 ]
