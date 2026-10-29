@@ -31,5 +31,6 @@
   {"slug": "frenchmans-reserve", "name": "Frenchman's Reserve", "town": "Palm Beach Gardens", "blurb": "A gated golf community with estate homes and a full-service club.", "idx": ""},
   {"slug": "boca-teeca", "name": "Boca Teeca Country Club", "town": "Boca Raton", "blurb": "An easy-going golf community with some of Boca's lower price points.", "idx": ""},
   {"slug": "admirals-cove", "name": "Admiral's Cove", "town": "Jupiter", "blurb": "Golf and deep-water yacht living on the Intracoastal.", "idx": ""},
-  {"slug": "pga-national", "name": "PGA National", "town": "Palm Beach Gardens", "blurb": "Home of the famous Champion course, with homes from condos to estates.", "idx": ""}
+  {"slug": "pga-national", "name": "PGA National", "town": "Palm Beach Gardens", "blurb": "Home of the famous Champion course, with homes from condos to estates.", "idx": ""},
+  {"slug": "abacoa", "name": "Abacoa", "town": "Jupiter", "blurb": "A walkable Jupiter neighborhood with its own golf club, a town center and Roger Dean Stadium.", "idx": ""}
 ]
