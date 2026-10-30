@@ -289,4 +289,8 @@ write('index.html', homePage());
 write('clubs/index.html', clubsIndex());
 for (const club of clubs) write(`clubs/${club.slug}/index.html`, clubPage(club));
 write('thanks/index.html', thanksPage());
+const SITE = 'https://countryclubdudes.com';
+const urls = ['/', '/clubs/', ...clubs.map((c) => `/clubs/${c.slug}/`)];
+write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${SITE}${u}</loc></url>`).join('\n')}\n</urlset>\n`);
+write('robots.txt', `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
 console.log(`Built ${clubs.length} club pages into dist/`);
