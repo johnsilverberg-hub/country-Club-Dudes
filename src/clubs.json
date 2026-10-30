@@ -36,5 +36,6 @@
   {"slug": "tequesta", "name": "Tequesta Country Club", "town": "Tequesta", "blurb": "A classic, member-owned golf club in a quiet waterfront village.", "idx": ""},
   {"slug": "panther-national", "name": "Panther National", "town": "Palm Beach Gardens", "blurb": "A newer private golf club with a course by Jack Nicklaus and Justin Thomas, and custom estate homes.", "idx": ""},
   {"slug": "jupiter-hills", "name": "Jupiter Hills Club", "town": "Tequesta", "blurb": "A private golf club with rolling, hilly terrain rare for South Florida.", "idx": ""},
-  {"slug": "quail-ridge", "name": "Quail Ridge Country Club", "town": "Boynton Beach", "blurb": "A member-owned club with two golf courses and a big racquet program.", "idx": ""}
+  {"slug": "quail-ridge", "name": "Quail Ridge Country Club", "town": "Boynton Beach", "blurb": "A member-owned club with two golf courses and a big racquet program.", "idx": ""},
+  {"slug": "delray-dunes", "name": "Delray Dunes Golf & Country Club", "town": "Boynton Beach", "blurb": "A small, established golf community with single-family homes on large lots.", "idx": ""}
 ]
