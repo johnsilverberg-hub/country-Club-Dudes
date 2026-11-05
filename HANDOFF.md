@@ -46,7 +46,7 @@ New construction communities go in `src/developments.json`, which starts empty. 
 Each entry gets its own page at `/new-developments/<slug>/`, with the Club Match form and a listings slot. Until the list has entries, the New Developments page asks visitors which developments they're watching. There's no limit on how many you add.
 
 ### 5. Check every club's facts
-Partly done (Nov 5): Wycliffe moved to Wellington, and 12 blurbs rewritten from facts in our own reels (Bocaire, Delaire, Hunters Run, Jupiter Hills, Woodfield, Royal Palm, Frenchman's Creek, BallenIsles, Jonathan's Landing, Mirasol, Stonebridge). The rest still need a once-over.
+Partly done (Nov 5): Wycliffe moved to Wellington, and 11 blurbs rewritten from facts in our own reels (Bocaire, Delaire, Hunters Run, Jupiter Hills, Woodfield, Royal Palm, Frenchman's Creek, BallenIsles, Jonathan's Landing, Mirasol, Stonebridge). The rest still need a once-over.
 
 Most towns and every one-line `blurb` in `src/clubs.json` were written as drafts. Please correct anything that's wrong. The club spreadsheet John emailed has the same list.
 
