@@ -245,6 +245,12 @@ function clubPage(club) {
   </div>
 </section>
 
+${club.photo || club.reel ? `<section class="band" style="padding-bottom:0">
+  <div class="wrap club-media">
+    ${club.photo ? `<img src="/images/${esc(club.photo)}" alt="${esc(club.name)}" loading="lazy">` : ''}
+    ${club.reel ? `<p><a class="btn primary" href="${esc(club.reel)}" target="_blank" rel="noopener">Watch our ${esc(club.name)} reel</a></p>` : ''}
+  </div>
+</section>` : ''}
 <section class="band">
   <div class="wrap">
     <div class="sec-head"><div><p class="eyebrow">For sale now</p><h2>${esc(club.name)} homes for sale</h2></div></div>
@@ -285,6 +291,7 @@ function thanksPage() {
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT, { recursive: true });
 fs.copyFileSync(path.join(SRC, 'styles.css'), path.join(OUT, 'styles.css'));
+if (fs.existsSync(path.join(SRC, 'images'))) fs.cpSync(path.join(SRC, 'images'), path.join(OUT, 'images'), { recursive: true });
 write('index.html', homePage());
 write('clubs/index.html', clubsIndex());
 for (const club of clubs) write(`clubs/${club.slug}/index.html`, clubPage(club));

@@ -9,12 +9,16 @@ The site for countryclubdudes.com: club guides, live listings for each club, and
 - `node build.js` builds every page into `dist/`. There is nothing to install.
 - Netlify runs the build and publishes `dist/` on every push (see `netlify.toml`).
 
+## Finishing the site
+
+See HANDOFF.md for everything left to do.
+
 ## Adding a club
 
 Add an entry to `src/clubs.json`:
 
 ```json
-{"slug": "club-name", "name": "Club Name", "town": "Boca Raton", "blurb": "One line about the club.", "idx": ""}
+{"slug": "club-name", "name": "Club Name", "town": "Boca Raton", "blurb": "One line about the club.", "idx": "", "photo": "club-name.jpg", "reel": ""}
 ```
 
 `idx` holds the IDX Broker widget code for that club's saved search. Leave it empty until the IDX feed is approved, and the page shows a "send me the listings" form instead.
