@@ -4,8 +4,13 @@ const path = require('path');
 
 const SRC = path.join(__dirname, 'src');
 const OUT = path.join(__dirname, 'dist');
-const clubs = JSON.parse(fs.readFileSync(path.join(SRC, 'clubs.json'), 'utf8'))
+const readList = (file) => JSON.parse(fs.readFileSync(path.join(SRC, file), 'utf8'))
   .sort((a, b) => a.name.localeCompare(b.name));
+const clubs = readList('clubs.json');
+// New construction communities. Same fields as a club, plus an optional "status" like "Now selling".
+const developments = readList('developments.json');
+const CLUBS = { base: '/clubs/', label: 'Clubs' };
+const DEVS = { base: '/new-developments/', label: 'New developments' };
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -35,6 +40,7 @@ function layout({ title, description, body }) {
     <a class="brand" href="/" aria-label="Country Club Dudes home">${FLAG} Country Club Dudes</a>
     <nav aria-label="Main"><ul>
       <li><a href="/clubs/">Clubs</a></li>
+      <li><a href="/new-developments/">New Developments</a></li>
       <li><a href="/#match">Club Match</a></li>
       <li><a href="/#reels">Reels</a></li>
       <li><a href="/#about">About</a></li>
@@ -88,10 +94,10 @@ function matchForm(club) {
     </form>`;
 }
 
-function scorecard(list) {
+function scorecard(list, base = '/clubs/') {
   return `<div class="scorecard" role="list">
       <div class="sc-row head" aria-hidden="true"><span>Hole</span><span>Club</span><span>Town</span><span>Known for</span><span></span></div>
-${list.map((c, i) => `      <div class="sc-row" role="listitem"><span class="hole">${i + 1}</span><h3><a href="/clubs/${c.slug}/">${esc(c.name)}</a></h3><span class="town">${esc(c.town)}</span><p class="note">${esc(c.blurb)}</p><a class="go" href="/clubs/${c.slug}/">Guide →</a></div>`).join('\n')}
+${list.map((c, i) => `      <div class="sc-row" role="listitem"><span class="hole">${i + 1}</span><h3><a href="${base}${c.slug}/">${esc(c.name)}</a></h3><span class="town">${esc(c.town)}</span><p class="note">${esc(c.blurb)}</p><a class="go" href="${base}${c.slug}/">Guide →</a></div>`).join('\n')}
     </div>`;
 }
 
@@ -188,6 +194,35 @@ ${reels.map(([where, title]) => `      <a class="reel" href="https://www.instagr
   });
 }
 
+function developmentsIndex() {
+  const list = developments.length
+    ? scorecard(developments, DEVS.base)
+    : `<div class="listings">
+        <p class="pending">We're adding new construction communities here soon.</p>
+        <p>Looking at a new build? Send a Club Match and tell us which developments you're watching. We'll send floor plans, pricing, and what the club will offer.</p>
+        <div><a class="btn primary" href="/#match">Send a Club Match</a></div>
+      </div>`;
+  return layout({
+    title: 'New Country Club Developments | Country Club Dudes',
+    description: 'New construction country club communities in Palm Beach County: what is being built, pricing, and how membership will work.',
+    body: `
+<section class="hero">
+  <div class="wrap" style="grid-template-columns:1fr">
+    <div>
+      <p class="eyebrow" style="color:var(--flag)">New developments</p>
+      <h1 style="margin-top:14px">New club communities</h1>
+      <p class="lede">New construction with a club attached. We track what's being built, what it costs, and how membership will work.</p>
+    </div>
+  </div>
+</section>
+<section class="band">
+  <div class="wrap">
+    ${list}
+  </div>
+</section>`,
+  });
+}
+
 function clubsIndex() {
   return layout({
     title: 'Country Club Guides | Country Club Dudes',
@@ -210,7 +245,7 @@ function clubsIndex() {
   });
 }
 
-function clubPage(club) {
+function clubPage(club, section = CLUBS) {
   const listings = club.idx
     ? `<div class="listings" id="listings">${club.idx}</div>`
     : `<div class="listings" id="listings">
@@ -225,7 +260,7 @@ function clubPage(club) {
 <section class="hero club-hero">
   <div class="wrap">
     <div>
-      <p class="crumbs"><a href="/clubs/">Clubs</a> / ${esc(club.name)}</p>
+      <p class="crumbs"><a href="${section.base}">${section.label}</a> / ${esc(club.name)}</p>
       <p class="eyebrow" style="color:var(--flag)">${esc(club.town)}</p>
       <h1 style="margin-top:14px">${esc(club.name)}</h1>
       <p class="lede">${esc(club.blurb)}</p>
@@ -237,7 +272,8 @@ function clubPage(club) {
     <aside class="card-mini" aria-label="${esc(club.name)} at a glance">
       <p class="eyebrow">${esc(club.name)} at a glance</p>
       <table>
-        <tr><td>Town</td><td>${esc(club.town)}</td></tr>
+        <tr><td>Town</td><td>${esc(club.town)}</td></tr>${club.status ? `
+        <tr><td>Status</td><td>${esc(club.status)}</td></tr>` : ''}
         <tr><td>Membership</td><td>Ask John</td></tr>
         <tr><td>Initiation &amp; dues</td><td>Ask John</td></tr>
       </table>
@@ -295,9 +331,11 @@ if (fs.existsSync(path.join(SRC, 'images'))) fs.cpSync(path.join(SRC, 'images'),
 write('index.html', homePage());
 write('clubs/index.html', clubsIndex());
 for (const club of clubs) write(`clubs/${club.slug}/index.html`, clubPage(club));
+write('new-developments/index.html', developmentsIndex());
+for (const dev of developments) write(`new-developments/${dev.slug}/index.html`, clubPage(dev, DEVS));
 write('thanks/index.html', thanksPage());
 const SITE = 'https://countryclubdudes.com';
-const urls = ['/', '/clubs/', ...clubs.map((c) => `/clubs/${c.slug}/`)];
+const urls = ['/', '/clubs/', ...clubs.map((c) => `/clubs/${c.slug}/`), '/new-developments/', ...developments.map((d) => `/new-developments/${d.slug}/`)];
 write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${SITE}${u}</loc></url>`).join('\n')}\n</urlset>\n`);
 write('robots.txt', `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
-console.log(`Built ${clubs.length} club pages into dist/`);
+console.log(`Built ${clubs.length} club pages and ${developments.length} new development pages into dist/`);

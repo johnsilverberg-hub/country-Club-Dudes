@@ -23,6 +23,10 @@ Add an entry to `src/clubs.json`:
 
 `idx` holds the IDX Broker widget code for that club's saved search. Leave it empty until the IDX feed is approved, and the page shows a "send me the listings" form instead.
 
+## Adding a new development
+
+Add an entry to `src/developments.json` in the same format as a club, with an optional `"status"` such as "Now selling". It gets a page at `/new-developments/<slug>/`.
+
 ## Leads
 
 The Club Match form uses Netlify Forms. Each submission records which club page it came from.

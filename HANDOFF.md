@@ -6,7 +6,7 @@ For Dezirae (and her Claude). Last updated November 5, 2026.
 
 - **Test site:** https://country-club-dudes.netlify.app
 - **Code:** this repo. Every push to `main` rebuilds the site on Netlify by itself.
-- **Pages:** home, all clubs, one page per club (40 so far), thanks page.
+- **Pages:** home, all clubs, one page per club (40 so far), New Developments, thanks page.
 - **Lead form:** "Club Match" on the home page and every club page. It runs on Netlify Forms (form name `club-match`) and records which club page it came from.
 - **Listings:** IDX Broker account is open on Beaches MLS. MLS approval is still in progress (John is handling the agreement).
 - **Domain:** countryclubdudes.com is at GoDaddy and still forwards to Premier Listings.
@@ -34,16 +34,25 @@ Each club is one line in `src/clubs.json`. Two optional fields are ready to use:
 - `"photo": "old-palm.jpg"` shows a photo on the club page. Put the file in `src/images/`. Wide photos about 1600px across work best. Only use photos we have rights to.
 - `"reel": "https://www.instagram.com/reel/..."` adds a "Watch our reel" button.
 
-### 4. Check every club's facts
+### 4. New developments
+New construction communities go in `src/developments.json`, which starts empty. Each one is a line just like a club, plus an optional `status`:
+
+```json
+{"slug": "new-community", "name": "New Community", "town": "Boca Raton", "blurb": "One line about it.", "status": "Now selling", "idx": "", "photo": "", "reel": ""}
+```
+
+Each entry gets its own page at `/new-developments/<slug>/`, with the Club Match form and a listings slot. Until the list has entries, the New Developments page asks visitors which developments they're watching. There's no limit on how many you add.
+
+### 5. Check every club's facts
 Most towns and every one-line `blurb` in `src/clubs.json` were written as drafts. Please correct anything that's wrong. The club spreadsheet John emailed has the same list.
 
-### 5. Brand
+### 6. Brand
 Send or add the logo and headshots of John and Shawn. The About section is on the home page in `build.js` (search for `id="about"`).
 
-### 6. Live listings (after MLS approval)
+### 7. Live listings (after MLS approval)
 For each club, build a saved search or widget in IDX Broker for that community, then paste its embed code into that club's `"idx"` field in `src/clubs.json`. Club pages show the listings automatically once `idx` is filled in.
 
-### 7. Point countryclubdudes.com at the new site
+### 8. Point countryclubdudes.com at the new site
 Only do this once John is happy with the site.
 1. In Netlify, open **Domain management**, then **Add a domain**, and enter `countryclubdudes.com`.
 2. In GoDaddy, turn off the forwarding to Premier Listings.
@@ -51,7 +60,7 @@ Only do this once John is happy with the site.
 4. Leave the MX (email) records alone, so email keeps working.
 5. Netlify adds the free SSL certificate by itself within about an hour.
 
-### 8. Ads
+### 9. Ads
 Point the Club Match Facebook ads at the matching club pages (for example, https://countryclubdudes.com/clubs/boca-west/ once the domain is live). If you want a Meta Pixel on the site, send the Pixel ID and it can be added to `build.js`.
 
 ## How to make changes
