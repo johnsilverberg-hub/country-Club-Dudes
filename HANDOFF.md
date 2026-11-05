@@ -29,6 +29,8 @@ Netlify currently asks visitors to log in to the team. In Netlify, open the **co
 In Netlify, go to **Forms**, then **Form notifications**, then **Add notification**, then **Email notification**, and add John and Shawn. For Follow Up Boss, add one more email notification to John's Follow Up Boss lead-inbox address (found in Follow Up Boss under Admin, then Lead Flow). Then send one test lead through the form and confirm it arrives in all three places.
 
 ### 3. Club photos and reels
+Done for reels: 24 club pages now link to a matching Country Club Dudes reel. Clubs with no club-specific reel yet: Aberdeen, Bear Lakes, The Bear's Club, Boca Greens, Boca Teeca, Boca West, Boca Woods, Broken Sound, Delray Dunes, Frenchman's Reserve, Indian Spring, Panther National, PGA National, Quail Ridge, Seagate, Tequesta. Photos are still needed.
+
 Each club is one line in `src/clubs.json`. Two optional fields are ready to use:
 
 - `"photo": "old-palm.jpg"` shows a photo on the club page. Put the file in `src/images/`. Wide photos about 1600px across work best. Only use photos we have rights to.
@@ -44,6 +46,8 @@ New construction communities go in `src/developments.json`, which starts empty. 
 Each entry gets its own page at `/new-developments/<slug>/`, with the Club Match form and a listings slot. Until the list has entries, the New Developments page asks visitors which developments they're watching. There's no limit on how many you add.
 
 ### 5. Check every club's facts
+Partly done (Nov 5): Wycliffe moved to Wellington, and 12 blurbs rewritten from facts in our own reels (Bocaire, Delaire, Hunters Run, Jupiter Hills, Woodfield, Royal Palm, Frenchman's Creek, BallenIsles, Jonathan's Landing, Mirasol, Stonebridge). The rest still need a once-over.
+
 Most towns and every one-line `blurb` in `src/clubs.json` were written as drafts. Please correct anything that's wrong. The club spreadsheet John emailed has the same list.
 
 ### 6. Brand
