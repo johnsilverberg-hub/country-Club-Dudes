@@ -5,8 +5,8 @@
   {"slug": "boca-grove", "name": "Boca Grove", "town": "Boca Raton", "blurb": "Golf, tennis, and a social calendar that stays full.", "idx": "", "reel": "https://www.instagram.com/reel/DaDo6iiuUWE/"},
   {"slug": "stonebridge", "name": "Stonebridge Country Club", "town": "Boca Raton", "blurb": "Gated golf living in west Boca, with custom homes and a club that also takes outside members.", "idx": "", "reel": "https://www.instagram.com/reel/DaOJuc_PBtE/"},
   {"slug": "woodfield", "name": "Woodfield Country Club", "town": "Boca Raton", "blurb": "A family-friendly club with a children's clubhouse, camps and full sports and social amenities.", "idx": "", "reel": "https://www.instagram.com/reel/DZgakIDtgm4/"},
-  {"slug": "royal-palm", "name": "Royal Palm Yacht & Country Club", "town": "Boca Raton", "blurb": "Waterfront homes, golf and marina access in east Boca.", "idx": "", "reel": "https://www.instagram.com/reel/DdWPGnKRaoe/"},
-  {"slug": "frenchmans-creek", "name": "Frenchman's Creek Beach & Country Club", "town": "Palm Beach Gardens", "blurb": "Two golf courses along the Intracoastal, plus a private beach club.", "idx": "", "reel": "https://www.instagram.com/reel/De4q97TiTQG/"},
+  {"slug": "royal-palm", "name": "Royal Palm Yacht & Country Club", "town": "Boca Raton", "blurb": "Waterfront homes, golf and marina access in east Boca.", "idx": "", "reel": "https://www.instagram.com/reel/DdWPGnKRaoe/", "water": true},
+  {"slug": "frenchmans-creek", "name": "Frenchman's Creek Beach & Country Club", "town": "Palm Beach Gardens", "blurb": "Two golf courses along the Intracoastal, plus a private beach club.", "idx": "", "reel": "https://www.instagram.com/reel/De4q97TiTQG/", "water": true},
   {"slug": "st-andrews", "name": "St. Andrews Country Club", "town": "Boca Raton", "blurb": "Gated golf and tennis living in west Boca.", "idx": "", "reel": "https://www.instagram.com/reel/De4qP6yDYV7/"},
   {"slug": "boca-woods", "name": "Boca Woods Country Club", "town": "Boca Raton", "blurb": "A golf community in west Boca with an active club calendar.", "idx": ""},
   {"slug": "boca-greens", "name": "Boca Greens Country Club", "town": "Boca Raton", "blurb": "A relaxed golf community with a range of home prices.", "idx": ""},
@@ -25,12 +25,12 @@
   {"slug": "the-bears-club", "name": "The Bear's Club", "town": "Jupiter", "blurb": "Jack Nicklaus's private golf club, with large estate homes.", "idx": ""},
   {"slug": "eastpointe", "name": "Eastpointe Country Club", "town": "Palm Beach Gardens", "blurb": "A gated golf and tennis community with an active club life.", "idx": "", "reel": "https://www.instagram.com/reel/DeaQZR_kt_S/"},
   {"slug": "ibis", "name": "Ibis Golf & Country Club", "town": "West Palm Beach", "blurb": "A large gated community with multiple golf courses and a full clubhouse.", "idx": "", "reel": "https://www.instagram.com/reel/DcPYcSlNz_K/"},
-  {"slug": "jonathans-landing", "name": "Jonathan's Landing", "town": "Jupiter", "blurb": "A gated golf and boating community on the Intracoastal, with a hole you reach by ferry.", "idx": "", "reel": "https://www.instagram.com/reel/DcWLHgqOwI4/"},
+  {"slug": "jonathans-landing", "name": "Jonathan's Landing", "town": "Jupiter", "blurb": "A gated golf and boating community on the Intracoastal, with a hole you reach by ferry.", "idx": "", "reel": "https://www.instagram.com/reel/DcWLHgqOwI4/", "water": true},
   {"slug": "ballenisles", "name": "BallenIsles Country Club", "town": "Palm Beach Gardens", "blurb": "Three championship courses on the former PGA National site, and a big racquet program.", "idx": "", "reel": "https://www.instagram.com/reel/DbnioCmuf2j/"},
   {"slug": "mirasol", "name": "Mirasol Country Club", "town": "Palm Beach Gardens", "blurb": "A gated club with 36 holes of golf and a full resort-style clubhouse.", "idx": "", "reel": "https://www.instagram.com/reel/DdMxhbnj0t-/"},
   {"slug": "frenchmans-reserve", "name": "Frenchman's Reserve", "town": "Palm Beach Gardens", "blurb": "A gated golf community with estate homes and a full-service club.", "idx": ""},
   {"slug": "boca-teeca", "name": "Boca Teeca Country Club", "town": "Boca Raton", "blurb": "An easy-going golf community with some of Boca's lower price points.", "idx": ""},
-  {"slug": "admirals-cove", "name": "Admiral's Cove", "town": "Jupiter", "blurb": "Golf and deep-water yacht living on the Intracoastal.", "idx": "", "reel": "https://www.instagram.com/reel/De4rV0MAtEk/"},
+  {"slug": "admirals-cove", "name": "Admiral's Cove", "town": "Jupiter", "blurb": "Golf and deep-water yacht living on the Intracoastal.", "idx": "", "reel": "https://www.instagram.com/reel/De4rV0MAtEk/", "water": true},
   {"slug": "pga-national", "name": "PGA National", "town": "Palm Beach Gardens", "blurb": "Home of the famous Champion course, with homes from condos to estates.", "idx": ""},
   {"slug": "abacoa", "name": "Abacoa", "town": "Jupiter", "blurb": "A walkable Jupiter neighborhood with its own golf club, a town center and Roger Dean Stadium.", "idx": "", "reel": "https://www.instagram.com/reel/Dd_Vj9DzIFU/"},
   {"slug": "tequesta", "name": "Tequesta Country Club", "town": "Tequesta", "blurb": "A classic, member-owned golf club in a quiet waterfront village.", "idx": ""},
@@ -38,5 +38,5 @@
   {"slug": "jupiter-hills", "name": "Jupiter Hills Club", "town": "Tequesta", "blurb": "A private club of just 212 homes on 366 acres, with two hilly 18-hole courses that play more like the Carolinas.", "idx": "", "reel": "https://www.instagram.com/reel/Defn_E2iZMU/"},
   {"slug": "quail-ridge", "name": "Quail Ridge Country Club", "town": "Boynton Beach", "blurb": "A member-owned club with two golf courses and a big racquet program.", "idx": ""},
   {"slug": "delray-dunes", "name": "Delray Dunes Golf & Country Club", "town": "Boynton Beach", "blurb": "A small, established golf community with single-family homes on large lots.", "idx": ""},
-  {"slug": "seagate", "name": "Seagate Country Club", "town": "Delray Beach", "blurb": "Golf club living tied to the Seagate Hotel and its beach club.", "idx": ""}
+  {"slug": "seagate", "name": "Seagate Country Club", "town": "Delray Beach", "blurb": "Golf club living tied to the Seagate Hotel and its beach club.", "idx": "", "water": true}
 ]

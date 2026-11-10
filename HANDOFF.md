@@ -45,6 +45,11 @@ New construction communities go in `src/developments.json`, which starts empty. 
 
 Each entry gets its own page at `/new-developments/<slug>/`, with the Club Match form and a listings slot. Until the list has entries, the New Developments page asks visitors which developments they're watching. There's no limit on how many you add.
 
+### 4b. 55+ communities and waterfront (added Nov 10)
+- `src/active-adult.json` holds 55+ resort-style communities (no golf), shown at `/active-adult/`. It starts with the 12 GL Homes Valencia communities. Towns and blurbs are drafts, so please check them and add others.
+- `src/waterfront.json` holds ocean and Intracoastal communities, shown at `/waterfront/`. It starts empty. Clubs marked `"water": true` in `src/clubs.json` also appear on that page under "Country clubs on the water".
+- Entries use the same fields as a club (`slug`, `name`, `town`, `blurb`, `idx`, optional `photo`, `reel`, `status`).
+
 ### 5. Check every club's facts
 Partly done (Nov 5): Wycliffe moved to Wellington, and 11 blurbs rewritten from facts in our own reels (Bocaire, Delaire, Hunters Run, Jupiter Hills, Woodfield, Royal Palm, Frenchman's Creek, BallenIsles, Jonathan's Landing, Mirasol, Stonebridge). The rest still need a once-over.
 

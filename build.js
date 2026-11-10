@@ -9,8 +9,14 @@ const readList = (file) => JSON.parse(fs.readFileSync(path.join(SRC, file), 'utf
 const clubs = readList('clubs.json');
 // New construction communities. Same fields as a club, plus an optional "status" like "Now selling".
 const developments = readList('developments.json');
+// 55+ resort-style communities: club life without the golf (pickleball, tennis, clubhouse).
+const resort = readList('active-adult.json');
+// Waterfront communities: ocean and Intracoastal living with tennis and pickleball.
+const waterfront = readList('waterfront.json');
 const CLUBS = { base: '/clubs/', label: 'Clubs' };
 const DEVS = { base: '/new-developments/', label: 'New developments' };
+const RESORT = { base: '/active-adult/', label: '55+ communities' };
+const WATER = { base: '/waterfront/', label: 'Waterfront' };
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -40,6 +46,8 @@ function layout({ title, description, body }) {
     <a class="brand" href="/" aria-label="Country Club Dudes home">${FLAG} Country Club Dudes</a>
     <nav aria-label="Main"><ul>
       <li><a href="/clubs/">Clubs</a></li>
+      <li><a href="/active-adult/">55+ Communities</a></li>
+      <li><a href="/waterfront/">Waterfront</a></li>
       <li><a href="/new-developments/">New Developments</a></li>
       <li><a href="/#match">Club Match</a></li>
       <li><a href="/#reels">Reels</a></li>
@@ -94,9 +102,9 @@ function matchForm(club) {
     </form>`;
 }
 
-function scorecard(list, base = '/clubs/') {
+function scorecard(list, base = '/clubs/', noun = 'Club') {
   return `<div class="scorecard" role="list">
-      <div class="sc-row head" aria-hidden="true"><span>Hole</span><span>Club</span><span>Town</span><span>Known for</span><span></span></div>
+      <div class="sc-row head" aria-hidden="true"><span>Hole</span><span>${noun}</span><span>Town</span><span>Known for</span><span></span></div>
 ${list.map((c, i) => `      <div class="sc-row" role="listitem"><span class="hole">${i + 1}</span><h3><a href="${base}${c.slug}/">${esc(c.name)}</a></h3><span class="town">${esc(c.town)}</span><p class="note">${esc(c.blurb)}</p><a class="go" href="${base}${c.slug}/">Guide →</a></div>`).join('\n')}
     </div>`;
 }
@@ -134,6 +142,17 @@ function homePage() {
         <tr><td>Homes for sale</td><td>Live</td></tr>
       </table>
     </aside>
+  </div>
+</section>
+
+<section class="band" id="ways" style="padding-bottom:0">
+  <div class="wrap">
+    <div class="sec-head"><div><p class="eyebrow">Three ways to live the club life</p><h2>Golf, 55+, or on the water</h2></div></div>
+    <div class="club-grid ways">
+      <a href="/clubs/"><strong>Golf country clubs</strong><span class="town">${clubs.length} clubs</span><span>Private golf, tennis and pickleball, dining and a full social calendar.</span></a>
+      <a href="/active-adult/"><strong>55+ communities</strong><span class="town">${resort.length ? `${resort.length} communities` : 'Coming soon'}</span><span>Clubhouse, pickleball, tennis and pools, with no golf membership.</span></a>
+      <a href="/waterfront/"><strong>Waterfront living</strong><span class="town">Ocean and Intracoastal</span><span>Homes on the water with tennis, pickleball and a club lifestyle.</span></a>
+    </div>
   </div>
 </section>
 
@@ -191,6 +210,69 @@ ${reels.map(([where, title]) => `      <a class="reel" href="https://www.instagr
     </div>
   </div>
 </section>`,
+  });
+}
+
+function sectionIndex({ list, section, title, description, eyebrow, h1, lede, empty, extra = '' }) {
+  const body = list.length
+    ? scorecard(list, section.base, 'Community')
+    : `<div class="listings">
+        <p class="pending">${empty}</p>
+        <div><a class="btn primary" href="/#match">Send a Club Match</a></div>
+      </div>`;
+  return layout({
+    title,
+    description,
+    body: `
+<section class="hero">
+  <div class="wrap" style="grid-template-columns:1fr">
+    <div>
+      <p class="eyebrow" style="color:var(--flag)">${eyebrow}</p>
+      <h1 style="margin-top:14px">${h1}</h1>
+      <p class="lede">${lede}</p>
+    </div>
+  </div>
+</section>
+<section class="band">
+  <div class="wrap">
+    ${body}
+  </div>
+</section>${extra}`,
+  });
+}
+
+function resortIndex() {
+  return sectionIndex({
+    list: resort, section: RESORT,
+    title: '55+ Resort-Style Communities in Palm Beach County | Country Club Dudes',
+    description: '55+ communities in Palm Beach County with a country club lifestyle and no golf course: clubhouses, pickleball, tennis, pools and a full social calendar.',
+    eyebrow: '55+ communities',
+    h1: 'Club life, <em>no golf required</em>',
+    lede: "Palm Beach County's 55+ communities with a clubhouse, pickleball, tennis, pools and a social calendar that never slows down, without the golf membership.",
+    empty: "We're adding 55+ communities here soon. Tell us which ones you're looking at.",
+  });
+}
+
+function waterfrontIndex() {
+  const waterClubs = clubs.filter((c) => c.water);
+  const extra = waterClubs.length ? `
+<section class="band" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head"><div><p class="eyebrow">Also on the water</p><h2>Country clubs on the water</h2></div><p>These golf clubs have waterfront homes, docks or a beach club too.</p></div>
+    <div class="club-grid">
+${waterClubs.map((c) => `      <a href="/clubs/${c.slug}/"><strong>${esc(c.name)}</strong><span class="town">${esc(c.town)}</span></a>`).join('\n')}
+    </div>
+  </div>
+</section>` : '';
+  return sectionIndex({
+    list: waterfront, section: WATER,
+    title: 'Waterfront Homes, Ocean and Intracoastal | Country Club Dudes',
+    description: 'Ocean and Intracoastal waterfront communities in Palm Beach County with tennis, pickleball and a club lifestyle.',
+    eyebrow: 'Waterfront living',
+    h1: 'Ocean and <em>Intracoastal</em> living',
+    lede: 'Waterfront communities on the ocean and the Intracoastal, with tennis, pickleball, a clubhouse and a club lifestyle.',
+    empty: "We're adding waterfront communities here soon. Tell us whether you want ocean, Intracoastal, or a dock out back.",
+    extra,
   });
 }
 
@@ -331,11 +413,15 @@ if (fs.existsSync(path.join(SRC, 'images'))) fs.cpSync(path.join(SRC, 'images'),
 write('index.html', homePage());
 write('clubs/index.html', clubsIndex());
 for (const club of clubs) write(`clubs/${club.slug}/index.html`, clubPage(club));
+write('active-adult/index.html', resortIndex());
+for (const c of resort) write(`active-adult/${c.slug}/index.html`, clubPage(c, RESORT));
+write('waterfront/index.html', waterfrontIndex());
+for (const c of waterfront) write(`waterfront/${c.slug}/index.html`, clubPage(c, WATER));
 write('new-developments/index.html', developmentsIndex());
 for (const dev of developments) write(`new-developments/${dev.slug}/index.html`, clubPage(dev, DEVS));
 write('thanks/index.html', thanksPage());
 const SITE = 'https://countryclubdudes.com';
-const urls = ['/', '/clubs/', ...clubs.map((c) => `/clubs/${c.slug}/`), '/new-developments/', ...developments.map((d) => `/new-developments/${d.slug}/`)];
+const urls = ['/', '/clubs/', ...clubs.map((c) => `/clubs/${c.slug}/`), '/active-adult/', ...resort.map((c) => `/active-adult/${c.slug}/`), '/waterfront/', ...waterfront.map((c) => `/waterfront/${c.slug}/`), '/new-developments/', ...developments.map((d) => `/new-developments/${d.slug}/`)];
 write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${SITE}${u}</loc></url>`).join('\n')}\n</urlset>\n`);
 write('robots.txt', `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
-console.log(`Built ${clubs.length} club pages and ${developments.length} new development pages into dist/`);
+console.log(`Built ${clubs.length} club, ${resort.length} 55+, ${waterfront.length} waterfront and ${developments.length} new development pages into dist/`);

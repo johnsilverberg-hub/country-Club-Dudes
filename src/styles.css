@@ -13,7 +13,7 @@
   --bg:#0F1A15; --surface:#16241D; --ink:#E6EEE8; --muted:#9DB0A5; --line:#2A3D33;
   --fairway:#1F5A3F; --fairway-ink:#F1F5EF; --flag:#E9C34B; --flag-ink:#1D1A0C; color-scheme:dark}
 
-body{background:var(--bg);color:var(--ink);font:16px/1.6 var(--body)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--body)}
 .wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.1;text-wrap:balance;margin:0}
 p{margin:0}
@@ -144,3 +144,10 @@ footer p{opacity:.8;max-width:40em}
 
 .club-media{display:grid;gap:16px}
 .club-media img{width:100%;max-height:520px;object-fit:cover;border-radius:14px}
+
+/* three ways */
+.club-grid.ways{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.club-grid.ways a{padding:24px;gap:8px}
+.club-grid.ways strong{font-size:24px}
+.club-grid.ways span:last-child{color:var(--muted);font-size:15px}
+.hero h1 em{font-style:normal;color:var(--flag)}
