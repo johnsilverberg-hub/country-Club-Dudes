@@ -1,4 +1,20 @@
 [
+  {"slug": "bellaggio", "name": "Bellaggio", "town": "Lake Worth", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "idx": ""},
+  {"slug": "boca-flores", "name": "Boca Flores", "town": "Boca Raton", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "idx": ""},
+  {"slug": "cascade-lakes", "name": "Cascade Lakes", "town": "Boynton Beach", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "idx": ""},
+  {"slug": "century-village", "name": "Century Village", "town": "Boca Raton", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "idx": ""},
+  {"slug": "coral-lakes", "name": "Coral Lakes", "town": "Boynton Beach", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "idx": ""},
+  {"slug": "cresswind-palm-beach", "name": "Cresswind Palm Beach", "town": "Westlake", "blurb": "Kolter's newer 55+ community with a big clubhouse, pickleball, tennis and lifestyle director.", "idx": ""},
+  {"slug": "floral-lakes", "name": "Floral Lakes", "town": "Delray Beach", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "idx": ""},
+  {"slug": "huntington-pointe", "name": "Huntington Pointe", "town": "Delray Beach", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "idx": ""},
+  {"slug": "kings-point", "name": "Kings Point", "town": "Delray Beach", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "idx": ""},
+  {"slug": "lakes-of-delray", "name": "Lakes of Delray", "town": "Delray Beach", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "idx": ""},
+  {"slug": "majestic-isles", "name": "Majestic Isles", "town": "Boynton Beach", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "idx": ""},
+  {"slug": "palm-isles", "name": "Palm Isles", "town": "Boynton Beach", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "idx": ""},
+  {"slug": "ponte-vecchio", "name": "Ponte Vecchio", "town": "Boynton Beach", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "idx": ""},
+  {"slug": "regency-at-avenir", "name": "Regency at Avenir", "town": "Palm Beach Gardens", "blurb": "Toll Brothers' 55+ community at Avenir, with a resort-style clubhouse, pickleball and tennis.", "idx": ""},
+  {"slug": "the-cascades", "name": "The Cascades", "town": "Boynton Beach", "blurb": "A GL Homes 55+ community with a resort-style clubhouse, pickleball, tennis and a full social calendar.", "idx": ""},
+  {"slug": "tuscany-bay", "name": "Tuscany Bay", "town": "Boynton Beach", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "idx": ""},
   {"slug": "valencia-bay", "name": "Valencia Bay", "town": "Boynton Beach", "blurb": "A GL Homes 55+ community with a resort-style clubhouse, pickleball, tennis and a full social calendar.", "idx": ""},
   {"slug": "valencia-cove", "name": "Valencia Cove", "town": "Boynton Beach", "blurb": "A GL Homes 55+ community with a resort-style clubhouse, pickleball, tennis and a full social calendar.", "idx": ""},
   {"slug": "valencia-falls", "name": "Valencia Falls", "town": "Delray Beach", "blurb": "A GL Homes 55+ community with a resort-style clubhouse, pickleball, tennis and a full social calendar.", "idx": ""},
@@ -10,5 +26,10 @@
   {"slug": "valencia-reserve", "name": "Valencia Reserve", "town": "Boynton Beach", "blurb": "A GL Homes 55+ community with a resort-style clubhouse, pickleball, tennis and a full social calendar.", "idx": ""},
   {"slug": "valencia-shores", "name": "Valencia Shores", "town": "Lake Worth", "blurb": "A GL Homes 55+ community with a resort-style clubhouse, pickleball, tennis and a full social calendar.", "idx": ""},
   {"slug": "valencia-sound", "name": "Valencia Sound", "town": "Boynton Beach", "blurb": "A GL Homes 55+ community with a resort-style clubhouse, pickleball, tennis and a full social calendar.", "idx": ""},
-  {"slug": "valencia-del-mar", "name": "Valencia del Mar", "town": "Boynton Beach", "blurb": "A GL Homes 55+ community with a resort-style clubhouse, pickleball, tennis and a full social calendar.", "idx": ""}
+  {"slug": "valencia-del-mar", "name": "Valencia del Mar", "town": "Boynton Beach", "blurb": "A GL Homes 55+ community with a resort-style clubhouse, pickleball, tennis and a full social calendar.", "idx": ""},
+  {"slug": "venetian-isles", "name": "Venetian Isles", "town": "Boynton Beach", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "idx": ""},
+  {"slug": "villa-borghese", "name": "Villa Borghese", "town": "Delray Beach", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "idx": ""},
+  {"slug": "villaggio-reserve", "name": "Villaggio Reserve", "town": "Delray Beach", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "idx": ""},
+  {"slug": "vizcaya", "name": "Vizcaya", "town": "Delray Beach", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "idx": ""},
+  {"slug": "whisper-walk", "name": "Whisper Walk", "town": "Boca Raton", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "idx": ""}
 ]
