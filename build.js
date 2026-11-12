@@ -175,6 +175,57 @@ ${body}
       if (e.key === 'Escape') document.querySelectorAll('.has-sub.open').forEach(function (li) { li.classList.remove('open'); var t = li.querySelector('.sub-toggle'); t.setAttribute('aria-expanded', 'false'); t.focus(); });
     });
 
+    // Hero search bar: typeahead for our clubs and communities, then hands off to IDX Broker.
+    var hs = document.querySelector('.hero-search');
+    if (hs) {
+      var cfg = JSON.parse(document.getElementById('hs-config').textContent);
+      var q = hs.querySelector('#hs-q'), list = hs.querySelector('#hs-list'), active = -1, items = [];
+      var norm = function (t) { return (t || '').toLowerCase().replace(/[^a-z0-9 ]/g, ''); };
+      var escH = function (t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; };
+      function close() { list.hidden = true; q.setAttribute('aria-expanded', 'false'); active = -1; q.removeAttribute('aria-activedescendant'); }
+      function render() {
+        var v = norm(q.value); if (v.length < 2) { close(); return; }
+        var type = hs.querySelector('input[name="hs-type"]:checked').value;
+        var places = cfg.places.filter(function (p) { return norm(p.n).indexOf(v) > -1 && (type === 'all' || (type === 'club') === (p.k === 'Club')); }).slice(0, 5);
+        var towns = cfg.towns.filter(function (t) { return norm(t).indexOf(v) > -1; }).slice(0, 3);
+        items = places.map(function (p) { return { label: p.n, sub: p.t + ' · ' + (p.k === 'Club' ? 'Club guide' : 'Community'), url: p.u }; })
+          .concat(towns.map(function (t) { return { label: 'Homes in ' + t, sub: 'Search listings', town: t }; }));
+        if (!items.length) { close(); return; }
+        list.innerHTML = items.map(function (it, i) { return '<li role="option" id="hs-o' + i + '" data-i="' + i + '"><b>' + escH(it.label) + '</b><span>' + escH(it.sub) + '</span></li>'; }).join('');
+        list.hidden = false; q.setAttribute('aria-expanded', 'true');
+      }
+      function pick(it) { if (it.url) { location.href = it.url; return; } q.value = it.town; close(); submit(); }
+      function setActive(i) {
+        var opts = list.querySelectorAll('li'); if (!opts.length) return;
+        active = (i + opts.length) % opts.length;
+        opts.forEach(function (o, j) { o.setAttribute('aria-selected', j === active ? 'true' : 'false'); });
+        q.setAttribute('aria-activedescendant', 'hs-o' + active);
+      }
+      function submit() {
+        var type = hs.querySelector('input[name="hs-type"]:checked').value;
+        var price = hs.querySelector('#hs-price').value, beds = hs.querySelector('#hs-beds').value, where = q.value.trim();
+        var base = (type !== 'all' && cfg.tabs[type]) || cfg.action;
+        if (!base) { location.href = type === 'club' ? '/clubs/' : type === 'noClub' ? '/search/no-club/' : '/search/'; return; }
+        var u = new URL(base, location.href);
+        Object.keys(cfg.fixed).forEach(function (k) { u.searchParams.append(k, cfg.fixed[k]); });
+        if (where && cfg.params.location) u.searchParams.append(cfg.params.location, where);
+        if (price && cfg.params.maxPrice) u.searchParams.append(cfg.params.maxPrice, price);
+        if (beds && cfg.params.minBeds) u.searchParams.append(cfg.params.minBeds, beds);
+        location.href = u.toString();
+      }
+      q.addEventListener('input', render);
+      q.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowDown') { e.preventDefault(); if (list.hidden) render(); setActive(active + 1); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(active - 1); }
+        else if (e.key === 'Enter' && !list.hidden && active > -1) { e.preventDefault(); pick(items[active]); }
+        else if (e.key === 'Escape') close();
+      });
+      list.addEventListener('mousedown', function (e) { var li = e.target.closest('li'); if (li) { e.preventDefault(); pick(items[+li.getAttribute('data-i')]); } });
+      q.addEventListener('blur', function () { setTimeout(close, 120); });
+      hs.addEventListener('change', function (e) { if (e.target.name === 'hs-type') render(); });
+      hs.addEventListener('submit', function (e) { e.preventDefault(); submit(); });
+    }
+
     // All / With a club / Without a club toggle on lifestyle pages.
     document.querySelectorAll('.seg').forEach(function (seg) {
       var wrap = seg.closest('.wrap'), cards = wrap.querySelectorAll('.club-card[data-type]'), empty = wrap.querySelector('.filter-empty');
@@ -309,6 +360,41 @@ function matchSection(club) {
 </section>`;
 }
 
+// Hero search bar. Wiring to IDX Broker lives in src/search.json ("heroSearch").
+function heroSearch() {
+  const hs = SEARCH.heroSearch || {};
+  const places = [
+    ...clubs.map((c) => ({ n: c.name, t: c.town, u: `${CLUBS.base}${c.slug}/`, k: 'Club' })),
+    ...communities.map((c) => ({ n: c.name, t: c.town, u: `${COMMS.base}${c.slug}/`, k: 'Community' })),
+  ];
+  const towns = [...new Set([...clubs, ...communities].map((c) => c.town))].sort();
+  const cfg = { action: hs.action || '', params: hs.params || {}, tabs: hs.tabs || {}, fixed: hs.fixed || {}, places, towns };
+  return `<form class="hero-search" role="search" action="/search/" method="get" novalidate>
+        <div class="hs-tabs" role="radiogroup" aria-label="Type of community">
+          <label><input type="radio" name="hs-type" value="all" checked><span>All homes</span></label>
+          <label><input type="radio" name="hs-type" value="club"><span>With a club</span></label>
+          <label><input type="radio" name="hs-type" value="noClub"><span>Without a club</span></label>
+        </div>
+        <div class="hs-bar">
+          <div class="hs-field hs-where">
+            <label for="hs-q">Where</label>
+            <input id="hs-q" type="text" autocomplete="off" placeholder="Club, community, city or ZIP" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="hs-list">
+            <ul class="hs-list" id="hs-list" role="listbox" hidden></ul>
+          </div>
+          <div class="hs-field">
+            <label for="hs-price">Max price</label>
+            <select id="hs-price"><option value="">Any price</option><option value="750000">$750K</option><option value="1000000">$1M</option><option value="1500000">$1.5M</option><option value="2500000">$2.5M</option><option value="5000000">$5M</option><option value="10000000">$10M</option></select>
+          </div>
+          <div class="hs-field">
+            <label for="hs-beds">Beds</label>
+            <select id="hs-beds"><option value="">Any</option><option value="2">2+</option><option value="3">3+</option><option value="4">4+</option><option value="5">5+</option></select>
+          </div>
+          <button class="btn gold hs-go" type="submit"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Search</span></button>
+        </div>
+        <script type="application/json" id="hs-config">${JSON.stringify(cfg).replace(/</g, '\\u003c')}</script>
+      </form>`;
+}
+
 function homePage() {
   // Inside the gates: real reels from clubs.json. Clubs marked "featuredReel": true come first,
   // then one reel per town. A cover image at src/images/reels/<slug>.jpg is used when present.
@@ -336,11 +422,8 @@ function homePage() {
       <p class="hero-kicker">Palm Beach County country club real estate</p>
       <h1>Find the right country club. Not just the right home.</h1>
       <p class="lede">We film inside these clubs every week. We'll tell you what the membership really costs, who plays where, and which clubs match how you actually want to spend your days.</p>
-      <div class="cta-row">
-        <a class="btn gold" href="#match">Get my Club Match</a>
-        <a class="btn outline" href="/clubs/">Browse the clubs</a>
-      </div>
-      <p class="hero-alt">Not looking for a club? <a class="text-link" href="/search/">Search all homes →</a></p>
+      ${heroSearch()}
+      <p class="hero-alt">Not sure where to start? <a class="text-link" href="#match">Get my Club Match →</a> <span aria-hidden="true">·</span> <a class="text-link" href="/clubs/">Browse the clubs</a></p>
     </div>
   </div>
 </section>
