@@ -2,62 +2,43 @@
 
 **From:** Dezirae (design)
 **For:** John, Shawn and John's Claude
-**Branch:** `design-refresh` (delivered as a patch file, see "Applying the design" below)
+**Pull request:** `design-refresh` branch
 
-Thank you for the chance to help shape the site. This package gives the site a finished design
-direction: the CCD brand system, new layouts for every page type, a Search menu, a hero video and
-search bar, and a live Instagram section. Everything was built on top of John's existing site, so his
-pages, data files and Netlify lead form keep working exactly as before.
-
-There's a clickable preview of the full design if you'd like to see it before applying anything.
+This pull request gives the site the CCD brand system, new layouts for every page type, a Search
+menu, a hero video and search bar, listing cards and a live Instagram section. It builds on the
+existing site, so the current pages, data files and Netlify lead form keep working as before.
 
 ---
 
-## How we'll work together
+## Scope
 
-To keep things simple and moving quickly, here is how the work is shared.
+**Dezirae: design**
+- Design direction, brand use, UX and page layouts
+- Design changes and new page layouts as the site grows
 
-**Dezirae (design)**
-- Design direction, brand use, UX and page layouts (included in this package)
-- Small design adjustments after you've reviewed it: spacing, colors, section order, new layouts
-- Design for new page types as the site grows
-
-**John and John's Claude (build and content)**
-- Applying this package and publishing the site (Netlify, domain)
-- Site content: club facts, photos, bios, client quotes, and communities without a club
-- Connecting the services the design is ready for: IDX Broker (listings and search), Behold (Instagram)
+**John's Claude: build and content**
+- Reviewing, merging and publishing the site (Netlify, domain)
+- Site content: club facts, photos, bios, client quotes, communities without a club
+- Connecting services: IDX Broker (search and listings), Behold (Instagram)
 - Lead routing (Netlify form notifications, Follow Up Boss)
 
-Every place that needs content or a connection already has a clearly marked slot, with instructions
-below, so nothing in the design needs to change to fill it in. Until a slot is filled, the site shows a
-friendly fallback (usually a "coming soon" message with a Club Match button), so the site is never
-broken while content is added.
+Every spot that needs content or a connection has a marked slot and instructions below. Until a
+slot is filled, the site shows a fallback (usually a "coming soon" message with a Club Match button).
 
-For design changes, send Dezirae a note or screenshot of what you'd like adjusted and she'll send an
-updated package.
+For design changes, send Dezirae a note or a screenshot.
 
 ---
 
-## Applying the design
+## Reviewing and merging
 
-**For John's Claude.** The package includes `ccd-design-refresh.patch` (12 commits, includes images and video).
+1. Open the Netlify deploy preview on this pull request and check it on desktop and phone.
+2. Run `node build.js` locally if needed (it should print "Built 40 club pages ...").
+3. Merge when John approves. Netlify publishes `main` automatically.
 
-```bash
-git checkout main && git pull
-git checkout -b design-refresh
-git am --3way /path/to/ccd-design-refresh.patch
-node build.js        # should print "Built 40 club pages ..."
-git push -u origin design-refresh
-```
-
-Then open a pull request so John can look over the Netlify deploy preview before merging.
-If `git am` has trouble, the zip in the package holds the same files at the same paths and can be
-copied over the repo instead.
-
-**What the patch touches:** `build.js` (templates and site script), `src/styles.css`, two new data files
-(`src/search.json`, `src/communities.json`), an empty `src/listings/` folder, new images in
-`src/images/`, and this document.
-`src/clubs.json`, `src/developments.json`, `netlify.toml` and `HANDOFF.md` are not changed.
+**What changed in the repo:** `build.js` (templates and site script), `src/styles.css`, two new
+data files (`src/search.json`, `src/communities.json`), an empty `src/listings/` folder, new images
+in `src/images/`, and this document. `src/clubs.json`, `src/developments.json`, `netlify.toml`,
+`README.md` and `HANDOFF.md` are not changed.
 
 ---
 
@@ -249,4 +230,3 @@ linked reel tiles from `clubs.json`.
 - [ ] Any filled-in IDX or Behold slot loads
 - [ ] Listing cards show the brokerage line and MLS disclaimer required by BeachesMLS
 
-Thank you, John and Shawn. Looking forward to seeing it live.
