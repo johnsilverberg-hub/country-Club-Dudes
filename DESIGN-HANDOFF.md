@@ -40,7 +40,7 @@ updated package.
 
 ## Applying the design
 
-**For John's Claude.** The package includes `ccd-design-refresh.patch` (10 commits, includes images and video).
+**For John's Claude.** The package includes `ccd-design-refresh.patch` (12 commits, includes images and video).
 
 ```bash
 git checkout main && git pull
@@ -55,7 +55,8 @@ If `git am` has trouble, the zip in the package holds the same files at the same
 copied over the repo instead.
 
 **What the patch touches:** `build.js` (templates and site script), `src/styles.css`, two new data files
-(`src/search.json`, `src/communities.json`), new images in `src/images/`, and this document.
+(`src/search.json`, `src/communities.json`), an empty `src/listings/` folder, new images in
+`src/images/`, and this document.
 `src/clubs.json`, `src/developments.json`, `netlify.toml` and `HANDOFF.md` are not changed.
 
 ---
@@ -77,7 +78,7 @@ copied over the repo instead.
 
 **Club pages (all 40 from one template)**
 - Hero with photo slot, lifestyle tags, membership at a glance, reel link, The Scorecard (amenities),
-  homes for sale (IDX), the Club Match form, and "More clubs in [town]"
+  homes for sale (designed listing cards fed by IDX), the Club Match form, and "More clubs in [town]"
 
 **New pages**
 - `/search/`: Search all homes, with Club communities and Communities without a club side by side
@@ -125,7 +126,7 @@ All optional. Add them whenever they're ready; the site fills them in on the nex
 | `verified` | `"November 2026"` | Membership at a glance |
 | `scorecard` | `{"Golf": "Two 18-hole courses", "Dining": "..."}` | The Scorecard. Keys: `Golf`, `Tennis, pickleball & padel`, `Fitness & spa`, `Pools`, `Dining`, `Kids & family`, `Social & events`, `Security & gates` |
 | `featuredReel` | `true` | Puts the club's reel in "Inside the gates" (only needed if Behold isn't set up) |
-| `idx`, `reel`, `status` | (existing) | Unchanged |
+| `idx`, `reel`, `status` | (existing) | Unchanged. `idx` is now the fallback when there's no `src/listings/<slug>.json` |
 
 Empty fields show "Ask the Dudes", which works as a soft prompt to get in touch.
 
@@ -191,7 +192,40 @@ BeachesMLS provides to IDX can be used. Advanced fields generally work within on
 page may need separate saved links for single-family homes and condos. If a community can't be matched
 by subdivision name, IDX Broker Platinum's polygon tool is the alternative.
 
-### 3. "Inside the gates" → Behold (live Instagram reels)
+### 3. Listings on each club page → IDX Broker
+
+Each club page (and each community page) has a "Homes for sale inside the gates" section with
+designed listing cards: photo, status badge (New, Price reduced, Open house), price, beds, baths,
+square feet, address, a line about the club's membership, the listing brokerage, and buttons for
+"See all homes in [club]" and "Get alerts for new listings". On phones the cards become a swipeable row.
+
+The page fills the section from the first of these that exists:
+
+1. **`src/listings/<club-slug>.json` (recommended, matches the design).** A small build script fetches
+   each club's listings from the IDX Broker API (for example, the results of a saved link per club;
+   see developers.idxbroker.com for the current endpoints) and writes one file per club before
+   `node build.js` runs. Shape:
+
+   ```json
+   { "total": 14, "url": "<IDX saved link showing all homes in this club>", "updated": "Nov 12, 2026",
+     "disclaimer": "<BeachesMLS IDX disclaimer text>",
+     "items": [ { "price": 1250000, "status": "New", "address": "123 Example Dr", "city": "Boca Raton",
+                  "beds": 3, "baths": 3.5, "sqft": 2850, "photo": "https://...",
+                  "url": "<IDX listing detail URL>", "courtesy": "<listing brokerage>" } ] }
+   ```
+
+   The first 6 items are shown. Keep the IDX API key in a Netlify environment variable (never in the
+   repo), and use a Netlify build hook on a daily schedule so listings stay current.
+2. **`"idx"` on the club in `clubs.json`:** an IDX Broker widget embed, shown as-is. Quickest to set up,
+   but it uses IDX Broker's own styling.
+3. **Neither:** a "coming soon" panel with the Club Match button (current state).
+
+**MLS display rules:** BeachesMLS IDX rules decide what must appear with listings (for example the
+listing brokerage, the MLS disclaimer and logo, and which fields may be shown). The cards include a
+brokerage line and the section has a disclaimer slot; please check the current rules and adjust the
+`courtesy` and `disclaimer` values to match.
+
+### 4. "Inside the gates" → Behold (live Instagram reels)
 
 1. Sign up at behold.so and connect the @countryclubdudes Instagram account (Behold will say if the
    account needs to be switched to a Business or Creator account first).
@@ -213,5 +247,6 @@ linked reel tiles from `clubs.json`.
 - [ ] Club Match form submits and arrives (Netlify form name `club-match`, fields unchanged)
 - [ ] One club page, one Search page and the Thanks page look right on a phone
 - [ ] Any filled-in IDX or Behold slot loads
+- [ ] Listing cards show the brokerage line and MLS disclaimer required by BeachesMLS
 
 Thank you, John and Shawn. Looking forward to seeing it live.
