@@ -28,15 +28,20 @@ function write(rel, html) {
 // Logo: drop the files into src/images and they're used automatically.
 // Until then a text wordmark stands in.
 const hasImage = (f) => fs.existsSync(path.join(SRC, 'images', f));
+// Header uses the horizontal lockup, footer the stacked logo. Light versions sit on the green.
 const LOGO_LIGHT = ['ccd-logo-light.svg', 'ccd-logo-light.png'].find(hasImage);
-const brandMark = () => LOGO_LIGHT
-  ? `<img src="/images/${LOGO_LIGHT}" alt="Country Club Dudes">`
-  : `<span class="wordmark">Country Club Dudes<small>Premier Listings</small></span>`;
+const LOGO_STACKED = ['ccd-logo-stacked-light.svg', 'ccd-logo-stacked-light.png'].find(hasImage);
+const brandMark = (stacked = false) => {
+  const file = stacked ? LOGO_STACKED || LOGO_LIGHT : LOGO_LIGHT;
+  return file
+    ? `<img src="/images/${file}" alt="Country Club Dudes" class="${stacked ? 'logo-stacked' : 'logo'}">`
+    : `<span class="wordmark">Country Club Dudes<small>Premier Listings</small></span>`;
+};
 
 // Photo slots: shows the image when the file exists, otherwise a labeled placeholder.
 function photo(file, alt, label, cls = 'ph') {
   if (file && hasImage(file)) return `<div class="${cls === 'ph' ? 'hero-photo' : cls}"><img src="/images/${esc(file)}" alt="${esc(alt)}" loading="lazy"></div>`;
-  return `<div class="ph"><span>[Photo] ${esc(label)}</span></div>`;
+  return `<div class="ph"><img class="ph-mark" src="/images/ccd-key-gold.png" alt=""><span>[Photo] ${esc(label)}</span></div>`;
 }
 
 const PHONES = { shawn: ['(201) 446-0393', '+12014460393'], john: ['(973) 479-9839', '+19734799839'] };
@@ -60,6 +65,8 @@ function layout({ title, description, body }) {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Poppins:wght@300;400;500&family=Archivo:wght@500;600&display=swap">
 <link rel="stylesheet" href="/styles.css">
+<link rel="icon" type="image/png" href="/images/favicon.png">
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 </head>
 <body>
 <header class="top">
@@ -81,7 +88,7 @@ ${body}
 <footer>
   <div class="wrap">
     <div>
-      <a class="brand" href="/" aria-label="Country Club Dudes home">${brandMark()}</a>
+      <a class="brand" href="/" aria-label="Country Club Dudes home">${brandMark(true)}</a>
       <p>Country Club Dudes at Premier Listings<br>Delray Beach, Florida</p>
     </div>
     <div>
