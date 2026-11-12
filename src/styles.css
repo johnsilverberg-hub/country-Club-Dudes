@@ -162,7 +162,13 @@ form .btn{min-height:52px;margin-top:8px;width:100%}
 .reels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
 .reel{aspect-ratio:9/16;border-radius:var(--radius);background:var(--green-2);color:var(--cream);padding:24px;display:flex;flex-direction:column;justify-content:space-between;text-decoration:none;position:relative;overflow:hidden}
 .reel::after{content:"";position:absolute;right:20px;top:20px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(253,251,245,.5);background:no-repeat center/14px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 12'%3E%3Cpath d='M0 0l10 6-10 6z' fill='%23FDFBF5'/%3E%3C/svg%3E")}
-.reel .eyebrow{color:var(--gold)}
+.reel .eyebrow{color:var(--gold);position:relative;z-index:1;padding-right:52px}
+.reel>div{position:relative;z-index:1}
+.reel>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.reel.has-cover::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(15,48,30,.55) 0%,rgba(15,48,30,0) 30%,rgba(15,48,30,0) 55%,rgba(15,48,30,.9) 100%)}
+.reel::after{z-index:2}
+.reel:hover>img{transform:scale(1.03)}
+.reel>img{transition:transform .4s}
 .reel h3{font-size:24px}
 .reel .views{font-size:13px;opacity:.75;margin-top:6px;display:block}
 

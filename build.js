@@ -197,12 +197,15 @@ function matchSection(club) {
 }
 
 function homePage() {
-  const reels = [
-    ['Boca Raton', 'Boca Pointe'],
-    ['Palm Beach Gardens', 'Old Palm golf'],
-    ['Delray Beach', 'Bobby Jones'],
-    ['Buyer advice', "Don't fall in love with the house"],
-  ];
+  // Inside the gates: real reels from clubs.json. Clubs marked "featuredReel": true come first,
+  // then one reel per town. A cover image at src/images/reels/<slug>.jpg is used when present.
+  const withReel = clubs.filter((c) => c.reel);
+  const picked = withReel.filter((c) => c.featuredReel);
+  for (const [, list] of byTown(clubs)) {
+    const c = list.find((x) => x.reel && !picked.includes(x));
+    if (c && picked.length < 4) picked.push(c);
+  }
+  const reels = picked.slice(0, 4);
   const doors = [
     ['Buying in a club', 'Match your golf, social life and budget to the right club before you fall for a house in the wrong one.', 'Get my Club Match', '#match', 'solid'],
     ['Comparing clubs', `Our guides to ${clubs.length} Palm Beach County clubs: what each is known for and what's for sale inside the gates.`, 'Browse the club guides', '/clubs/', 'outline'],
@@ -278,10 +281,10 @@ ${matchSection(null)}
   <div class="wrap">
     <div class="sec-head">
       <div><p class="eyebrow">@countryclubdudes</p><h2 style="margin-top:12px">Inside the gates</h2></div>
-      <p>Our most-shared reels on Instagram.</p>
+      <p>We film inside these clubs every week. <a class="text-link" href="https://www.instagram.com/countryclubdudes/" target="_blank" rel="noopener">See every reel on Instagram →</a></p>
     </div>
     <div class="reels">
-${reels.map(([where, title]) => `      <a class="reel" href="https://www.instagram.com/countryclubdudes/" target="_blank" rel="noopener"><span class="eyebrow">${esc(where)}</span><div><h3>${esc(title)}</h3><span class="views">Watch on Instagram</span></div></a>`).join('\n')}
+${reels.map((c) => { const cover = ['jpg', 'png', 'webp'].map((x) => `reels/${c.slug}.${x}`).find(hasImage); return `      <a class="reel${cover ? ' has-cover' : ''}" href="${esc(c.reel)}" target="_blank" rel="noopener" aria-label="Watch our ${esc(c.name)} reel on Instagram">${cover ? `<img src="/images/${cover}" alt="" loading="lazy">` : ''}<span class="eyebrow">${esc(c.town)}</span><div><h3>${esc(c.name)}</h3><span class="views">Watch the reel</span></div></a>`; }).join('\n')}
     </div>
   </div>
 </section>
