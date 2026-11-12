@@ -9,6 +9,8 @@ const readList = (file) => JSON.parse(fs.readFileSync(path.join(SRC, file), 'utf
 const clubs = readList('clubs.json');
 // New construction communities. Same fields as a club, plus an optional "status" like "Now selling".
 const developments = readList('developments.json');
+// The Search menu and its pages (see src/search.json).
+const SEARCH = JSON.parse(fs.readFileSync(path.join(SRC, 'search.json'), 'utf8'));
 const CLUBS = { base: '/clubs/', label: 'Clubs' };
 const DEVS = { base: '/new-developments/', label: 'New developments' };
 
@@ -95,7 +97,13 @@ function layout({ title, description, body }) {
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav">Menu</button>
     <nav class="main" id="main-nav" aria-label="Main"><ul>
       <li><a href="/clubs/">Clubs</a></li>
-      <li><a href="/new-developments/">New Developments</a></li>
+      <li class="has-sub">
+        <button class="sub-toggle" type="button" aria-expanded="false" aria-controls="sub-search">Search <span aria-hidden="true">▾</span></button>
+        <ul class="sub" id="sub-search">
+          <li><a class="sub-all" href="/search/">${esc(SEARCH.all.label)}</a></li>
+${SEARCH.categories.map((c) => `          <li><a href="/search/${c.slug}/">${esc(c.label)}</a></li>`).join('\n')}
+        </ul>
+      </li>
       <li><a href="/#front-nine">Buying guide</a></li>
       <li><a href="/#dudes">Meet the Dudes</a></li>
       <li><a class="btn gold sm" href="/#match">Get my Club Match</a></li>
@@ -120,6 +128,7 @@ ${body}
     <div>
       <h4>Explore</h4>
       <a href="/clubs/">Club guides</a>
+      <a href="/search/">Search all homes</a>
       <a href="/new-developments/">New developments</a>
       <a href="/#match">Club Match</a>
       <p class="legal">John Silverberg and Shawn Miller, Premier Listings. Licensed real estate professionals. Equal Housing Opportunity. Club fees and membership terms change; verify current details with each club.</p>
@@ -133,6 +142,22 @@ ${body}
     if (b) b.addEventListener('click', function () {
       var open = h.classList.toggle('open');
       b.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+
+    // Search dropdown: click/tap to open; closes on outside click or Escape.
+    document.querySelectorAll('.has-sub').forEach(function (li) {
+      var t = li.querySelector('.sub-toggle');
+      t.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var open = li.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    });
+    document.addEventListener('click', function () {
+      document.querySelectorAll('.has-sub.open').forEach(function (li) { li.classList.remove('open'); li.querySelector('.sub-toggle').setAttribute('aria-expanded', 'false'); });
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') document.querySelectorAll('.has-sub.open').forEach(function (li) { li.classList.remove('open'); var t = li.querySelector('.sub-toggle'); t.setAttribute('aria-expanded', 'false'); t.focus(); });
     });
 
     // Hero video: desktop only, and not for people who turn off motion. Phones keep the still.
@@ -453,6 +478,7 @@ function clubPage(club, section = CLUBS) {
       <p class="eyebrow">${esc(club.town)}${club.status ? ` · ${esc(club.status)}` : ''}</p>
       <h1>${esc(club.name)}</h1>
       <p class="lede">${esc(club.blurb)}</p>
+${(club.tags || []).length ? `      <div class="tag-row">${SEARCH.categories.filter((c) => club.tags.includes(c.tag)).map((c) => `<a class="tag" href="/search/${c.slug}/">${esc(c.label)}</a>`).join('')}</div>` : ''}
       <div class="cta-row">
         <a class="btn gold" href="#listings">See homes for sale</a>
         <a class="btn outline" href="#match">Ask about this club</a>
@@ -515,6 +541,68 @@ ${nearby.length ? `
   });
 }
 
+function searchNav(active) {
+  const items = [['/search/', SEARCH.all.label, 'all'], ...SEARCH.categories.map((c) => [`/search/${c.slug}/`, c.label, c.slug])];
+  return `<nav class="chip-nav" aria-label="Search by">${items.map(([href, label, key]) => `<a href="${href}"${key === active ? ' aria-current="page"' : ''}>${esc(label)}</a>`).join('')}</nav>`;
+}
+
+function idxBlock(embed, what) {
+  return embed
+    ? `<div class="idx">${embed}</div>`
+    : `<div class="listings" id="listings">
+        <p class="pending">Live listings for ${esc(what)} are coming soon.</p>
+        <p>Want to see what's for sale today? Send a Club Match and John will send you every active listing that fits.</p>
+        <a class="btn solid" href="/#match">Send a Club Match</a>
+      </div>`;
+}
+
+function searchAllPage() {
+  const a = SEARCH.all;
+  return layout({
+    title: 'Search Homes for Sale | Country Club Dudes',
+    description: 'Search homes for sale in Palm Beach County country club communities and beyond.',
+    body: `
+${pageHero('Search', esc(a.title), esc(a.intro))}
+<section class="band light">
+  <div class="wrap">
+    ${searchNav('all')}
+    ${idxBlock(a.idx, 'all homes')}
+  </div>
+</section>`,
+  });
+}
+
+function searchCategoryPage(cat) {
+  const list = clubs.filter((c) => (c.tags || []).includes(cat.tag));
+  const clubsBlock = list.length
+    ? clubCards(list)
+    : `<div class="listings">
+        <p class="pending">We're putting this list together now.</p>
+        <p>Tell us what you're looking for and we'll send the clubs that fit, with real dues and what's for sale today.</p>
+        <a class="btn solid" href="/#match">Get my Club Match</a>
+      </div>`;
+  return layout({
+    title: `${cat.title} | Country Club Dudes`,
+    description: `${cat.intro} Palm Beach County clubs, homes for sale and membership details.`,
+    body: `
+${pageHero('Search', esc(cat.title), esc(cat.intro))}
+<section class="band light">
+  <div class="wrap">
+    ${searchNav(cat.slug)}
+    <div class="sec-head"><div><p class="eyebrow">${list.length ? `${list.length} club${list.length === 1 ? '' : 's'}` : 'Clubs'}</p><h2 style="margin-top:12px">Clubs that fit</h2></div></div>
+    ${clubsBlock}
+  </div>
+</section>
+<section class="band sand">
+  <div class="wrap">
+    <div class="sec-head"><div><p class="eyebrow">For sale now</p><h2 style="margin-top:12px">Homes for sale</h2></div></div>
+    ${idxBlock(cat.idx, cat.title.toLowerCase())}
+  </div>
+</section>
+${matchSection(null)}`,
+  });
+}
+
 function thanksPage() {
   return layout({
     title: 'Thanks | Country Club Dudes',
@@ -540,9 +628,11 @@ write('clubs/index.html', clubsIndex());
 for (const club of clubs) write(`clubs/${club.slug}/index.html`, clubPage(club));
 write('new-developments/index.html', developmentsIndex());
 for (const dev of developments) write(`new-developments/${dev.slug}/index.html`, clubPage(dev, DEVS));
+write('search/index.html', searchAllPage());
+for (const cat of SEARCH.categories) write(`search/${cat.slug}/index.html`, searchCategoryPage(cat));
 write('thanks/index.html', thanksPage());
 const SITE = 'https://countryclubdudes.com';
-const urls = ['/', '/clubs/', ...clubs.map((c) => `/clubs/${c.slug}/`), '/new-developments/', ...developments.map((d) => `/new-developments/${d.slug}/`)];
+const urls = ['/', '/clubs/', '/search/', ...SEARCH.categories.map((c) => `/search/${c.slug}/`), ...clubs.map((c) => `/clubs/${c.slug}/`), '/new-developments/', ...developments.map((d) => `/new-developments/${d.slug}/`)];
 write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${SITE}${u}</loc></url>`).join('\n')}\n</urlset>\n`);
 write('robots.txt', `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
 console.log(`Built ${clubs.length} club pages and ${developments.length} new development pages into dist/`);

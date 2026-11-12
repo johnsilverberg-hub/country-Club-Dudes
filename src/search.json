@@ -1,0 +1,17 @@
+{
+  "_howto": "The Search menu. 'all' is the full home search page. Each category lists every club in clubs.json whose \"tags\" include the category's tag, e.g. \"tags\": [\"55-plus\", \"racquets\"]. Paste an IDX Broker embed into \"idx\" to show live listings on that page. Add, remove or reorder categories here and the menu updates.",
+  "all": {
+    "label": "Search All Homes",
+    "title": "Search all homes",
+    "intro": "Every home for sale across the clubs we cover, plus homes outside the gates.",
+    "idx": ""
+  },
+  "categories": [
+    { "slug": "55-plus", "tag": "55-plus", "label": "55+", "title": "55+ club communities", "intro": "Age-restricted and active adult club communities.", "idx": "" },
+    { "slug": "racquets", "tag": "racquets", "label": "Racquets", "title": "Clubs for tennis, pickleball and padel", "intro": "Clubs with serious racquet programs: courts, pros, leagues and round robins.", "idx": "" },
+    { "slug": "boating", "tag": "boating", "label": "Boating", "title": "Boating and waterfront clubs", "intro": "Club communities with marinas, dockage or ocean access.", "idx": "" },
+    { "slug": "gated", "tag": "gated", "label": "Gated Communities", "title": "Gated club communities", "intro": "Guard-gated and private-entry club communities.", "idx": "" },
+    { "slug": "non-equity", "tag": "non-equity", "label": "Non-Equity Memberships", "title": "Non-equity membership clubs", "intro": "Clubs where membership doesn't include an ownership share in the club.", "idx": "" },
+    { "slug": "non-mandatory", "tag": "non-mandatory", "label": "Non-Mandatory Memberships", "title": "Clubs with optional membership", "intro": "Communities where you can buy the home without joining the club.", "idx": "" }
+  ]
+}

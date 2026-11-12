@@ -66,6 +66,25 @@ footer .brand img.logo{height:96px}
 nav.main ul{display:flex;align-items:center;gap:32px;list-style:none;margin:0;padding:0;font-size:15px}
 nav.main a{text-decoration:none;opacity:.9}
 nav.main a:hover{opacity:1;text-decoration:underline;text-underline-offset:6px}
+.has-sub{position:relative}
+.sub-toggle{display:inline-flex;align-items:center;gap:6px;padding:0;border:0;background:none;color:inherit;font:inherit;font-size:15px;cursor:pointer;opacity:.9}
+.sub-toggle span{font-size:11px;transition:transform .15s}
+.has-sub.open .sub-toggle span{transform:rotate(180deg)}
+.sub{display:none;position:absolute;top:calc(100% + 22px);left:-24px;min-width:260px;list-style:none;margin:0;padding:10px;background:var(--cream);color:var(--ink);border-radius:16px;box-shadow:0 18px 40px rgba(15,48,30,.25);flex-direction:column;gap:0!important}
+.sub::before{content:"";position:absolute;top:-22px;left:0;right:0;height:22px}
+.has-sub.open .sub{display:flex}
+nav.main ul.sub{align-items:stretch;padding:10px}
+@media (hover:hover) and (min-width:901px){.has-sub:hover .sub,.has-sub:focus-within .sub{display:flex}}
+nav.main .sub a{display:block;text-align:left;white-space:nowrap;padding:10px 14px;border-radius:10px;font-size:15px;opacity:1;text-decoration:none}
+nav.main .sub a:hover{background:var(--sand);text-decoration:none}
+nav.main .sub a.sub-all{font-weight:500;border-bottom:1px solid var(--line);border-radius:10px 10px 0 0;margin-bottom:4px}
+.chip-nav{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:56px}
+.chip-nav a{display:inline-flex;align-items:center;min-height:42px;padding:0 18px;border:1px solid var(--line);border-radius:999px;font-size:14px;text-decoration:none;background:#fff}
+.chip-nav a:hover{border-color:var(--green)}
+.chip-nav a[aria-current="page"]{background:var(--green);border-color:var(--green);color:var(--cream)}
+.tag-row{display:flex;flex-wrap:wrap;gap:8px}
+.tag{display:inline-flex;align-items:center;min-height:32px;padding:0 14px;border:1px solid rgba(188,156,34,.6);border-radius:999px;color:var(--gold);font:600 12px/1 var(--label);letter-spacing:.06em;text-transform:uppercase;text-decoration:none}
+.tag:hover{background:rgba(188,156,34,.12)}
 .menu-toggle{display:none}
 
 /* hero */
@@ -248,6 +267,14 @@ footer .brand{margin-bottom:16px;color:var(--cream)}
   header.top.open nav.main{display:block}
   nav.main ul{flex-direction:column;align-items:flex-start;gap:4px}
   nav.main a{display:block;padding:10px 0;font-size:17px}
+  .sub-toggle{padding:10px 0;font-size:17px}
+  nav.main a.btn{display:inline-flex;padding:0 22px;margin-top:14px;font-size:16px}
+  .sub{position:static;box-shadow:none;background:transparent;color:inherit;padding:0 0 8px 14px;min-width:0;border-left:1px solid var(--line-on-green);border-radius:0}
+  .sub::before{display:none}
+  nav.main ul.sub{padding:0 0 8px 16px}
+  nav.main .sub a{padding:8px 0;font-size:16px;border-radius:0}
+  nav.main .sub a:hover{background:none;text-decoration:underline}
+  nav.main .sub a.sub-all{border-bottom:0;margin:0}
   .hero .wrap,.split,.match .wrap,.quote{grid-template-columns:1fr}
   .hero-full{min-height:auto}
   .hero-full .wrap{padding-block:72px 96px}
