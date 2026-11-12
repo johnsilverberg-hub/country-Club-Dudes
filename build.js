@@ -567,16 +567,59 @@ ${byTown(clubs).map(([town, list]) => `    <div class="town-group"><h2>${esc(tow
 // e.g. "scorecard": {"Golf": "Two 18-hole courses", "Dining": "..."}
 const AMENITIES = ['Golf', 'Tennis, pickleball & padel', 'Fitness & spa', 'Pools', 'Dining', 'Kids & family', 'Social & events', 'Security & gates'];
 
-function clubPage(club, section = CLUBS) {
-  const sc = club.scorecard || {};
-  const ask = '<span class="ph-text">Ask the Dudes</span>';
-  const listings = club.idx
-    ? `<div id="listings">${club.idx}</div>`
-    : `<div class="listings" id="listings">
-        <p class="pending">Live listings for ${esc(club.name)} are coming soon.</p>
+// Listings for one club or community. Three sources, in order:
+//  1. src/listings/<slug>.json, written at build time from the IDX Broker API (see DESIGN-HANDOFF.md).
+//     Shape: { "total": 14, "url": "<IDX saved link for all homes here>", "updated": "2026-11-12",
+//              "disclaimer": "...", "items": [ { "price": 1250000, "status": "New", "address": "...",
+//              "city": "Boca Raton", "beds": 3, "baths": 3.5, "sqft": 2850, "photo": "https://...",
+//              "url": "<IDX listing detail URL>", "courtesy": "Listing brokerage name" } ] }
+//  2. "idx" on the club: an IDX Broker widget embed, shown as-is.
+//  3. Neither: a "coming soon" panel with the Club Match form.
+function listingsBlock(c) {
+  const head = (count) => `<div class="sec-head"><div><p class="eyebrow">For sale now${count ? ` · ${count} home${count === 1 ? '' : 's'}` : ''}</p><h2 style="margin-top:12px">Homes for sale inside the gates</h2></div>
+      <p>See one you like? Ask us about the club costs that come with it before you book a showing.</p></div>`;
+  const file = path.join(SRC, 'listings', `${c.slug}.json`);
+  if (fs.existsSync(file)) {
+    const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+    const items = (Array.isArray(data) ? data : data.items || []).slice(0, 6);
+    const total = data.total || items.length;
+    if (items.length) {
+      const money = (n) => '$' + Number(n).toLocaleString('en-US');
+      const memb = c.membership ? `Membership: ${esc(c.membership)}` : 'Ask us what membership costs here';
+      return `${head(total)}
+    ${data.sample ? '<p class="sample-note">Sample listings for design preview. Not real MLS data.</p>' : ''}
+    <div class="listing-grid" id="listings">
+${items.map((l) => `      <a class="listing" href="${esc(l.url || data.url || '#match')}"${l.url ? ' target="_blank" rel="noopener"' : ''}>
+        <div class="listing-photo">${l.photo ? `<img src="${esc(l.photo)}" alt="${esc(l.address)}" loading="lazy">` : ''}${l.status ? `<span class="listing-status">${esc(l.status)}</span>` : ''}</div>
+        <div class="listing-body">
+          <p class="listing-price">${money(l.price)}</p>
+          <p class="listing-facts">${[l.beds && `${l.beds} bd`, l.baths && `${l.baths} ba`, l.sqft && `${Number(l.sqft).toLocaleString('en-US')} sq ft`].filter(Boolean).join(' · ')}</p>
+          <p class="listing-addr">${esc(l.address)}${l.city ? `, ${esc(l.city)}` : ''}</p>
+          <p class="listing-club">${memb}</p>
+          ${l.courtesy ? `<p class="listing-courtesy">Courtesy of ${esc(l.courtesy)}</p>` : ''}
+        </div>
+      </a>`).join('\n')}
+    </div>
+    <div class="listing-foot">
+      ${data.url ? `<a class="btn solid" href="${esc(data.url)}"${data.sample ? '' : ' target="_blank" rel="noopener"'}>See all ${total} homes in ${esc(c.name)}</a>` : ''}
+      <a class="btn outline" href="#match">Get alerts for new listings</a>
+    </div>
+    ${data.disclaimer ? `<p class="idx-disclaimer">${esc(data.disclaimer)}${data.updated ? ` Updated ${esc(data.updated)}.` : ''}</p>` : ''}`;
+    }
+  }
+  if (c.idx) return `${head(0)}\n    <div id="listings" class="idx">${c.idx}</div>`;
+  return `${head(0)}
+    <div class="listings" id="listings">
+        <p class="pending">Live listings for ${esc(c.name)} are coming soon.</p>
         <p>Want to see what's for sale here today? Send a Club Match below and John will send you every active listing.</p>
         <a class="btn solid" href="#match">Send me the listings</a>
       </div>`;
+}
+
+function clubPage(club, section = CLUBS) {
+  const sc = club.scorecard || {};
+  const ask = '<span class="ph-text">Ask the Dudes</span>';
+  const listings = listingsBlock(club);
   const nearby = (section === DEVS ? developments : clubs).filter((c) => c.town === club.town && c.slug !== club.slug);
   return layout({
     title: `${club.name} Homes for Sale, ${club.town} | Country Club Dudes`,
@@ -635,8 +678,6 @@ ${AMENITIES.map((a, i) => `        <tr><td class="n">${i + 1}</td><td class="q">
 
 <section class="band sand">
   <div class="wrap">
-    <div class="sec-head"><div><p class="eyebrow">For sale now</p><h2 style="margin-top:12px">Homes for sale inside the gates</h2></div>
-      <p>See one you like? Ask us about the club costs that come with it before you book a showing.</p></div>
     ${listings}
   </div>
 </section>
@@ -781,8 +822,7 @@ ${tagRow(c)}
 </section>
 <section class="band sand">
   <div class="wrap">
-    <div class="sec-head"><div><p class="eyebrow">For sale now</p><h2 style="margin-top:12px">Homes for sale in ${esc(c.name)}</h2></div></div>
-    ${idxBlock(c.idx, c.name)}
+    ${listingsBlock(c)}
   </div>
 </section>
 ${matchSection(null)}`,
