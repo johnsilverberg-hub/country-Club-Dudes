@@ -171,7 +171,8 @@ form .btn{min-height:52px;margin-top:8px;width:100%}
 .dude{display:grid;grid-template-columns:220px minmax(0,1fr);gap:32px;align-items:start}
 .dude .ph{height:280px;min-height:0;background:var(--green)}
 .dude-photo{height:280px;border-radius:var(--radius);overflow:hidden}
-.dude-photo img{width:100%;height:100%;object-fit:cover}
+.dude-photo{background:var(--cream)}
+.dude-photo img{width:100%;height:100%;object-fit:cover;object-position:center 20%}
 .dude-copy{display:flex;flex-direction:column;gap:12px}
 .dude h3{font-size:34px}
 .dude .role{font-size:14px;color:var(--on-green-muted)}
