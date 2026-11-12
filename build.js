@@ -41,6 +41,29 @@ function photo(file, alt, label, cls = 'ph') {
   return `<div class="ph"><img class="ph-mark" src="/images/ccd-key-gold.png" alt=""><span>[Photo] ${esc(label)}</span></div>`;
 }
 
+// Instagram feed for "Inside the gates". Sign up at behold.so, connect @countryclubdudes,
+// create a JSON feed, and paste its feed ID here. Leave empty to show the linked reel tiles only.
+const BEHOLD_FEED_ID = '';
+
+// Hero background video. Put the files in src/images/hero/:
+//   hero.mp4 (H.264, 1920x1080, 15-20s loop, muted, ~3-5 MB), optional hero.webm,
+//   hero-poster.jpg (a still frame, shown while loading, on phones, and for reduced motion).
+function heroMedia() {
+  const poster = ['hero/hero-poster.jpg', 'hero/hero-poster.webp'].find(hasImage);
+  const mp4 = hasImage('hero/hero.mp4'), webm = hasImage('hero/hero.webm');
+  const bg = poster ? `<img class="hero-poster" src="/images/${poster}" alt="" fetchpriority="high">` : '';
+  if (!mp4 && !webm) {
+    return `<div class="hero-media" aria-hidden="true">${bg}${poster ? '' : '<span class="hero-media-note">[Background video] 15–20 second slow-pan loop of club footage</span>'}</div>`;
+  }
+  return `<div class="hero-media" aria-hidden="true">${bg}
+      <video class="hero-video" muted loop playsinline preload="none"${poster ? ` poster="/images/${poster}"` : ''}>
+        ${webm ? '<source data-src="/images/hero/hero.webm" type="video/webm">' : ''}
+        ${mp4 ? '<source data-src="/images/hero/hero.mp4" type="video/mp4">' : ''}
+      </video>
+    </div>
+    <button class="hero-pause" type="button" aria-label="Pause background video" hidden>Pause</button>`;
+}
+
 const PHONES = { shawn: ['(201) 446-0393', '+12014460393'], john: ['(973) 479-9839', '+19734799839'] };
 
 // Clubs grouped by town, biggest towns first.
@@ -105,12 +128,50 @@ ${body}
 </footer>
 <script>
   (function () {
+    // Mobile menu
     var h = document.querySelector('header.top'), b = h && h.querySelector('.menu-toggle');
-    if (!b) return;
-    b.addEventListener('click', function () {
+    if (b) b.addEventListener('click', function () {
       var open = h.classList.toggle('open');
       b.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
+
+    // Hero video: desktop only, and not for people who turn off motion. Phones keep the still.
+    var v = document.querySelector('.hero-video'), pause = document.querySelector('.hero-pause');
+    var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.matchMedia('(max-width: 700px)').matches;
+    if (v && !still) {
+      v.querySelectorAll('source[data-src]').forEach(function (s) { s.src = s.getAttribute('data-src'); });
+      v.load();
+      var p = v.play(); if (p && p.catch) p.catch(function () {});
+      v.addEventListener('playing', function () { v.classList.add('on'); });
+      if (pause) {
+        pause.hidden = false;
+        pause.addEventListener('click', function () {
+          if (v.paused) { v.play(); pause.textContent = 'Pause'; pause.setAttribute('aria-label', 'Pause background video'); }
+          else { v.pause(); pause.textContent = 'Play'; pause.setAttribute('aria-label', 'Play background video'); }
+        });
+      }
+    }
+
+    // Inside the gates: live Instagram reels from Behold. Falls back to the linked tiles.
+    var grid = document.querySelector('.reels[data-feed]');
+    if (grid && window.fetch) {
+      fetch(grid.getAttribute('data-feed')).then(function (r) { return r.json(); }).then(function (data) {
+        var posts = Array.isArray(data) ? data : (data.posts || []);
+        var reels = posts.filter(function (p) { return p.mediaType === 'VIDEO' || p.isReel; });
+        var list = (reels.length >= 4 ? reels : posts).slice(0, 4);
+        if (list.length < 4) return;
+        var esc = function (t) { var d = document.createElement('div'); d.textContent = t || ''; return d.innerHTML; };
+        grid.innerHTML = list.map(function (p) {
+          var img = (p.sizes && p.sizes.medium && p.sizes.medium.mediaUrl) || p.thumbnailUrl || p.mediaUrl;
+          var cap = (p.prunedCaption || p.caption || '').split('\\n')[0];
+          if (cap.length > 70) cap = cap.slice(0, 67).replace(/\\s+\\S*$/, '') + '…';
+          var when = p.timestamp ? new Date(p.timestamp).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Reel';
+          return '<a class="reel has-cover" href="' + esc(p.permalink) + '" target="_blank" rel="noopener" aria-label="Watch on Instagram: ' + esc(cap) + '">' +
+            (img ? '<img src="' + esc(img) + '" alt="" loading="lazy">' : '') +
+            '<span class="eyebrow">' + esc(when) + '</span><div><h3 class="reel-cap">' + esc(cap || 'Watch the reel') + '</h3><span class="views">Watch on Instagram</span></div></a>';
+        }).join('');
+      }).catch(function () {});
+    }
   })();
 </script>
 </body>
@@ -216,7 +277,8 @@ function homePage() {
     title: 'Country Club Dudes | Palm Beach County Country Club Homes',
     description: 'Find the Palm Beach County country club that fits how you live, then the home. Club guides, real dues, and live listings from John Silverberg and Shawn Miller.',
     body: `
-<section class="hero dark" id="top">
+<section class="hero hero-full dark" id="top">
+  ${heroMedia()}
   <div class="wrap">
     <div class="hero-copy">
       <p class="hero-kicker">Palm Beach County country club real estate</p>
@@ -227,7 +289,6 @@ function homePage() {
         <a class="btn outline" href="/clubs/">Browse the clubs</a>
       </div>
     </div>
-    ${photo('hero.jpg', 'John Silverberg and Shawn Miller at a Palm Beach County club', 'Candid golden-hour shot of John and Shawn on a member course or clubhouse veranda. Real, not stock.')}
   </div>
 </section>
 
@@ -283,7 +344,7 @@ ${matchSection(null)}
       <div><p class="eyebrow">@countryclubdudes</p><h2 style="margin-top:12px">Inside the gates</h2></div>
       <p>We film inside these clubs every week. <a class="text-link" href="https://www.instagram.com/countryclubdudes/" target="_blank" rel="noopener">See every reel on Instagram →</a></p>
     </div>
-    <div class="reels">
+    <div class="reels"${BEHOLD_FEED_ID ? ` data-feed="https://feeds.behold.so/${BEHOLD_FEED_ID}"` : ''}>
 ${reels.map((c) => { const cover = ['jpg', 'png', 'webp'].map((x) => `reels/${c.slug}.${x}`).find(hasImage); return `      <a class="reel${cover ? ' has-cover' : ''}" href="${esc(c.reel)}" target="_blank" rel="noopener" aria-label="Watch our ${esc(c.name)} reel on Instagram">${cover ? `<img src="/images/${cover}" alt="" loading="lazy">` : ''}<span class="eyebrow">${esc(c.town)}</span><div><h3>${esc(c.name)}</h3><span class="views">Watch the reel</span></div></a>`; }).join('\n')}
     </div>
   </div>
