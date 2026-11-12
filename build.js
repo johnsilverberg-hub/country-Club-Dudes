@@ -28,15 +28,12 @@ function write(rel, html) {
 // Logo: drop the files into src/images and they're used automatically.
 // Until then a text wordmark stands in.
 const hasImage = (f) => fs.existsSync(path.join(SRC, 'images', f));
-// Header uses the horizontal lockup, footer the stacked logo. Light versions sit on the green.
-const LOGO_LIGHT = ['ccd-logo-light.svg', 'ccd-logo-light.png'].find(hasImage);
-const LOGO_STACKED = ['ccd-logo-stacked-light.svg', 'ccd-logo-stacked-light.png'].find(hasImage);
-const brandMark = (stacked = false) => {
-  const file = stacked ? LOGO_STACKED || LOGO_LIGHT : LOGO_LIGHT;
-  return file
-    ? `<img src="/images/${file}" alt="Country Club Dudes" class="${stacked ? 'logo-stacked' : 'logo'}">`
-    : `<span class="wordmark">Country Club Dudes<small>Premier Listings</small></span>`;
-};
+// Brand rule: always the full stacked logo. The key icon on its own is only for spots
+// where the full logo can't fit, or as a design accent (e.g. behind empty photo slots).
+const LOGO = ['ccd-logo-stacked-light.svg', 'ccd-logo-stacked-light.png'].find(hasImage);
+const brandMark = () => LOGO
+  ? `<img src="/images/${LOGO}" alt="Country Club Dudes" class="logo">`
+  : `<span class="wordmark">Country Club Dudes<small>Premier Listings</small></span>`;
 
 // Photo slots: shows the image when the file exists, otherwise a labeled placeholder.
 function photo(file, alt, label, cls = 'ph') {
@@ -88,7 +85,7 @@ ${body}
 <footer>
   <div class="wrap">
     <div>
-      <a class="brand" href="/" aria-label="Country Club Dudes home">${brandMark(true)}</a>
+      <a class="brand" href="/" aria-label="Country Club Dudes home">${brandMark()}</a>
       <p>Country Club Dudes at Premier Listings<br>Delray Beach, Florida</p>
     </div>
     <div>

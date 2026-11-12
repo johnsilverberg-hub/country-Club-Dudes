@@ -55,10 +55,10 @@ section.band{padding-block:clamp(72px,9vw,112px)}
 
 /* header */
 header.top{background:var(--green);color:var(--on-green);border-bottom:1px solid var(--line-on-green);position:sticky;top:0;z-index:20}
-header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:84px}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:96px}
 .brand{display:flex;align-items:center;text-decoration:none}
-.brand img.logo{height:50px;width:auto}
-.brand img.logo-stacked{height:96px;width:auto}
+.brand img.logo{height:68px;width:auto}
+footer .brand img.logo{height:96px}
 .ph-mark{position:absolute;top:50%;left:50%;width:42%;max-width:220px;transform:translate(-50%,-60%);opacity:.16}
 .light .ph-mark,.sand .ph-mark{opacity:.22}
 .wordmark{font:500 24px/1 var(--display);letter-spacing:-.01em;display:flex;flex-direction:column;gap:4px}
@@ -255,6 +255,7 @@ footer .brand{margin-bottom:16px;color:var(--cream)}
   .card-table .q{font-size:19px}
   .sec-head{gap:16px;margin-bottom:36px}
   .listings,.reel-strip{padding:28px 24px}
-  .brand img.logo{height:34px}
+  header.top .wrap{min-height:80px}
+  header.top .brand img.logo{height:56px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
