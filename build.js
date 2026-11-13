@@ -9,6 +9,12 @@ const readList = (file) => JSON.parse(fs.readFileSync(path.join(SRC, file), 'utf
 const clubs = readList('clubs.json');
 // New construction communities. Same fields as a club, plus an optional "status" like "Now selling".
 const developments = readList('developments.json');
+// The Search menu and its pages (see src/search.json).
+const SEARCH = JSON.parse(fs.readFileSync(path.join(SRC, 'search.json'), 'utf8'));
+const FEATURES = [...SEARCH.lifestyle, ...SEARCH.membership];
+// Communities without a club: same fields as a club (name, slug, town, blurb, tags, idx, photo).
+const communities = readList('communities.json');
+const COMMS = { base: '/communities/', label: 'Communities' };
 const CLUBS = { base: '/clubs/', label: 'Clubs' };
 const DEVS = { base: '/new-developments/', label: 'New developments' };
 
@@ -20,7 +26,58 @@ function write(rel, html) {
   fs.writeFileSync(file, html);
 }
 
-const FLAG = `<svg width="26" height="30" viewBox="0 0 26 30" aria-hidden="true"><rect x="5" y="2" width="2.4" height="26" fill="currentColor"/><path d="M7.4 3 L24 8.5 L7.4 14 Z" fill="var(--flag)"/><ellipse cx="9" cy="28" rx="8" ry="1.6" fill="currentColor" opacity=".5"/></svg>`;
+// ---------------------------------------------------------------------------
+// Design layer (design-refresh). Layout and styling only: the data files,
+// the Club Match form fields and the Netlify form setup are unchanged.
+// ---------------------------------------------------------------------------
+
+// Logo: drop the files into src/images and they're used automatically.
+// Until then a text wordmark stands in.
+const hasImage = (f) => fs.existsSync(path.join(SRC, 'images', f));
+// Brand rule: always the full stacked logo. The key icon on its own is only for spots
+// where the full logo can't fit, or as a design accent (e.g. behind empty photo slots).
+const LOGO = ['ccd-logo-stacked-light.svg', 'ccd-logo-stacked-light.png'].find(hasImage);
+const brandMark = () => LOGO
+  ? `<img src="/images/${LOGO}" alt="Country Club Dudes" class="logo">`
+  : `<span class="wordmark">Country Club Dudes<small>Premier Listings</small></span>`;
+
+// Photo slots: shows the image when the file exists, otherwise a labeled placeholder.
+function photo(file, alt, label, cls = 'ph') {
+  if (file && hasImage(file)) return `<div class="${cls === 'ph' ? 'hero-photo' : cls}"><img src="/images/${esc(file)}" alt="${esc(alt)}" loading="lazy"></div>`;
+  return `<div class="ph"><img class="ph-mark" src="/images/ccd-key-gold.png" alt=""><span>[Photo] ${esc(label)}</span></div>`;
+}
+
+// Instagram feed for "Inside the gates". Sign up at behold.so, connect @countryclubdudes,
+// create a JSON feed, and paste its feed ID here. Leave empty to show the linked reel tiles only.
+const BEHOLD_FEED_ID = '';
+
+// Hero background video. Put the files in src/images/hero/:
+//   hero.mp4 (H.264, 1920x1080, 15-20s loop, muted, ~3-5 MB), optional hero.webm,
+//   hero-poster.jpg (a still frame, shown while loading, on phones, and for reduced motion).
+function heroMedia() {
+  const poster = ['hero/hero-poster.jpg', 'hero/hero-poster.webp'].find(hasImage);
+  const mp4 = hasImage('hero/hero.mp4'), webm = hasImage('hero/hero.webm');
+  const bg = poster ? `<img class="hero-poster" src="/images/${poster}" alt="" fetchpriority="high">` : '';
+  if (!mp4 && !webm) {
+    return `<div class="hero-media" aria-hidden="true">${bg}${poster ? '' : '<span class="hero-media-note">[Background video] 15–20 second slow-pan loop of club footage</span>'}</div>`;
+  }
+  return `<div class="hero-media" aria-hidden="true">${bg}
+      <video class="hero-video" muted loop playsinline preload="none"${poster ? ` poster="/images/${poster}"` : ''}>
+        ${webm ? '<source data-src="/images/hero/hero.webm" type="video/webm">' : ''}
+        ${mp4 ? '<source data-src="/images/hero/hero.mp4" type="video/mp4">' : ''}
+      </video>
+    </div>
+    <button class="hero-pause" type="button" aria-label="Pause background video" hidden>Pause</button>`;
+}
+
+const PHONES = { shawn: ['(201) 446-0393', '+12014460393'], john: ['(973) 479-9839', '+19734799839'] };
+
+// Clubs grouped by town, biggest towns first.
+function byTown(list) {
+  const groups = {};
+  for (const c of list) (groups[c.town] = groups[c.town] || []).push(c);
+  return Object.entries(groups).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
+}
 
 function layout({ title, description, body }) {
   return `<!doctype html>
@@ -31,29 +88,195 @@ function layout({ title, description, body }) {
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Poppins:wght@300;400;500&family=Archivo:wght@500;600&display=swap">
 <link rel="stylesheet" href="/styles.css">
+<link rel="icon" type="image/png" href="/images/favicon.png">
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 </head>
 <body>
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="/" aria-label="Country Club Dudes home">${FLAG} Country Club Dudes</a>
-    <nav aria-label="Main"><ul>
+    <a class="brand" href="/" aria-label="Country Club Dudes home">${brandMark()}</a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav">Menu</button>
+    <nav class="main" id="main-nav" aria-label="Main"><ul>
       <li><a href="/clubs/">Clubs</a></li>
-      <li><a href="/new-developments/">New Developments</a></li>
-      <li><a href="/#match">Club Match</a></li>
-      <li><a href="/#reels">Reels</a></li>
-      <li><a href="/#about">About</a></li>
+      <li class="has-sub">
+        <button class="sub-toggle" type="button" aria-expanded="false" aria-controls="sub-search">Search <span aria-hidden="true">▾</span></button>
+        <div class="sub mega" id="sub-search">
+          <div class="mega-col"><p class="mega-h">Find a home</p><ul>
+            <li><a class="sub-all" href="/search/">${esc(SEARCH.all.label)}</a></li>
+            <li><a href="/clubs/">Club communities</a></li>
+            <li><a href="/search/no-club/">${esc(SEARCH.noClub.label)}</a></li>
+            <li><a href="/new-developments/">New developments</a></li>
+          </ul></div>
+          <div class="mega-col"><p class="mega-h">By lifestyle</p><ul>
+${SEARCH.lifestyle.map((c) => `            <li><a href="/search/${c.slug}/">${esc(c.label)}</a></li>`).join('\n')}
+          </ul></div>
+          <div class="mega-col"><p class="mega-h">By membership</p><ul>
+${SEARCH.membership.map((c) => `            <li><a href="/search/${c.slug}/">${esc(c.label)}</a></li>`).join('\n')}
+          </ul></div>
+        </div>
+      </li>
+      <li><a href="/#front-nine">Buying guide</a></li>
+      <li><a href="/#dudes">Meet the Dudes</a></li>
+      <li><a class="btn gold sm" href="/#match">Get my Club Match</a></li>
     </ul></nav>
   </div>
 </header>
+<main>
 ${body}
+</main>
 <footer>
   <div class="wrap">
-    <div><strong style="font-family:var(--display);font-size:20px;font-weight:400">Country Club Dudes</strong><p>John Silverberg and Shawn Miller, Premier Listings, Delray Beach, Florida. Licensed real estate professionals. Equal Housing Opportunity.</p></div>
-    <p>countryclubdudes.com</p>
+    <div>
+      <a class="brand" href="/" aria-label="Country Club Dudes home">${brandMark()}</a>
+      <p>Country Club Dudes at Premier Listings<br>Delray Beach, Florida</p>
+    </div>
+    <div>
+      <h4>Talk to a Dude</h4>
+      <a href="tel:${PHONES.shawn[1]}">Shawn Miller, ${PHONES.shawn[0]}</a>
+      <a href="tel:${PHONES.john[1]}">John Silverberg, ${PHONES.john[0]}</a>
+      <a href="https://www.instagram.com/countryclubdudes/" target="_blank" rel="noopener">Instagram @countryclubdudes</a>
+    </div>
+    <div>
+      <h4>Explore</h4>
+      <a href="/clubs/">Club guides</a>
+      <a href="/search/">Search all homes</a>
+      <a href="/search/no-club/">Communities without a club</a>
+      <a href="/new-developments/">New developments</a>
+      <a href="/#match">Club Match</a>
+      <p class="legal">John Silverberg and Shawn Miller, Premier Listings. Licensed real estate professionals. Equal Housing Opportunity. Club fees and membership terms change; verify current details with each club.</p>
+    </div>
   </div>
 </footer>
+<script>
+  (function () {
+    // Mobile menu
+    var h = document.querySelector('header.top'), b = h && h.querySelector('.menu-toggle');
+    if (b) b.addEventListener('click', function () {
+      var open = h.classList.toggle('open');
+      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+
+    // Search dropdown: click/tap to open; closes on outside click or Escape.
+    document.querySelectorAll('.has-sub').forEach(function (li) {
+      var t = li.querySelector('.sub-toggle');
+      t.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var open = li.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    });
+    document.addEventListener('click', function () {
+      document.querySelectorAll('.has-sub.open').forEach(function (li) { li.classList.remove('open'); li.querySelector('.sub-toggle').setAttribute('aria-expanded', 'false'); });
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') document.querySelectorAll('.has-sub.open').forEach(function (li) { li.classList.remove('open'); var t = li.querySelector('.sub-toggle'); t.setAttribute('aria-expanded', 'false'); t.focus(); });
+    });
+
+    // Hero search bar: typeahead for our clubs and communities, then hands off to IDX Broker.
+    var hs = document.querySelector('.hero-search');
+    if (hs) {
+      var cfg = JSON.parse(document.getElementById('hs-config').textContent);
+      var q = hs.querySelector('#hs-q'), list = hs.querySelector('#hs-list'), active = -1, items = [];
+      var norm = function (t) { return (t || '').toLowerCase().replace(/[^a-z0-9 ]/g, ''); };
+      var escH = function (t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; };
+      function close() { list.hidden = true; q.setAttribute('aria-expanded', 'false'); active = -1; q.removeAttribute('aria-activedescendant'); }
+      function render() {
+        var v = norm(q.value); if (v.length < 2) { close(); return; }
+        var type = hs.querySelector('input[name="hs-type"]:checked').value;
+        var places = cfg.places.filter(function (p) { return norm(p.n).indexOf(v) > -1 && (type === 'all' || (type === 'club') === (p.k === 'Club')); }).slice(0, 5);
+        var towns = cfg.towns.filter(function (t) { return norm(t).indexOf(v) > -1; }).slice(0, 3);
+        items = places.map(function (p) { return { label: p.n, sub: p.t + ' · ' + (p.k === 'Club' ? 'Club guide' : 'Community'), url: p.u }; })
+          .concat(towns.map(function (t) { return { label: 'Homes in ' + t, sub: 'Search listings', town: t }; }));
+        if (!items.length) { close(); return; }
+        list.innerHTML = items.map(function (it, i) { return '<li role="option" id="hs-o' + i + '" data-i="' + i + '"><b>' + escH(it.label) + '</b><span>' + escH(it.sub) + '</span></li>'; }).join('');
+        list.hidden = false; q.setAttribute('aria-expanded', 'true');
+      }
+      function pick(it) { if (it.url) { location.href = it.url; return; } q.value = it.town; close(); submit(); }
+      function setActive(i) {
+        var opts = list.querySelectorAll('li'); if (!opts.length) return;
+        active = (i + opts.length) % opts.length;
+        opts.forEach(function (o, j) { o.setAttribute('aria-selected', j === active ? 'true' : 'false'); });
+        q.setAttribute('aria-activedescendant', 'hs-o' + active);
+      }
+      function submit() {
+        var type = hs.querySelector('input[name="hs-type"]:checked').value;
+        var price = hs.querySelector('#hs-price').value, beds = hs.querySelector('#hs-beds').value, where = q.value.trim();
+        var base = (type !== 'all' && cfg.tabs[type]) || cfg.action;
+        if (!base) { location.href = type === 'club' ? '/clubs/' : type === 'noClub' ? '/search/no-club/' : '/search/'; return; }
+        var u = new URL(base, location.href);
+        Object.keys(cfg.fixed).forEach(function (k) { u.searchParams.append(k, cfg.fixed[k]); });
+        if (where && cfg.params.location) u.searchParams.append(cfg.params.location, where);
+        if (price && cfg.params.maxPrice) u.searchParams.append(cfg.params.maxPrice, price);
+        if (beds && cfg.params.minBeds) u.searchParams.append(cfg.params.minBeds, beds);
+        location.href = u.toString();
+      }
+      q.addEventListener('input', render);
+      q.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowDown') { e.preventDefault(); if (list.hidden) render(); setActive(active + 1); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(active - 1); }
+        else if (e.key === 'Enter' && !list.hidden && active > -1) { e.preventDefault(); pick(items[active]); }
+        else if (e.key === 'Escape') close();
+      });
+      list.addEventListener('mousedown', function (e) { var li = e.target.closest('li'); if (li) { e.preventDefault(); pick(items[+li.getAttribute('data-i')]); } });
+      q.addEventListener('blur', function () { setTimeout(close, 120); });
+      hs.addEventListener('change', function (e) { if (e.target.name === 'hs-type') render(); });
+      hs.addEventListener('submit', function (e) { e.preventDefault(); submit(); });
+    }
+
+    // All / With a club / Without a club toggle on lifestyle pages.
+    document.querySelectorAll('.seg').forEach(function (seg) {
+      var wrap = seg.closest('.wrap'), cards = wrap.querySelectorAll('.club-card[data-type]'), empty = wrap.querySelector('.filter-empty');
+      seg.addEventListener('click', function (e) {
+        var b = e.target.closest('button'); if (!b) return;
+        var show = b.getAttribute('data-show'), n = 0;
+        seg.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        cards.forEach(function (c) { var on = show === 'all' || c.getAttribute('data-type') === show; c.hidden = !on; if (on) n++; });
+        if (empty) empty.hidden = n > 0;
+      });
+    });
+
+    // Hero video: desktop only, and not for people who turn off motion. Phones keep the still.
+    var v = document.querySelector('.hero-video'), pause = document.querySelector('.hero-pause');
+    var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.matchMedia('(max-width: 700px)').matches;
+    if (v && !still) {
+      v.querySelectorAll('source[data-src]').forEach(function (s) { s.src = s.getAttribute('data-src'); });
+      v.load();
+      var p = v.play(); if (p && p.catch) p.catch(function () {});
+      v.addEventListener('playing', function () { v.classList.add('on'); });
+      if (pause) {
+        pause.hidden = false;
+        pause.addEventListener('click', function () {
+          if (v.paused) { v.play(); pause.textContent = 'Pause'; pause.setAttribute('aria-label', 'Pause background video'); }
+          else { v.pause(); pause.textContent = 'Play'; pause.setAttribute('aria-label', 'Play background video'); }
+        });
+      }
+    }
+
+    // Inside the gates: live Instagram reels from Behold. Falls back to the linked tiles.
+    var grid = document.querySelector('.reels[data-feed]');
+    if (grid && window.fetch) {
+      fetch(grid.getAttribute('data-feed')).then(function (r) { return r.json(); }).then(function (data) {
+        var posts = Array.isArray(data) ? data : (data.posts || []);
+        var reels = posts.filter(function (p) { return p.mediaType === 'VIDEO' || p.isReel; });
+        var list = (reels.length >= 4 ? reels : posts).slice(0, 4);
+        if (list.length < 4) return;
+        var esc = function (t) { var d = document.createElement('div'); d.textContent = t || ''; return d.innerHTML; };
+        grid.innerHTML = list.map(function (p) {
+          var img = (p.sizes && p.sizes.medium && p.sizes.medium.mediaUrl) || p.thumbnailUrl || p.mediaUrl;
+          var cap = (p.prunedCaption || p.caption || '').split('\\n')[0];
+          if (cap.length > 70) cap = cap.slice(0, 67).replace(/\\s+\\S*$/, '') + '…';
+          var when = p.timestamp ? new Date(p.timestamp).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Reel';
+          return '<a class="reel has-cover" href="' + esc(p.permalink) + '" target="_blank" rel="noopener" aria-label="Watch on Instagram: ' + esc(cap) + '">' +
+            (img ? '<img src="' + esc(img) + '" alt="" loading="lazy">' : '') +
+            '<span class="eyebrow">' + esc(when) + '</span><div><h3 class="reel-cap">' + esc(cap || 'Watch the reel') + '</h3><span class="views">Watch on Instagram</span></div></a>';
+        }).join('');
+      }).catch(function () {});
+    }
+  })();
+</script>
 </body>
 </html>
 `;
@@ -61,6 +284,7 @@ ${body}
 
 // Netlify Forms picks this up at deploy time (data-netlify). Submissions email John;
 // Follow Up Boss gets them through a Netlify form notification or Zapier later.
+// Field names are unchanged from the original build.
 function matchForm(club) {
   const id = club ? club.slug : 'home';
   return `<form name="club-match" method="POST" action="/thanks/" data-netlify="true" netlify-honeypot="company">
@@ -89,133 +313,233 @@ function matchForm(club) {
         <div class="field"><label for="${id}-phone">Mobile</label><input id="${id}-phone" name="phone" type="tel" autocomplete="tel" required></div>
       </div>
       <div class="field"><label for="${id}-email">Email</label><input id="${id}-email" name="email" type="email" autocomplete="email" required></div>
-      <button class="btn primary" type="submit">Send my Club Match</button>
+      <button class="btn gold" type="submit">Send my Club Match</button>
       <p class="form-msg">John gets this right away. No spam, ever.</p>
     </form>`;
 }
 
-function scorecard(list, base = '/clubs/') {
-  return `<div class="scorecard" role="list">
-      <div class="sc-row head" aria-hidden="true"><span>Hole</span><span>Club</span><span>Town</span><span>Known for</span><span></span></div>
-${list.map((c, i) => `      <div class="sc-row" role="listitem"><span class="hole">${i + 1}</span><h3><a href="${base}${c.slug}/">${esc(c.name)}</a></h3><span class="town">${esc(c.town)}</span><p class="note">${esc(c.blurb)}</p><a class="go" href="${base}${c.slug}/">Guide →</a></div>`).join('\n')}
+function clubCards(list, base = CLUBS.base) {
+  return `<div class="card-grid">
+${list.map((c) => `      <a class="club-card" href="${base}${c.slug}/"><span class="eyebrow">${esc(c.town)}${c.status ? ` · ${esc(c.status)}` : ''}</span><h3>${esc(c.name)}</h3><p>${esc(c.blurb)}</p><span class="go">Read the guide →</span></a>`).join('\n')}
     </div>`;
 }
 
+// The Front Nine: questions to ask before buying in any club (from the CCD sample site).
+const FRONT_NINE = [
+  ['Is membership mandatory with the home?', 'Some clubs require it at closing. Others make it optional, which changes both cost and resale.'],
+  ['Equity or non-equity?', 'Equity means you own a share of the club. It affects refunds, transfers and who votes on assessments.'],
+  ['What is the initiation or capital contribution, and is any of it refundable?', 'Often a six-figure line item separate from the purchase price.'],
+  ['What do the annual dues cover?', 'Golf, sports and social tiers vary a lot, and so does what is included.'],
+  ['Is there a food and beverage minimum?', 'A yearly spend you owe whether or not you eat at the club.'],
+  ['Any current or pending assessments?', 'Clubhouse and course projects get funded by members, sometimes right after you join.'],
+  ['How do tee times work in peak season?', 'Easy access in July can look very different in February.'],
+  ['Can you rent before you buy, and do renters get club access?', 'The best way to test a club, if its rules allow it.'],
+  ['How long does membership approval take?', 'Applications and board reviews can add weeks to a normal closing timeline.'],
+];
+
+function matchSection(club) {
+  const head = club
+    ? `<p class="eyebrow">Interested in ${esc(club.name)}?</p>
+      <h2>Get the real numbers and what's for sale.</h2>
+      <p class="intro">Tell us a little about what you want and we'll send current listings, membership costs, and similar clubs worth a look.</p>`
+    : `<p class="eyebrow">Club Match</p>
+      <h2>Tell us how you play. We'll send your short list.</h2>
+      <ol class="steps">
+        <li><b>1</b><p>Answer a few quick questions about towns, budget and how you'll use the club.</p></li>
+        <li><b>2</b><p>We send two or three clubs that fit, with real dues and what's for sale today.</p></li>
+        <li><b>3</b><p>Tour them with us, including the clubhouse and the course.</p></li>
+      </ol>`;
+  return `<section class="band dark match" id="match">
+  <div class="wrap">
+    <div>
+      ${head}
+      <p class="contact-line">Rather talk? Call or text Shawn at <a class="text-link" href="tel:${PHONES.shawn[1]}">${PHONES.shawn[0]}</a> or John at <a class="text-link" href="tel:${PHONES.john[1]}">${PHONES.john[0]}</a>.</p>
+    </div>
+    ${matchForm(club)}
+  </div>
+</section>`;
+}
+
+// Hero search bar. Wiring to IDX Broker lives in src/search.json ("heroSearch").
+function heroSearch() {
+  const hs = SEARCH.heroSearch || {};
+  const places = [
+    ...clubs.map((c) => ({ n: c.name, t: c.town, u: `${CLUBS.base}${c.slug}/`, k: 'Club' })),
+    ...communities.map((c) => ({ n: c.name, t: c.town, u: `${COMMS.base}${c.slug}/`, k: 'Community' })),
+  ];
+  const towns = [...new Set([...clubs, ...communities].map((c) => c.town))].sort();
+  const cfg = { action: hs.action || '', params: hs.params || {}, tabs: hs.tabs || {}, fixed: hs.fixed || {}, places, towns };
+  return `<form class="hero-search" role="search" action="/search/" method="get" novalidate>
+        <div class="hs-tabs" role="radiogroup" aria-label="Type of community">
+          <label><input type="radio" name="hs-type" value="all" checked><span>All homes</span></label>
+          <label><input type="radio" name="hs-type" value="club"><span>With a club</span></label>
+          <label><input type="radio" name="hs-type" value="noClub"><span>Without a club</span></label>
+        </div>
+        <div class="hs-bar">
+          <div class="hs-field hs-where">
+            <label for="hs-q">Where</label>
+            <input id="hs-q" type="text" autocomplete="off" placeholder="Club, community, city or ZIP" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="hs-list">
+            <ul class="hs-list" id="hs-list" role="listbox" hidden></ul>
+          </div>
+          <div class="hs-field">
+            <label for="hs-price">Max price</label>
+            <select id="hs-price"><option value="">Any price</option><option value="750000">$750K</option><option value="1000000">$1M</option><option value="1500000">$1.5M</option><option value="2500000">$2.5M</option><option value="5000000">$5M</option><option value="10000000">$10M</option></select>
+          </div>
+          <div class="hs-field">
+            <label for="hs-beds">Beds</label>
+            <select id="hs-beds"><option value="">Any</option><option value="2">2+</option><option value="3">3+</option><option value="4">4+</option><option value="5">5+</option></select>
+          </div>
+          <button class="btn gold hs-go" type="submit"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Search</span></button>
+        </div>
+        <script type="application/json" id="hs-config">${JSON.stringify(cfg).replace(/</g, '\\u003c')}</script>
+      </form>`;
+}
+
 function homePage() {
-  const reels = [
-    ['Boca Raton', 'Boca Pointe'],
-    ['Palm Beach Gardens', 'Old Palm golf'],
-    ['Delray Beach', 'Bobby Jones'],
-    ['Buyer advice', "Don't fall in love with the house"],
+  // Inside the gates: real reels from clubs.json. Clubs marked "featuredReel": true come first,
+  // then one reel per town. A cover image at src/images/reels/<slug>.jpg is used when present.
+  const withReel = clubs.filter((c) => c.reel);
+  const picked = withReel.filter((c) => c.featuredReel);
+  for (const [, list] of byTown(clubs)) {
+    const c = list.find((x) => x.reel && !picked.includes(x));
+    if (c && picked.length < 4) picked.push(c);
+  }
+  const reels = picked.slice(0, 4);
+  const doors = [
+    ['Buying in a club', 'Match your golf, social life and budget to the right club before you fall for a house in the wrong one.', 'Get my Club Match', '#match', 'solid'],
+    ['Buying outside a club, or not sure yet', "Not everyone wants dues. We'll lay out the tradeoff honestly and show you homes with or without a membership attached.", 'Communities without a club', '/search/no-club/', 'outline'],
+    ['Comparing clubs', `Our guides to ${clubs.length} Palm Beach County clubs: what each is known for and what's for sale inside the gates.`, 'Browse the club guides', '/clubs/', 'solid'],
+    ['Selling a club home', 'Your buyer picks the club first and the house second. We market the membership and lifestyle alongside the home.', 'Talk through a sale', '#match', 'outline'],
   ];
   return layout({
     title: 'Country Club Dudes | Palm Beach County Country Club Homes',
     description: 'Find the Palm Beach County country club that fits how you live, then the home. Club guides, real dues, and live listings from John Silverberg and Shawn Miller.',
     body: `
-<section class="hero" id="top">
+<section class="hero hero-full dark" id="top">
+  ${heroMedia()}
   <div class="wrap">
-    <div>
-      <p class="eyebrow" style="color:var(--flag)">Palm Beach County country club real estate</p>
-      <h1 style="margin-top:14px">Find the club that fits <em>your game</em>, then the home.</h1>
+    <div class="hero-copy">
+      <p class="hero-kicker">Palm Beach County country club real estate</p>
+      <h1>Find the right country club. Not just the right home.</h1>
       <p class="lede">We film inside these clubs every week. We'll tell you what the membership really costs, who plays where, and which clubs match how you actually want to spend your days.</p>
-      <div class="cta-row">
-        <a class="btn primary" href="#match">Get my Club Match</a>
-        <a class="btn ghost" href="/clubs/">Browse the clubs</a>
-      </div>
+      ${heroSearch()}
+      <p class="hero-alt">Not sure where to start? <a class="text-link" href="#match">Get my Club Match →</a> <span aria-hidden="true">·</span> <a class="text-link" href="/clubs/">Browse the clubs</a></p>
     </div>
-    <aside class="card-mini" aria-label="What we compare for every club">
-      <p class="eyebrow">What we compare, club by club</p>
-      <table>
-        <tr><td>Membership type</td><td>Equity / Bundled</td></tr>
-        <tr><td>Initiation &amp; annual dues</td><td>$ / yr</td></tr>
-        <tr><td>Capital contribution</td><td>On resale</td></tr>
-        <tr><td>Golf holes</td><td>18 / 36 / 54</td></tr>
-        <tr><td>Tennis &amp; pickleball</td><td>Courts</td></tr>
-        <tr><td>Homes for sale</td><td>Live</td></tr>
-      </table>
-    </aside>
   </div>
 </section>
 
-<section class="band" id="clubs">
+<section class="band light">
   <div class="wrap">
     <div class="sec-head">
-      <div><p class="eyebrow">The course</p><h2>Club guides</h2></div>
-      <p>Each club has its own page with homes for sale and what membership costs. <a href="/clubs/">See all clubs →</a></p>
+      <h2>What brings you here?</h2>
+      <p>Pick the closest fit. Each path gets you to the right page and the right conversation.</p>
     </div>
-    ${scorecard(clubs.slice(0, 9))}
+    <div class="doors">
+${doors.map(([h, p, cta, href, style]) => `      <div class="door"><h3>${h}</h3><p>${esc(p)}</p><a class="btn ${style} sm" href="${href}">${cta}</a></div>`).join('\n')}
+    </div>
   </div>
 </section>
 
-<section class="band match" id="match">
-  <div class="wrap">
-    <div>
-      <p class="eyebrow">Club Match</p>
-      <h2 style="font-size:clamp(30px,4vw,44px);margin-top:10px">Tell us how you play. We'll send your short list.</h2>
-      <ol class="steps">
-        <li><b>1</b><p>Answer a few quick questions about towns, budget and how you'll use the club.</p></li>
-        <li><b>2</b><p>We send two or three clubs that fit, with real dues and what's for sale today.</p></li>
-        <li><b>3</b><p>Tour them with us, including the clubhouse and the course.</p></li>
-      </ol>
+<section class="band dark" id="front-nine">
+  <div class="wrap split">
+    <div class="split-intro">
+      <h2>The Front Nine</h2>
+      <hr class="rule">
+      <p>Nine questions to answer before you buy in any club. Listing sites cover none of them. We can answer all nine for the clubs we cover.</p>
+      <div class="cta-row"><a class="btn cream sm" href="#match">Ask us about a specific club</a></div>
     </div>
-    ${matchForm(null)}
+    <table class="card-table">
+      <caption class="hidden-field">Nine questions to ask before buying in a country club</caption>
+      <thead><tr><th scope="col">Hole</th><th scope="col">Ask</th><th scope="col">Why it matters</th></tr></thead>
+      <tbody>
+${FRONT_NINE.map(([q, why], i) => `        <tr><td class="n">${i + 1}</td><td class="q">${esc(q)}</td><td class="why">${esc(why)}</td></tr>`).join('\n')}
+      </tbody>
+    </table>
   </div>
 </section>
 
-<section class="band" id="reels">
+<section class="band light" id="clubs">
   <div class="wrap">
     <div class="sec-head">
-      <div><p class="eyebrow">@countryclubdudes</p><h2>Inside the gates</h2></div>
-      <p>Our most-shared reels on Instagram.</p>
+      <h2>Explore clubs by town</h2>
+      <p>Each guide covers what the club is known for, membership, and current homes for sale. <a class="text-link" href="/clubs/">See all ${clubs.length} clubs →</a></p>
     </div>
-    <div class="reels">
-${reels.map(([where, title]) => `      <a class="reel" href="https://www.instagram.com/countryclubdudes/" target="_blank" rel="noopener"><span class="eyebrow">${esc(where)}</span><div><h3>${esc(title)}</h3><span class="views">Watch on Instagram</span></div></a>`).join('\n')}
+    <div class="towns">
+${byTown(clubs).map(([town, list]) => `      <div class="town-col"><h3>${esc(town)}</h3>
+${list.map((c) => `        <a href="/clubs/${c.slug}/">${esc(c.name)}</a>`).join('\n')}
+      </div>`).join('\n')}
     </div>
   </div>
 </section>
 
-<section class="band about" id="about" style="padding-top:0">
+${matchSection(null)}
+
+<section class="band light" id="reels">
   <div class="wrap">
-    <div>
-      <p class="eyebrow">About</p>
-      <h2 style="font-size:clamp(30px,4vw,44px);margin:10px 0 20px">John Silverberg and Shawn Miller, Premier Listings</h2>
+    <div class="sec-head">
+      <div><p class="eyebrow">@countryclubdudes</p><h2 style="margin-top:12px">Inside the gates</h2></div>
+      <p>We film inside these clubs every week. <a class="text-link" href="https://www.instagram.com/countryclubdudes/" target="_blank" rel="noopener">See every reel on Instagram →</a></p>
+    </div>
+    <div class="reels"${BEHOLD_FEED_ID ? ` data-feed="https://feeds.behold.so/${BEHOLD_FEED_ID}"` : ''}>
+${reels.map((c) => { const cover = ['jpg', 'png', 'webp'].map((x) => `reels/${c.slug}.${x}`).find(hasImage); return `      <a class="reel${cover ? ' has-cover' : ''}" href="${esc(c.reel)}" target="_blank" rel="noopener" aria-label="Watch our ${esc(c.name)} reel on Instagram">${cover ? `<img src="/images/${cover}" alt="" loading="lazy">` : ''}<span class="eyebrow">${esc(c.town)}</span><div><h3>${esc(c.name)}</h3><span class="views">Watch the reel</span></div></a>`; }).join('\n')}
+    </div>
+  </div>
+</section>
+
+<section class="band dark-2" id="dudes">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Meet the Dudes</h2>
+      <p>Two guys who play the courses, eat in the grill rooms and ask the membership director the awkward questions so you don't have to.</p>
+    </div>
+    <div class="about-intro" id="about">
       <p>We're the Country Club Dudes. We sell homes in Palm Beach County's country club communities, and we film what it's actually like to live in them.</p>
       <p>Buying into a club is two decisions: the house and the membership. We help you get both right, starting with the club.</p>
-      <div class="cta-row"><a class="btn primary" href="#match">Start with Club Match</a></div>
     </div>
-    <div class="facts">
-      <div><strong>${clubs.length}</strong><span>clubs covered</span></div>
-      <div><strong>89</strong><span>club reels this year</span></div>
-      <div><strong>Delray</strong><span>office at Premier Listings</span></div>
-      <div><strong>PBC</strong><span>Boca to Jupiter</span></div>
+    <div class="dudes">
+${[['Shawn Miller', 'shawn', 'shawn.jpg', 'Shawn, candid on course'], ['John Silverberg', 'john', 'john.jpg', 'John, candid at the clubhouse']].map(([name, key, file, label]) => `      <article class="dude">
+        ${photo(file, name, label, 'dude-photo')}
+        <div class="dude-copy">
+          <h3>${name}</h3>
+          <p class="role">REALTOR®, Premier Listings</p>
+          <p class="ph-text">[Two sentences on ${name.split(' ')[0]}'s background, and the club detail he always checks first.]</p>
+          <a class="text-link" href="tel:${PHONES[key][1]}">${PHONES[key][0]}</a>
+        </div>
+      </article>`).join('\n')}
     </div>
+    <figure class="quote">
+      <blockquote class="ph-text">“[Client quote that mentions the club guidance, not just the house.]”</blockquote>
+      <figcaption>[Client first name], bought in [Club name], [Town]</figcaption>
+    </figure>
   </div>
 </section>`,
   });
 }
 
+function pageHero(eyebrow, h1, lede) {
+  return `<section class="page-hero dark">
+  <div class="wrap">
+    <p class="eyebrow">${eyebrow}</p>
+    <h1>${h1}</h1>
+    ${lede ? `<p class="lede">${lede}</p>` : ''}
+  </div>
+</section>`;
+}
+
 function developmentsIndex() {
   const list = developments.length
-    ? scorecard(developments, DEVS.base)
+    ? clubCards(developments, DEVS.base)
     : `<div class="listings">
         <p class="pending">We're adding new construction communities here soon.</p>
         <p>Looking at a new build? Send a Club Match and tell us which developments you're watching. We'll send floor plans, pricing, and what the club will offer.</p>
-        <div><a class="btn primary" href="/#match">Send a Club Match</a></div>
+        <a class="btn solid" href="/#match">Send a Club Match</a>
       </div>`;
   return layout({
     title: 'New Country Club Developments | Country Club Dudes',
     description: 'New construction country club communities in Palm Beach County: what is being built, pricing, and how membership will work.',
     body: `
-<section class="hero">
-  <div class="wrap" style="grid-template-columns:1fr">
-    <div>
-      <p class="eyebrow" style="color:var(--flag)">New developments</p>
-      <h1 style="margin-top:14px">New club communities</h1>
-      <p class="lede">New construction with a club attached. We track what's being built, what it costs, and how membership will work.</p>
-    </div>
-  </div>
-</section>
-<section class="band">
+${pageHero('New developments', 'New club communities', "New construction with a club attached. We track what's being built, what it costs, and how membership will work.")}
+<section class="band light">
   <div class="wrap">
     ${list}
   </div>
@@ -228,83 +552,286 @@ function clubsIndex() {
     title: 'Country Club Guides | Country Club Dudes',
     description: 'Every Palm Beach County country club we cover, with homes for sale and membership details.',
     body: `
-<section class="hero">
-  <div class="wrap" style="grid-template-columns:1fr">
-    <div>
-      <p class="eyebrow" style="color:var(--flag)">Club guides</p>
-      <h1 style="margin-top:14px">Every club we cover</h1>
-      <p class="lede">Pick a club to see homes for sale and what membership costs.</p>
-    </div>
-  </div>
-</section>
-<section class="band">
+${pageHero('Club guides', 'Every club we cover', `${clubs.length} Palm Beach County clubs, grouped by town. Pick one to see homes for sale and what membership costs.`)}
+<section class="band light">
   <div class="wrap">
-    ${scorecard(clubs)}
+${byTown(clubs).map(([town, list]) => `    <div class="town-group"><h2>${esc(town)}</h2>
+    ${clubCards(list)}
+    </div>`).join('\n')}
   </div>
 </section>`,
   });
 }
 
-function clubPage(club, section = CLUBS) {
-  const listings = club.idx
-    ? `<div class="listings" id="listings">${club.idx}</div>`
-    : `<div class="listings" id="listings">
-        <p class="pending">Live listings for ${esc(club.name)} are coming soon.</p>
+// Club scorecard rows. Fill in per club with an optional "scorecard" object in clubs.json,
+// e.g. "scorecard": {"Golf": "Two 18-hole courses", "Dining": "..."}
+const AMENITIES = ['Golf', 'Tennis, pickleball & padel', 'Fitness & spa', 'Pools', 'Dining', 'Kids & family', 'Social & events', 'Security & gates'];
+
+// Listings for one club or community. Three sources, in order:
+//  1. src/listings/<slug>.json, written at build time from the IDX Broker API (see DESIGN-HANDOFF.md).
+//     Shape: { "total": 14, "url": "<IDX saved link for all homes here>", "updated": "2026-11-12",
+//              "disclaimer": "...", "items": [ { "price": 1250000, "status": "New", "address": "...",
+//              "city": "Boca Raton", "beds": 3, "baths": 3.5, "sqft": 2850, "photo": "https://...",
+//              "url": "<IDX listing detail URL>", "courtesy": "Listing brokerage name" } ] }
+//  2. "idx" on the club: an IDX Broker widget embed, shown as-is.
+//  3. Neither: a "coming soon" panel with the Club Match form.
+function listingsBlock(c) {
+  const head = (count) => `<div class="sec-head"><div><p class="eyebrow">For sale now${count ? ` · ${count} home${count === 1 ? '' : 's'}` : ''}</p><h2 style="margin-top:12px">Homes for sale inside the gates</h2></div>
+      <p>See one you like? Ask us about the club costs that come with it before you book a showing.</p></div>`;
+  const file = path.join(SRC, 'listings', `${c.slug}.json`);
+  if (fs.existsSync(file)) {
+    const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+    const items = (Array.isArray(data) ? data : data.items || []).slice(0, 6);
+    const total = data.total || items.length;
+    if (items.length) {
+      const money = (n) => '$' + Number(n).toLocaleString('en-US');
+      const memb = c.membership ? `Membership: ${esc(c.membership)}` : 'Ask us what membership costs here';
+      return `${head(total)}
+    ${data.sample ? '<p class="sample-note">Sample listings for design preview. Not real MLS data.</p>' : ''}
+    <div class="listing-grid" id="listings">
+${items.map((l) => `      <a class="listing" href="${esc(l.url || data.url || '#match')}"${l.url ? ' target="_blank" rel="noopener"' : ''}>
+        <div class="listing-photo">${l.photo ? `<img src="${esc(l.photo)}" alt="${esc(l.address)}" loading="lazy">` : ''}${l.status ? `<span class="listing-status">${esc(l.status)}</span>` : ''}</div>
+        <div class="listing-body">
+          <p class="listing-price">${money(l.price)}</p>
+          <p class="listing-facts">${[l.beds && `${l.beds} bd`, l.baths && `${l.baths} ba`, l.sqft && `${Number(l.sqft).toLocaleString('en-US')} sq ft`].filter(Boolean).join(' · ')}</p>
+          <p class="listing-addr">${esc(l.address)}${l.city ? `, ${esc(l.city)}` : ''}</p>
+          <p class="listing-club">${memb}</p>
+          ${l.courtesy ? `<p class="listing-courtesy">Courtesy of ${esc(l.courtesy)}</p>` : ''}
+        </div>
+      </a>`).join('\n')}
+    </div>
+    <div class="listing-foot">
+      ${data.url ? `<a class="btn solid" href="${esc(data.url)}"${data.sample ? '' : ' target="_blank" rel="noopener"'}>See all ${total} homes in ${esc(c.name)}</a>` : ''}
+      <a class="btn outline" href="#match">Get alerts for new listings</a>
+    </div>
+    ${data.disclaimer ? `<p class="idx-disclaimer">${esc(data.disclaimer)}${data.updated ? ` Updated ${esc(data.updated)}.` : ''}</p>` : ''}`;
+    }
+  }
+  if (c.idx) return `${head(0)}\n    <div id="listings" class="idx">${c.idx}</div>`;
+  return `${head(0)}
+    <div class="listings" id="listings">
+        <p class="pending">Live listings for ${esc(c.name)} are coming soon.</p>
         <p>Want to see what's for sale here today? Send a Club Match below and John will send you every active listing.</p>
-        <div><a class="btn primary" href="#match">Send me the listings</a></div>
+        <a class="btn solid" href="#match">Send me the listings</a>
       </div>`;
+}
+
+function clubPage(club, section = CLUBS) {
+  const sc = club.scorecard || {};
+  const ask = '<span class="ph-text">Ask the Dudes</span>';
+  const listings = listingsBlock(club);
+  const nearby = (section === DEVS ? developments : clubs).filter((c) => c.town === club.town && c.slug !== club.slug);
   return layout({
     title: `${club.name} Homes for Sale, ${club.town} | Country Club Dudes`,
     description: `${club.name} in ${club.town}: homes for sale, membership, and what it's like to live there.`,
     body: `
-<section class="hero club-hero">
+<section class="hero club-hero dark">
   <div class="wrap">
-    <div>
-      <p class="crumbs"><a href="${section.base}">${section.label}</a> / ${esc(club.name)}</p>
-      <p class="eyebrow" style="color:var(--flag)">${esc(club.town)}</p>
-      <h1 style="margin-top:14px">${esc(club.name)}</h1>
+    <div class="hero-copy">
+      <p class="crumbs"><a href="${section.base}">${section.label}</a> / ${esc(club.town)}</p>
+      <p class="eyebrow">${esc(club.town)}${club.status ? ` · ${esc(club.status)}` : ''}</p>
+      <h1>${esc(club.name)}</h1>
       <p class="lede">${esc(club.blurb)}</p>
+${tagRow(club)}
       <div class="cta-row">
-        <a class="btn primary" href="#listings">Homes for sale</a>
-        <a class="btn ghost" href="#match">Ask about membership</a>
+        <a class="btn gold" href="#listings">See homes for sale</a>
+        <a class="btn outline" href="#match">Ask about this club</a>
       </div>
     </div>
-    <aside class="card-mini" aria-label="${esc(club.name)} at a glance">
-      <p class="eyebrow">${esc(club.name)} at a glance</p>
-      <table>
-        <tr><td>Town</td><td>${esc(club.town)}</td></tr>${club.status ? `
-        <tr><td>Status</td><td>${esc(club.status)}</td></tr>` : ''}
-        <tr><td>Membership</td><td>Ask John</td></tr>
-        <tr><td>Initiation &amp; dues</td><td>Ask John</td></tr>
-      </table>
-    </aside>
+    ${photo(club.photo, club.name, `${club.name}: clubhouse, course or aerial`)}
   </div>
 </section>
 
-${club.photo || club.reel ? `<section class="band" style="padding-bottom:0">
-  <div class="wrap club-media">
-    ${club.photo ? `<img src="/images/${esc(club.photo)}" alt="${esc(club.name)}" loading="lazy">` : ''}
-    ${club.reel ? `<p><a class="btn primary" href="${esc(club.reel)}" target="_blank" rel="noopener">Watch our ${esc(club.name)} reel</a></p>` : ''}
-  </div>
-</section>` : ''}
-<section class="band">
+<section class="band light">
   <div class="wrap">
-    <div class="sec-head"><div><p class="eyebrow">For sale now</p><h2>${esc(club.name)} homes for sale</h2></div></div>
+    <div class="sec-head">
+      <div><p class="eyebrow">The first two holes</p><h2 style="margin-top:12px">Membership at a glance</h2></div>
+      <p>Membership terms change, so confirm current details with us or the club before you buy.</p>
+    </div>
+    <div class="glance">
+      <div><span class="eyebrow">Membership with the home</span><strong>${club.membership ? esc(club.membership) : ask}</strong></div>
+      <div><span class="eyebrow">Equity structure</span><strong>${club.equity ? esc(club.equity) : ask}</strong></div>
+      <div><span class="eyebrow">Details last verified</span><strong>${club.verified ? esc(club.verified) : ask}</strong></div>
+    </div>
+${club.reel ? `    <div class="reel-strip"><div><p class="eyebrow" style="color:var(--gold)">Watch</p><h3 style="margin-top:8px">See ${esc(club.name)} through our camera</h3></div><a class="btn gold" href="${esc(club.reel)}" target="_blank" rel="noopener">Watch the reel</a></div>` : ''}
+  </div>
+</section>
+
+<section class="band light" style="padding-top:0">
+  <div class="wrap split">
+    <div class="split-intro">
+      <h2>The Scorecard</h2>
+      <hr class="rule">
+      <p>Amenities at a glance, hole by hole. Offerings change, so confirm before you buy.</p>
+      <div class="cta-row"><a class="btn solid sm" href="#match">Ask us how it compares</a></div>
+    </div>
+    <table class="card-table">
+      <caption class="hidden-field">${esc(club.name)} amenities</caption>
+      <thead><tr><th scope="col">Hole</th><th scope="col">Amenity</th><th scope="col">What's here</th></tr></thead>
+      <tbody>
+${AMENITIES.map((a, i) => `        <tr><td class="n">${i + 1}</td><td class="q">${a}</td><td class="why">${sc[a] ? esc(sc[a]) : ask}</td></tr>`).join('\n')}
+        <tr><td class="n">9</td><td class="q">The bottom line</td><td class="why">${esc(club.blurb)}</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="band sand">
+  <div class="wrap">
     ${listings}
   </div>
 </section>
 
-<section class="band match" id="match">
+${matchSection(club)}
+${nearby.length ? `
+<section class="band light">
   <div class="wrap">
-    <div>
-      <p class="eyebrow">Interested in ${esc(club.name)}?</p>
-      <h2 style="font-size:clamp(30px,4vw,44px);margin-top:10px">Get the real numbers and what's for sale.</h2>
-      <p style="margin-top:16px;color:var(--muted)">Tell us a little about what you want and we'll send current listings, membership costs, and similar clubs worth a look.</p>
+    <div class="sec-head"><h2>More clubs in ${esc(club.town)}</h2><p><a class="text-link" href="/clubs/">See all clubs →</a></p></div>
+    ${clubCards(nearby.slice(0, 3), section.base)}
+  </div>
+</section>` : ''}`,
+  });
+}
+
+function searchNav(active) {
+  const items = [['/search/', 'All homes', 'all'], ['/search/no-club/', 'Without a club', 'no-club'], ...FEATURES.map((c) => [`/search/${c.slug}/`, c.label, c.slug])];
+  return `<nav class="chip-nav" aria-label="Search by">${items.map(([href, label, key]) => `<a href="${href}"${key === active ? ' aria-current="page"' : ''}>${esc(label)}</a>`).join('')}</nav>`;
+}
+
+function idxBlock(embed, what) {
+  return embed
+    ? `<div class="idx">${embed}</div>`
+    : `<div class="listings" id="listings">
+        <p class="pending">Live listings for ${esc(what)} are coming soon.</p>
+        <p>Want to see what's for sale today? Send a Club Match and John will send you every active listing that fits.</p>
+        <a class="btn solid" href="/#match">Send a Club Match</a>
+      </div>`;
+}
+
+function emptyList(msg) {
+  return `<div class="listings">
+        <p class="pending">${msg}</p>
+        <p>Tell us what you're looking for and we'll send the places that fit, with real costs and what's for sale today.</p>
+        <a class="btn solid" href="/#match">Get my Club Match</a>
+      </div>`;
+}
+
+// Cards for a mixed list of clubs and communities; each card carries its type for the toggle.
+function mixedCards(list) {
+  return `<div class="card-grid">
+${list.map((c) => `      <a class="club-card" data-type="${c._type}" href="${c._type === 'club' ? CLUBS.base : COMMS.base}${c.slug}/"><span class="eyebrow">${esc(c.town)} · ${c._type === 'club' ? 'Club' : 'No club'}</span><h3>${esc(c.name)}</h3><p>${esc(c.blurb)}</p><span class="go">${c._type === 'club' ? 'Read the guide' : 'See the community'} →</span></a>`).join('\n')}
+    </div>`;
+}
+
+function searchShell({ title, description, hero, active, listHead, list, idx, idxWhat }) {
+  return layout({
+    title, description,
+    body: `
+${hero}
+<section class="band light">
+  <div class="wrap">
+    ${searchNav(active)}
+    ${listHead}
+    ${list}
+  </div>
+</section>
+<section class="band sand">
+  <div class="wrap">
+    <div class="sec-head"><div><p class="eyebrow">For sale now</p><h2 style="margin-top:12px">Homes for sale</h2></div></div>
+    ${idxBlock(idx, idxWhat)}
+  </div>
+</section>
+${matchSection(null)}`,
+  });
+}
+
+function searchAllPage() {
+  const a = SEARCH.all;
+  return layout({
+    title: 'Search Homes for Sale | Country Club Dudes',
+    description: 'Search homes for sale in Palm Beach County, in club communities and communities without a club.',
+    body: `
+${pageHero('Search', esc(a.title), esc(a.intro))}
+<section class="band light">
+  <div class="wrap">
+    ${searchNav('all')}
+    <div class="split-choice">
+      <a class="choice" href="/clubs/"><span class="eyebrow">${clubs.length} clubs</span><h3>Club communities</h3><p>Golf, racquets, dining and a social calendar, with membership attached.</p><span class="go">Browse club guides →</span></a>
+      <a class="choice" href="/search/no-club/"><span class="eyebrow">No membership required</span><h3>${esc(SEARCH.noClub.label)}</h3><p>Gated, 55+ and waterfront neighborhoods without club dues.</p><span class="go">Browse communities →</span></a>
     </div>
-    ${matchForm(club)}
+    ${idxBlock(a.idx, 'all homes')}
   </div>
 </section>`,
   });
+}
+
+function noClubPage() {
+  const n = SEARCH.noClub;
+  const list = communities.map((c) => ({ ...c, _type: 'community' }));
+  return searchShell({
+    title: `${n.title} | Country Club Dudes`,
+    description: `${n.intro} Palm Beach County homes for sale.`,
+    hero: pageHero('Search', esc(n.title), esc(n.intro)),
+    active: 'no-club',
+    listHead: `<div class="sec-head"><div><p class="eyebrow">${list.length ? `${list.length} communit${list.length === 1 ? 'y' : 'ies'}` : 'Communities'}</p><h2 style="margin-top:12px">Communities</h2></div><p>Not sure you want a club? <a class="text-link" href="/search/optional-membership/">See clubs with optional membership →</a></p></div>`,
+    list: list.length ? mixedCards(list) : emptyList("We're putting this list together now."),
+    idx: n.idx, idxWhat: 'communities without a club',
+  });
+}
+
+function featurePage(cat, clubsOnly) {
+  const list = [
+    ...clubs.filter((c) => (c.tags || []).includes(cat.tag)).map((c) => ({ ...c, _type: 'club' })),
+    ...(clubsOnly ? [] : communities.filter((c) => (c.tags || []).includes(cat.tag)).map((c) => ({ ...c, _type: 'community' }))),
+  ].sort((a, b) => a.name.localeCompare(b.name));
+  const nClub = list.filter((c) => c._type === 'club').length, nComm = list.length - nClub;
+  const toggle = clubsOnly ? '' : `<div class="seg" role="group" aria-label="Show">
+      <button type="button" data-show="all" aria-pressed="true">All <span>${list.length}</span></button>
+      <button type="button" data-show="club" aria-pressed="false">With a club <span>${nClub}</span></button>
+      <button type="button" data-show="community" aria-pressed="false">Without a club <span>${nComm}</span></button>
+    </div>`;
+  return searchShell({
+    title: `${cat.title} | Country Club Dudes`,
+    description: `${cat.intro} Palm Beach County homes for sale and community guides.`,
+    hero: pageHero('Search', esc(cat.title), esc(cat.intro)),
+    active: cat.slug,
+    listHead: `<div class="sec-head"><div><p class="eyebrow">${clubsOnly ? 'Clubs' : 'Communities'}</p><h2 style="margin-top:12px">${clubsOnly ? 'Clubs that fit' : 'Places that fit'}</h2></div>${toggle}</div>`,
+    list: list.length ? `<div class="filterable">${mixedCards(list)}<div class="filter-empty" hidden>${emptyList('Nothing here yet for this filter.')}</div></div>` : emptyList("We're putting this list together now."),
+    idx: cat.idx, idxWhat: cat.title.toLowerCase(),
+  });
+}
+
+// Community without a club: hero, highlights, listings and the Club Match form.
+function communityPage(c) {
+  return layout({
+    title: `${c.name} Homes for Sale, ${c.town} | Country Club Dudes`,
+    description: `${c.name} in ${c.town}: homes for sale and what it's like to live there.`,
+    body: `
+<section class="hero club-hero dark">
+  <div class="wrap">
+    <div class="hero-copy">
+      <p class="crumbs"><a href="/search/no-club/">Communities without a club</a> / ${esc(c.town)}</p>
+      <p class="eyebrow">${esc(c.town)} · No club membership</p>
+      <h1>${esc(c.name)}</h1>
+      <p class="lede">${esc(c.blurb)}</p>
+${tagRow(c)}
+      <div class="cta-row"><a class="btn gold" href="#listings">See homes for sale</a><a class="btn outline" href="#match">Ask about this community</a></div>
+    </div>
+    ${photo(c.photo, c.name, `${c.name}: entrance, streetscape or aerial`)}
+  </div>
+</section>
+<section class="band sand">
+  <div class="wrap">
+    ${listingsBlock(c)}
+  </div>
+</section>
+${matchSection(null)}`,
+  });
+}
+
+function tagRow(c) {
+  const tags = FEATURES.filter((f) => (c.tags || []).includes(f.tag));
+  return tags.length ? `      <div class="tag-row">${tags.map((f) => `<a class="tag" href="/search/${f.slug}/">${esc(f.label)}</a>`).join('')}</div>` : '';
 }
 
 function thanksPage() {
@@ -312,13 +839,12 @@ function thanksPage() {
     title: 'Thanks | Country Club Dudes',
     description: 'Thanks for reaching out to the Country Club Dudes.',
     body: `
-<section class="hero">
-  <div class="wrap" style="grid-template-columns:1fr">
-    <div>
-      <h1>Got it. We'll be in touch soon.</h1>
-      <p class="lede">John or Shawn will reach out with your short list, usually the same day.</p>
-      <div class="cta-row"><a class="btn primary" href="/clubs/">Keep browsing clubs</a></div>
-    </div>
+<section class="page-hero dark" style="min-height:60vh">
+  <div class="wrap">
+    <p class="eyebrow">Club Match received</p>
+    <h1>Got it. We'll be in touch soon.</h1>
+    <p class="lede">John or Shawn will reach out with your short list, usually the same day.</p>
+    <div class="cta-row"><a class="btn gold" href="/clubs/">Keep browsing clubs</a></div>
   </div>
 </section>`,
   });
@@ -333,9 +859,14 @@ write('clubs/index.html', clubsIndex());
 for (const club of clubs) write(`clubs/${club.slug}/index.html`, clubPage(club));
 write('new-developments/index.html', developmentsIndex());
 for (const dev of developments) write(`new-developments/${dev.slug}/index.html`, clubPage(dev, DEVS));
+write('search/index.html', searchAllPage());
+write('search/no-club/index.html', noClubPage());
+for (const cat of SEARCH.lifestyle) write(`search/${cat.slug}/index.html`, featurePage(cat, false));
+for (const cat of SEARCH.membership) write(`search/${cat.slug}/index.html`, featurePage(cat, true));
+for (const c of communities) write(`communities/${c.slug}/index.html`, communityPage(c));
 write('thanks/index.html', thanksPage());
 const SITE = 'https://countryclubdudes.com';
-const urls = ['/', '/clubs/', ...clubs.map((c) => `/clubs/${c.slug}/`), '/new-developments/', ...developments.map((d) => `/new-developments/${d.slug}/`)];
+const urls = ['/', '/clubs/', '/search/', '/search/no-club/', ...FEATURES.map((c) => `/search/${c.slug}/`), ...communities.map((c) => `/communities/${c.slug}/`), ...clubs.map((c) => `/clubs/${c.slug}/`), '/new-developments/', ...developments.map((d) => `/new-developments/${d.slug}/`)];
 write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${SITE}${u}</loc></url>`).join('\n')}\n</urlset>\n`);
 write('robots.txt', `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
 console.log(`Built ${clubs.length} club pages and ${developments.length} new development pages into dist/`);

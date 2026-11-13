@@ -1,0 +1,81 @@
+{
+  "_howto": "Drives the Search menu and its pages. Lifestyle pages list every club (clubs.json) and community without a club (communities.json) whose \"tags\" include the page's tag, with an All / With a club / Without a club toggle. Membership pages list clubs only. Paste an IDX Broker embed into \"idx\" to show live listings on a page. Add, remove or reorder entries here and the menu updates.",
+  "all": {
+    "label": "Search all homes",
+    "title": "Search all homes",
+    "intro": "Every home for sale across the communities we cover, with or without a club.",
+    "idx": ""
+  },
+  "noClub": {
+    "label": "Communities without a club",
+    "title": "Communities without a club",
+    "intro": "Gated, 55+ and waterfront neighborhoods with no club membership required. Same local know-how, no dues.",
+    "idx": ""
+  },
+  "lifestyle": [
+    {
+      "slug": "55-plus",
+      "tag": "55-plus",
+      "label": "55+",
+      "title": "55+ communities",
+      "intro": "Age-restricted and active adult communities, with or without a club.",
+      "idx": ""
+    },
+    {
+      "slug": "gated",
+      "tag": "gated",
+      "label": "Gated",
+      "title": "Gated communities",
+      "intro": "Guard-gated and private-entry communities, with or without a club.",
+      "idx": ""
+    },
+    {
+      "slug": "waterfront",
+      "tag": "waterfront",
+      "label": "Waterfront & boating",
+      "title": "Waterfront and boating communities",
+      "intro": "Homes on the water, with marinas, dockage or ocean access.",
+      "idx": ""
+    },
+    {
+      "slug": "racquets",
+      "tag": "racquets",
+      "label": "Racquets",
+      "title": "Tennis, pickleball and padel",
+      "intro": "Communities with serious racquet programs: courts, pros, leagues and round robins.",
+      "idx": ""
+    }
+  ],
+  "membership": [
+    {
+      "slug": "non-equity",
+      "tag": "non-equity",
+      "label": "Non-equity",
+      "title": "Non-equity clubs",
+      "intro": "Clubs where membership doesn't include an ownership share in the club.",
+      "idx": ""
+    },
+    {
+      "slug": "optional-membership",
+      "tag": "optional-membership",
+      "label": "Optional membership",
+      "title": "Clubs with optional membership",
+      "intro": "Buy the home without having to join the club. Join later, or never.",
+      "idx": ""
+    }
+  ],
+  "heroSearch": {
+    "_howto": "Hero search bar. Set 'action' to the IDX Broker results URL (e.g. https://YOURSUBDOMAIN.idxbroker.com/idx/results/listings). Each key in 'params' maps a search-bar field to the IDX field name: confirm the names by running a search on the IDX site and reading the results URL. 'tabs' can point the With a club / Without a club tabs at IDX saved-link URLs instead. Leave 'action' empty and the bar falls back to the site's own Search pages.",
+    "action": "",
+    "params": {
+      "location": "",
+      "maxPrice": "hp",
+      "minBeds": "bd"
+    },
+    "tabs": {
+      "club": "",
+      "noClub": ""
+    },
+    "fixed": {}
+  }
+}
