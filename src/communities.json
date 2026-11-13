@@ -13,6 +13,7 @@
   {"name": "Le Lac", "slug": "le-lac", "town": "Boca Raton", "blurb": "A gated enclave of large custom estate homes in Boca Raton.", "tags": ["gated"], "photo": "", "idx": ""},
   {"name": "Les Jardins", "slug": "les-jardins", "town": "Boca Raton", "blurb": "A small gated community of custom estate homes in Boca Raton.", "tags": ["gated"], "photo": "", "idx": ""},
   {"name": "Long Lake Estates", "slug": "long-lake-estates", "town": "Boca Raton", "blurb": "A gated enclave of large custom estates on acre-plus lots in west Boca.", "tags": ["gated"], "photo": "", "idx": ""},
+  {"name": "Lotus", "slug": "lotus", "town": "Boca Raton", "blurb": "A gated Toll Brothers community in west Boca with a resort-style clubhouse and no golf membership.", "tags": ["gated"], "photo": "", "idx": ""},
   {"name": "Majestic Isles", "slug": "majestic-isles", "town": "Boynton Beach", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "tags": ["55-plus"], "photo": "", "idx": ""},
   {"name": "Palm Isles", "slug": "palm-isles", "town": "Boynton Beach", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "tags": ["55-plus"], "photo": "", "idx": ""},
   {"name": "Ponte Vecchio", "slug": "ponte-vecchio", "town": "Boynton Beach", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "tags": ["55-plus"], "photo": "", "idx": ""},
