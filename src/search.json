@@ -1,5 +1,12 @@
 {
   "_howto": "Drives the Search menu and its pages. Lifestyle pages list every club (clubs.json) and community without a club (communities.json) whose \"tags\" include the page's tag, with an All / With a club / Without a club toggle. Membership pages list clubs only. Paste an IDX Broker embed into \"idx\" to show live listings on a page. Add, remove or reorder entries here and the menu updates.",
+  "_menu": "\"menu\" lists what appears under Search, in order. Keys: all, clubs, no-club, new-developments, or any category slug below. With 6 or fewer items the menu is a single list; with 7 or more it switches to three columns (Find a home / By lifestyle / By membership). Pages for categories not in the menu are still built, so links from club tags keep working.",
+  "menu": [
+    "all",
+    "55-plus",
+    "new-developments",
+    "optional-membership"
+  ],
   "all": {
     "label": "Search all homes",
     "title": "Search all homes",
