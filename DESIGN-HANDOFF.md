@@ -47,7 +47,7 @@ in `src/images/`, and this document. `src/clubs.json`, `src/developments.json`, 
 **Everywhere**
 - CCD brand system: Lora headings, Poppins body, Archivo labels; deep green `#0F301E`, club green
   `#1D4932`, gold `#BC9C22`, cream `#FDFBF5`; pill buttons
-- Sticky header with the full CCD logo, a three-column **Search** menu, and a "Get my Club Match" button;
+- Sticky header with the full CCD logo, a **Search** menu, and a "Get my Club Match" button;
   collapses to a Menu button on phones
 - New footer with logo, contact numbers and links
 
@@ -127,6 +127,21 @@ and shows up in the hero search suggestions.
 
 Bios ("Two sentences on Shawn's background...") and the client quote are in `homePage()` in
 `build.js`, marked with square brackets.
+
+---
+
+### Search menu (`src/search.json` → `menu`)
+
+The `menu` list sets what appears under Search, in order. It currently shows Search all homes, 55+,
+New developments and Optional membership. Available keys: `all`, `clubs`, `no-club`,
+`new-developments`, and any category slug in `search.json` (`55-plus`, `gated`, `waterfront`,
+`racquets`, `non-equity`, `optional-membership`).
+
+- **6 or fewer items:** a single list.
+- **7 or more:** it switches to the three-column layout (Find a home / By lifestyle / By membership).
+
+The buttons along the top of each Search page follow the same list. Pages for categories that aren't
+in the menu are still built, so the gold tags on club and community pages keep linking to them.
 
 ---
 
