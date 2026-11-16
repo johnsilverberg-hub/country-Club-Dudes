@@ -11,7 +11,7 @@ The site for countryclubdudes.com: club guides, live listings for each club, and
 
 ## Finishing the site
 
-See HANDOFF.md for everything left to do.
+See HANDOFF.md for everything left to do, and DESIGN-HANDOFF.md for the design system and setup guides.
 
 ## Adding a club
 
