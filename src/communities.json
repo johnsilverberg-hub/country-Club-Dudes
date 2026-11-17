@@ -16,7 +16,7 @@
   {"name": "Long Lake Estates", "slug": "long-lake-estates", "town": "Boca Raton", "blurb": "A gated enclave of large custom estates on acre-plus lots in west Boca.", "tags": ["gated"], "photo": "", "idx": ""},
   {"name": "Lotus", "slug": "lotus", "town": "Boca Raton", "blurb": "A gated Toll Brothers community in west Boca with a resort-style clubhouse and no golf membership.", "tags": ["gated"], "photo": "", "idx": ""},
   {"name": "Majestic Isles", "slug": "majestic-isles", "town": "Boynton Beach", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "tags": ["55-plus"], "photo": "", "idx": ""},
-  {"name": "Mizner's Preserve", "slug": "mizners-preserve", "town": "Delray Beach", "blurb": "A gated community of single-family homes on the west Boca and Delray border.", "tags": ["gated"], "photo": "", "idx": ""},
+  {"name": "Mizner's Preserve", "slug": "mizners-preserve", "town": "Boca Raton", "blurb": "A gated community of single-family homes in west Boca Raton.", "tags": ["gated"], "photo": "", "idx": ""},
   {"name": "Palm Isles", "slug": "palm-isles", "town": "Boynton Beach", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "tags": ["55-plus"], "photo": "", "idx": ""},
   {"name": "Ponte Vecchio", "slug": "ponte-vecchio", "town": "Boynton Beach", "blurb": "A 55+ community with a clubhouse, pools, tennis and an active social calendar.", "tags": ["55-plus"], "photo": "", "idx": ""},
   {"name": "Regency at Avenir", "slug": "regency-at-avenir", "town": "Palm Beach Gardens", "blurb": "Toll Brothers' 55+ community at Avenir, with a resort-style clubhouse, pickleball and tennis.", "tags": ["55-plus", "gated", "racquets"], "photo": "", "idx": ""},
