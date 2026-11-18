@@ -121,8 +121,20 @@ async function main() {
     await probe(`mls/searchfields/${idxID}`, (r) => asList(r).filter((f) => /subdiv|city|zip|hopa|gate|water|commun|area|develop/i.test(JSON.stringify(f))).map((f) => JSON.stringify(f)).join(' | ').slice(0, 2500));
     await probe(`mls/propertytypes/${idxID}`, (r) => JSON.stringify(r).slice(0, 800));
     await probe(`mls/disclaimer?idxID=${idxID}`, (r) => JSON.stringify(r).slice(0, 300));
-    await probe('clients/listcomponents', (r) => JSON.stringify(r).slice(0, 300));
-    await probe('clients/searchquery', (r) => JSON.stringify(r).slice(0, 300));
+    let subs = [];
+    try { subs = asList(await api('GET', `mls/searchfieldvalues/${idxID}?mlsPtID=1&name=subdivision`)).map(String); log(`Subdivision values: ${subs.length}`); }
+    catch (e) { log(`searchfieldvalues: ${e.message}`); }
+    const core = (n) => n.toUpperCase().replace(/&/g, 'AND').replace(/\b(THE|COUNTRY CLUB|GOLF AND COUNTRY CLUB|GOLF CLUB|BEACH AND COUNTRY CLUB|YACHT AND COUNTRY CLUB|CLUB)\b/g, '').replace(/[^A-Z0-9 ]/g, '').replace(/\s+/g, ' ').trim();
+    for (const e of entries) {
+      const k = core(e.name);
+      const hits = subs.filter((v) => v.toUpperCase().replace(/[^A-Z0-9 ]/g, '').includes(k));
+      log(`SUB ${e.slug} [${k}] ${hits.length}: ${hits.slice(0, 12).join(' ; ')}`);
+    }
+    try {
+      const q = new URLSearchParams({ linkName: 'ccd-boca-west', pageTitle: 'Homes for sale in Boca West', linkTitle: 'Homes for sale in Boca West' });
+      q.set('queryString[idxID]', idxID); q.set('queryString[pt]', '1'); q.append('queryString[a_subdivision][]', 'BOCA WEST');
+      log(`PUT test: ${JSON.stringify(await api('PUT', 'clients/savedlinks', q.toString())).slice(0, 300)}`);
+    } catch (e) { log(`PUT test: ${e.message}`); }
   }
   let saved = asList(await api('GET', 'clients/savedlinks'));
   log(`Existing saved links (${saved.length}): ${saved.slice(0, 30).map((l) => l.linkName).join(', ')}`);
