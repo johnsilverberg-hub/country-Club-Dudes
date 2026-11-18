@@ -12,6 +12,8 @@ const developments = readList('developments.json');
 // The Search menu and its pages (see src/search.json).
 const SEARCH = JSON.parse(fs.readFileSync(path.join(SRC, 'search.json'), 'utf8'));
 const FEATURES = [...SEARCH.lifestyle, ...SEARCH.membership];
+// Written by idx-sync.js at build time when the IDX API key is set (results URL and saved-link URLs).
+const IDX = fs.existsSync(path.join(SRC, 'idx.json')) ? JSON.parse(fs.readFileSync(path.join(SRC, 'idx.json'), 'utf8')) : { links: {} };
 // Communities without a club: same fields as a club (name, slug, town, blurb, tags, idx, photo).
 const communities = readList('communities.json');
 const COMMS = { base: '/communities/', label: 'Communities' };
@@ -368,7 +370,8 @@ function heroSearch() {
     ...communities.map((c) => ({ n: c.name, t: c.town, u: `${COMMS.base}${c.slug}/`, k: 'Community' })),
   ];
   const towns = [...new Set([...clubs, ...communities].map((c) => c.town))].sort();
-  const cfg = { action: hs.action || '', params: hs.params || {}, tabs: hs.tabs || {}, fixed: hs.fixed || {}, places, towns };
+  const tabs = { club: (hs.tabs || {}).club || IDX.links['search-club'] || '', noClub: (hs.tabs || {}).noClub || IDX.links['search-noClub'] || '' };
+  const cfg = { action: hs.action || IDX.resultsUrl || '', params: hs.params || {}, tabs, fixed: hs.fixed || {}, places, towns };
   return `<form class="hero-search" role="search" action="/search/" method="get" novalidate>
         <div class="hs-tabs" role="radiogroup" aria-label="Type of community">
           <label><input type="radio" name="hs-type" value="all" checked><span>All homes</span></label>

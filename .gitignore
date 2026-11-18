@@ -1,3 +1,5 @@
 dist/
 node_modules/
 .DS_Store
+src/idx.json
+src/listings/*.json
