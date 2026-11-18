@@ -26,7 +26,15 @@ const PER_PAGE = 6;
 const LOG = [];
 const log = (...a) => { LOG.push(a.join(' ')); console.log('[idx]', ...a); };
 // On deploy previews only, the log lines (never the key) are published at /idx-status.txt for checking.
-const saveLog = () => { if (process.env.CONTEXT === 'deploy-preview') fs.writeFileSync(path.join(SRC, 'idx-status.txt'), LOG.join('\n') + '\n'); };
+// They are also sent as requests to the site's own /idx-status-beacon path, so they show in its Netlify request logs.
+const saveLog = async () => {
+  if (process.env.CONTEXT !== 'deploy-preview') return;
+  fs.writeFileSync(path.join(SRC, 'idx-status.txt'), LOG.join('\n') + '\n');
+  const base = process.env.URL;
+  if (!base) return;
+  const chunks = LOG.flatMap((line, i) => (line.match(/[\s\S]{1,900}/g) || ['']).map((c, j) => `${i}.${j} ${c}`));
+  for (const c of chunks) { try { await fetch(`${base}/idx-status-beacon?l=${encodeURIComponent(c)}`); } catch {} }
+};
 
 async function api(method, endpoint, body) {
   const headers = { accesskey: KEY, outputtype: 'json', apiversion: '1.7.0' };
