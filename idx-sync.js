@@ -128,9 +128,9 @@ async function main() {
     for (const e of entries) {
       const k = core(e.name);
       const hits = subs.filter((v) => v.toUpperCase().replace(/[^A-Z0-9 ]/g, '').includes(k));
-      log(`SUB ${e.slug} [${k}] ${hits.length}: ${hits.slice(0, 12).join(' ; ')}`);
+      log(`SUB ${e.slug} [${k}] ${hits.length}: ${hits.slice(0, 60).join(' ; ')}`);
     }
-    try {
+    if (false) try {
       const q = new URLSearchParams({ linkName: 'ccd-boca-west', pageTitle: 'Homes for sale in Boca West', linkTitle: 'Homes for sale in Boca West' });
       q.set('queryString[idxID]', idxID); q.set('queryString[pt]', '1'); q.append('queryString[a_subdivision][]', 'BOCA WEST');
       log(`PUT test: ${JSON.stringify(await api('PUT', 'clients/savedlinks', q.toString())).slice(0, 300)}`);
@@ -171,7 +171,8 @@ async function main() {
     config.links[e.slug] = link.url;
     try {
       const raw = asList(await api('GET', `clients/savedlinks/${link.id}/results`));
-      if (!filled && raw[0]) log(`Listing fields: ${Object.keys(raw[0]).join(', ')}`);
+      log(`Results ${e.slug}: ${raw.length}`);
+      if (!filled && raw[0]) log(`Listing fields: ${Object.keys(raw[0]).join(', ')} | sample subdivision/city/status/price/office: ${['subdivision', 'cityName', 'propStatus', 'listingPrice', 'listingOfficeName', 'propSubType'].map((k) => raw[0][k]).join(' / ')}`);
       const items = raw.map(card).filter((c) => c.price && c.address);
       fs.writeFileSync(path.join(OUT_DIR, `${e.slug}.json`), JSON.stringify({
         total: raw.length, url: link.url, updated: today, disclaimer, items: items.slice(0, PER_PAGE),
