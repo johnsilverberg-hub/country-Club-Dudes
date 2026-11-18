@@ -89,7 +89,8 @@ async function main() {
   const system = asList(await api('GET', 'clients/systemlinks'));
   const results = system.find((s) => /results/i.test(`${s.name} ${s.url}`)) || {};
   const search = system.find((s) => /^(basic|advanced)?\s*search$/i.test(String(s.name || ''))) || {};
-  log(`System links: ${system.map((s) => s.name).join(', ') || 'none'}`);
+  log(`Connected. System links: ${system.map((s) => `${s.name} <${s.url}>`).join(', ') || 'none'}`);
+  try { const info = asList(await api('GET', 'clients/accountinfo'))[0] || {}; log(`Account fields: ${Object.keys(info).join(', ')}`); } catch (e) { log(`Account info: ${e.message}`); }
 
   let idxID = process.env.IDX_ID;
   let disclaimer = '';
@@ -104,6 +105,8 @@ async function main() {
   } catch (e) { log(`MLS info: ${e.message}`); }
 
   let saved = asList(await api('GET', 'clients/savedlinks'));
+  log(`Existing saved links (${saved.length}): ${saved.slice(0, 30).map((l) => l.linkName).join(', ')}`);
+  if (saved[0]) log(`Saved link fields: ${Object.keys(saved[0]).join(', ')}; first query: ${JSON.stringify(saved[0].queryString || {})}`);
   const byName = () => new Map(saved.map((s) => [String(s.linkName || '').toLowerCase(), s]));
 
   if (process.env.IDX_CREATE_LINKS === '1' && idxID) {
@@ -136,6 +139,7 @@ async function main() {
     config.links[e.slug] = link.url;
     try {
       const raw = asList(await api('GET', `clients/savedlinks/${link.id}/results`));
+      if (!filled && raw[0]) log(`Listing fields: ${Object.keys(raw[0]).join(', ')}`);
       const items = raw.map(card).filter((c) => c.price && c.address);
       fs.writeFileSync(path.join(OUT_DIR, `${e.slug}.json`), JSON.stringify({
         total: raw.length, url: link.url, updated: today, disclaimer, items: items.slice(0, PER_PAGE),
