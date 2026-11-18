@@ -115,6 +115,15 @@ async function main() {
     }
   } catch (e) { log(`MLS info: ${e.message}`); }
 
+  if (process.env.CONTEXT === 'deploy-preview' && idxID) {
+    // Field discovery for setting up saved links and the hero search (field names only).
+    const probe = async (ep, fn) => { try { log(`${ep}: ${fn(await api('GET', ep))}`); } catch (e) { log(`${ep}: ${e.message}`); } };
+    await probe(`mls/searchfields/${idxID}`, (r) => asList(r).filter((f) => /subdiv|city|zip|hopa|gate|water|commun|area|develop/i.test(JSON.stringify(f))).map((f) => JSON.stringify(f)).join(' | ').slice(0, 2500));
+    await probe(`mls/propertytypes/${idxID}`, (r) => JSON.stringify(r).slice(0, 800));
+    await probe(`mls/disclaimer?idxID=${idxID}`, (r) => JSON.stringify(r).slice(0, 300));
+    await probe('clients/listcomponents', (r) => JSON.stringify(r).slice(0, 300));
+    await probe('clients/searchquery', (r) => JSON.stringify(r).slice(0, 300));
+  }
   let saved = asList(await api('GET', 'clients/savedlinks'));
   log(`Existing saved links (${saved.length}): ${saved.slice(0, 30).map((l) => l.linkName).join(', ')}`);
   if (saved[0]) log(`Saved link fields: ${Object.keys(saved[0]).join(', ')}; first query: ${JSON.stringify(saved[0].queryString || {})}`);
