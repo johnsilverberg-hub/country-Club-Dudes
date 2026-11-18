@@ -23,7 +23,10 @@ const SRC = path.join(__dirname, 'src');
 const OUT_DIR = path.join(SRC, 'listings');
 const PER_PAGE = 6;
 
-const log = (...a) => console.log('[idx]', ...a);
+const LOG = [];
+const log = (...a) => { LOG.push(a.join(' ')); console.log('[idx]', ...a); };
+// On deploy previews only, the log lines (never the key) are published at /idx-status.txt for checking.
+const saveLog = () => { if (process.env.CONTEXT === 'deploy-preview') fs.writeFileSync(path.join(SRC, 'idx-status.txt'), LOG.join('\n') + '\n'); };
 
 async function api(method, endpoint, body) {
   const headers = { accesskey: KEY, outputtype: 'json', apiversion: '1.7.0' };
@@ -158,4 +161,4 @@ async function main() {
 }
 
 // Never fail the site build because of IDX: log and carry on with the fallbacks.
-main().catch((e) => log(`Skipped: ${e.message}`));
+main().catch((e) => log(`Skipped: ${e.message}`)).finally(saveLog);

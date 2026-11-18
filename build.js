@@ -857,6 +857,7 @@ fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT, { recursive: true });
 fs.copyFileSync(path.join(SRC, 'styles.css'), path.join(OUT, 'styles.css'));
 if (fs.existsSync(path.join(SRC, 'images'))) fs.cpSync(path.join(SRC, 'images'), path.join(OUT, 'images'), { recursive: true });
+if (process.env.CONTEXT === 'deploy-preview' && fs.existsSync(path.join(SRC, 'idx-status.txt'))) fs.copyFileSync(path.join(SRC, 'idx-status.txt'), path.join(OUT, 'idx-status.txt'));
 write('index.html', homePage());
 write('clubs/index.html', clubsIndex());
 for (const club of clubs) write(`clubs/${club.slug}/index.html`, clubPage(club));
