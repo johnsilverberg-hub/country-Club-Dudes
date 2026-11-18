@@ -693,6 +693,9 @@ function menuEntry(key) {
   return null;
 }
 const MENU = (SEARCH.menu || ['all']).map(menuEntry).filter(Boolean);
+// Only categories in the menu get pages, tags and sitemap entries. The rest wait until they're added back.
+const LIVE = FEATURES.filter((f) => (SEARCH.menu || []).includes(f.slug));
+const isLive = (slug) => LIVE.some((f) => f.slug === slug);
 
 // 6 or fewer items: one simple list. 7 or more: three labeled columns.
 function searchMenu() {
@@ -791,7 +794,7 @@ function noClubPage() {
     description: `${n.intro} Palm Beach County homes for sale.`,
     hero: pageHero('Search', esc(n.title), esc(n.intro)),
     active: 'no-club',
-    listHead: `<div class="sec-head"><div><p class="eyebrow">${list.length ? `${list.length} communit${list.length === 1 ? 'y' : 'ies'}` : 'Communities'}</p><h2 style="margin-top:12px">Communities</h2></div><p>Not sure you want a club? <a class="text-link" href="/search/optional-membership/">See clubs with optional membership →</a></p></div>`,
+    listHead: `<div class="sec-head"><div><p class="eyebrow">${list.length ? `${list.length} communit${list.length === 1 ? 'y' : 'ies'}` : 'Communities'}</p><h2 style="margin-top:12px">Communities</h2></div>${isLive('optional-membership') ? '<p>Not sure you want a club? <a class="text-link" href="/search/optional-membership/">See clubs with optional membership →</a></p>' : ''}</div>`,
     list: list.length ? mixedCards(list) : emptyList("We're putting this list together now."),
     idx: n.idx, idxWhat: 'communities without a club',
   });
@@ -848,7 +851,7 @@ ${matchSection(null)}`,
 }
 
 function tagRow(c) {
-  const tags = FEATURES.filter((f) => (c.tags || []).includes(f.tag));
+  const tags = LIVE.filter((f) => (c.tags || []).includes(f.tag));
   return tags.length ? `      <div class="tag-row">${tags.map((f) => `<a class="tag" href="/search/${f.slug}/">${esc(f.label)}</a>`).join('')}</div>` : '';
 }
 
@@ -879,12 +882,12 @@ write('new-developments/index.html', developmentsIndex());
 for (const dev of developments) write(`new-developments/${dev.slug}/index.html`, clubPage(dev, DEVS));
 write('search/index.html', searchAllPage());
 write('search/no-club/index.html', noClubPage());
-for (const cat of SEARCH.lifestyle) write(`search/${cat.slug}/index.html`, featurePage(cat, false));
-for (const cat of SEARCH.membership) write(`search/${cat.slug}/index.html`, featurePage(cat, true));
+for (const cat of SEARCH.lifestyle.filter((c) => isLive(c.slug))) write(`search/${cat.slug}/index.html`, featurePage(cat, false));
+for (const cat of SEARCH.membership.filter((c) => isLive(c.slug))) write(`search/${cat.slug}/index.html`, featurePage(cat, true));
 for (const c of communities) write(`communities/${c.slug}/index.html`, communityPage(c));
 write('thanks/index.html', thanksPage());
 const SITE = 'https://countryclubdudes.com';
-const urls = ['/', '/clubs/', '/search/', '/search/no-club/', ...FEATURES.map((c) => `/search/${c.slug}/`), ...communities.map((c) => `/communities/${c.slug}/`), ...clubs.map((c) => `/clubs/${c.slug}/`), '/new-developments/', ...developments.map((d) => `/new-developments/${d.slug}/`)];
+const urls = ['/', '/clubs/', '/search/', '/search/no-club/', ...LIVE.map((c) => `/search/${c.slug}/`), ...communities.map((c) => `/communities/${c.slug}/`), ...clubs.map((c) => `/clubs/${c.slug}/`), '/new-developments/', ...developments.map((d) => `/new-developments/${d.slug}/`)];
 write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${SITE}${u}</loc></url>`).join('\n')}\n</urlset>\n`);
 write('robots.txt', `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
 console.log(`Built ${clubs.length} club pages and ${developments.length} new development pages into dist/`);

@@ -132,16 +132,17 @@ Bios ("Two sentences on Shawn's background...") and the client quote are in `hom
 
 ### Search menu (`src/search.json` → `menu`)
 
-The `menu` list sets what appears under Search, in order. It currently shows Search all homes, 55+,
-New developments and Optional membership. Available keys: `all`, `clubs`, `no-club`,
-`new-developments`, and any category slug in `search.json` (`55-plus`, `gated`, `waterfront`,
-`racquets`, `non-equity`, `optional-membership`).
+The `menu` list sets what appears under Search, in order. It currently shows Search all homes,
+Communities without a club and 55+. Available keys: `all`, `clubs`, `no-club`, `new-developments`,
+and any category slug in `search.json` (`55-plus`, `gated`, `waterfront`, `racquets`, `non-equity`,
+`optional-membership`).
 
-- **6 or fewer items:** a single list.
-- **7 or more:** it switches to the three-column layout (Find a home / By lifestyle / By membership).
-
-The buttons along the top of each Search page follow the same list. Pages for categories that aren't
-in the menu are still built, so the gold tags on club and community pages keep linking to them.
+- **Only categories in the menu are live.** Their pages, the gold tags on club and community pages,
+  and their sitemap entries are built. The others stay defined in `search.json` and come back as soon
+  as their slug is added to `menu`. Tags already in the data files can stay as they are.
+- **6 or fewer items:** a single list. **7 or more:** the three-column layout (Find a home /
+  By lifestyle / By membership).
+- The buttons along the top of each Search page follow the same list.
 
 ---
 
