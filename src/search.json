@@ -71,17 +71,30 @@
     }
   ],
   "heroSearch": {
-    "_howto": "Hero search bar. Set 'action' to the IDX Broker results URL (e.g. https://YOURSUBDOMAIN.idxbroker.com/idx/results/listings). Each key in 'params' maps a search-bar field to the IDX field name: confirm the names by running a search on the IDX site and reading the results URL. 'tabs' can point the With a club / Without a club tabs at IDX saved-link URLs instead. Leave 'action' empty and the bar falls back to the site's own Search pages.",
-    "action": "",
+    "_howto": "Hero search bar and every Live listings button on the site. action is the IDX Broker results page. fixed is added to every IDX link (pt=sfr is residential, which includes condos). cityIds maps each town to its IDX city ID, so typing a town filters by it; a 5-digit ZIP filters by ZIP. params maps the price and beds fields to IDX field names. tabs can point the With a club / Without a club tabs at IDX saved-link URLs; left empty they open our own club and community pages. Club and community buttons use the MLS subdivision names in src/idx-subdivisions.json.",
+    "action": "https://countryclubedudes.idxbroker.com/idx/results/listings",
     "params": {
-      "location": "",
       "maxPrice": "hp",
       "minBeds": "bd"
+    },
+    "fixed": {
+      "pt": "sfr"
+    },
+    "cityIds": {
+      "Boca Raton": "4792",
+      "Boynton Beach": "5235",
+      "Delray Beach": "11984",
+      "Jupiter": "23621",
+      "Lake Worth": "25257",
+      "Palm Beach Gardens": "35210",
+      "Tequesta": "46056",
+      "Wellington": "50530",
+      "West Palm Beach": "51006",
+      "Westlake": "62060"
     },
     "tabs": {
       "club": "",
       "noClub": ""
-    },
-    "fixed": {}
+    }
   }
 }
