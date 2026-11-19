@@ -134,7 +134,8 @@ async function main() {
 
   let saved = asList(await api('GET', 'clients/savedlinks'));
   const byName = () => new Map(saved.map((s) => [String(s.linkName || '').toLowerCase(), s]));
-  const canWrite = (process.env.CONTEXT === 'deploy-preview' || process.env.IDX_CREATE_LINKS === '1') && idxID;
+  const norm = (q) => { try { return decodeURIComponent(String(q).replace(/\+/g, ' ')).replace(/\[\d*\]/g, '[]').split('&').sort().join('&'); } catch { return String(q); } };
+  const canWrite = process.env.IDX_PROBE === '0' && (process.env.CONTEXT === 'deploy-preview' || process.env.IDX_CREATE_LINKS === '1') && idxID;
 
   if (canWrite) {
     const have = byName();
@@ -147,7 +148,7 @@ async function main() {
       const want = `page=listings&${qs.toString()}`;
       try {
         if (!cur) { await api('PUT', 'clients/savedlinks', body.toString()); made++; }
-        else if (String(cur.queryString) !== want) { await api('POST', `clients/savedlinks/${cur.id}`, body.toString()); updated++; }
+        else if (norm(cur.queryString) !== norm(want)) { await api('POST', `clients/savedlinks/${cur.id}`, body.toString()); updated++; }
       } catch (err) { log(`Saved link ${w.linkName}: ${err.message}`); }
     }
     log(`Saved links created: ${made}, updated: ${updated}, wanted: ${wanted.length}`);
@@ -155,21 +156,34 @@ async function main() {
   }
 
   if (process.env.CONTEXT === 'deploy-preview' && idxID && process.env.IDX_PROBE !== '0') {
-    // Try query formats on the Boca West link and report how many results each returns.
-    const bw = byName().get('ccd-boca-west');
-    const bwUrl = bw && bw.url;
-    for (const ep of ['clients/featured', 'clients/soldpending', 'clients/supplemental', 'clients/listingcount', 'mls/listingcount/' + idxID, 'clients/apiversion', 'mls/approvedmls']) {
-      try { const r = await api('GET', ep); log(`EP ${ep}: ${asList(r).length} | ${JSON.stringify(r).slice(0, 220)}`); } catch (e) { log(`EP ${ep}: ${e.message}`); }
-    }
-    for (const u of [bwUrl, `${(results.url || '')}?idxID=${idxID}&pt=sfr&city[]=4792`].filter(Boolean)) {
+    // Find which query field IDX uses for subdivision: create small test links and count results.
+    const kp = byName().get('ccd-kings-point');
+    if (kp) log(`KP stored query: ${kp.queryString}`);
+    const tests = [
+      ['city', { pt: 'sfr', 'city[]': '4792' }],
+      ['a_subdivision', { pt: 'sfr', 'a_subdivision[]': 'KINGS POINT' }],
+      ['aw_subdivision', { pt: 'sfr', 'aw_subdivision[]': 'KINGS POINT' }],
+      ['subdivision', { pt: 'sfr', 'subdivision[]': 'KINGS POINT' }],
+      ['sub', { pt: 'sfr', 'sub[]': 'KINGS POINT' }],
+      ['a_subdivisionName', { pt: 'sfr', 'a_subdivisionName[]': 'KINGS POINT' }],
+    ];
+    const have = byName();
+    for (const [label, qv] of tests) {
+      const linkName = `ccd-test-${label.toLowerCase().replace(/[^a-z]/g, '')}`;
       try {
-        const res = await fetch(u, { headers: { 'user-agent': 'Mozilla/5.0 (site build check)' } });
-        const html = await res.text();
-        const cells = (html.match(/IDX-resultsCell/g) || []).length;
-        const count = (html.match(/IDX-resultsCount[^>]*>([^<]*)/) || [])[1];
-        const noRes = /no (listings|properties|results)[^<]{0,80}/i.exec(html);
-        log(`PAGE ${u.slice(0, 160)} -> ${res.status} cells=${cells} count=${count || ''} ${noRes ? 'msg=' + noRes[0] : ''} len=${html.length}`);
-      } catch (e) { log(`PAGE ${u}: ${e.message}`); }
+        let link = have.get(linkName);
+        if (!link) {
+          const body = new URLSearchParams({ linkName, pageTitle: 'Test', linkTitle: 'Test' });
+          body.set('queryString[idxID]', idxID);
+          for (const [k, v] of Object.entries(qv)) body.set(`queryString[${k}]`, v);
+          const r = await api('PUT', 'clients/savedlinks', body.toString());
+          link = { id: r && r.newID };
+        }
+        const res = asList(await api('GET', `clients/savedlinks/${link.id}/results`));
+        const subsSeen = [...new Set(res.map((x) => x.subdivision).filter(Boolean))].slice(0, 5).join(' ; ');
+        log(`TEST ${label}: ${res.length} [${subsSeen}]`);
+        try { await api('DELETE', `clients/savedlinks/${link.id}`); log(`TEST ${label}: deleted`); } catch (e) { log(`TEST ${label}: delete ${e.message}`); }
+      } catch (e) { log(`TEST ${label}: ${e.message}`); }
     }
   }
 
@@ -192,7 +206,7 @@ async function main() {
   let filled = 0;
   const counts = [];
 
-  for (const e of entries) {
+  for (const e of (process.env.CONTEXT === 'deploy-preview' && process.env.IDX_PROBE !== '0') ? [] : entries) {
     const link = links.get(`ccd-${e.slug}`);
     if (!link) continue;
     config.links[e.slug] = link.url;
