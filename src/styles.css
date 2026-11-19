@@ -77,7 +77,8 @@ nav.main a:hover{opacity:1;text-decoration:underline;text-underline-offset:6px}
 .mega-col{min-width:190px}
 .mega-col+.mega-col{padding-left:32px;border-left:1px solid var(--line)}
 .mega-h{font:600 11px/1 var(--label);letter-spacing:.12em;text-transform:uppercase;color:var(--soft);margin:0 0 10px 12px}
-nav.main .mega ul{display:flex;flex-direction:column;align-items:stretch;gap:0;padding:0}
+nav.main .mega ul,nav.main .simple ul{display:flex;flex-direction:column;align-items:stretch;gap:0;padding:0}
+.sub.simple{padding:10px;min-width:240px;transform:translateX(-30%)}
 nav.main .sub a{display:block;text-align:left;white-space:nowrap;padding:9px 12px;border-radius:10px;font-size:15px;opacity:1;text-decoration:none}
 nav.main .sub a:hover{background:var(--sand);text-decoration:none}
 nav.main .sub a.sub-all{font-weight:500}
@@ -333,6 +334,7 @@ footer .brand{margin-bottom:16px;color:var(--cream)}
   nav.main a.btn{display:inline-flex;padding:0 22px;margin-top:14px;font-size:16px}
   .sub{position:static;transform:none;box-shadow:none;background:transparent;color:inherit;padding:4px 0 10px 16px;border-left:1px solid var(--line-on-green);border-radius:0;flex-direction:column;gap:14px}
   .sub::before{display:none}
+  .sub.simple{transform:none;min-width:0;padding:4px 0 10px 16px}
   .mega-col{min-width:0}
   .mega-col+.mega-col{padding-left:0;border-left:0}
   .mega-h{color:var(--gold);margin:0 0 4px}
