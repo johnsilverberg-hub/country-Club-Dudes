@@ -51,6 +51,7 @@ async function api(method, endpoint, body) {
 }
 
 const asList = (x) => (Array.isArray(x) ? x : x && typeof x === 'object' ? Object.values(x) : []);
+const plain = (t) => String(t).replace(/['\u2019]/g, '');
 const pick = (o, keys) => { for (const k of keys) if (o[k] !== undefined && o[k] !== null && o[k] !== '') return o[k]; return undefined; };
 const num = (v) => { const n = Number(String(v ?? '').replace(/[^0-9.]/g, '')); return Number.isFinite(n) && n > 0 ? n : undefined; };
 
@@ -124,7 +125,7 @@ async function main() {
   const wanted = [];
   for (const e of entries) {
     const names = SUBS[e.slug];
-    if (Array.isArray(names) && names.length) wanted.push({ linkName: `ccd-${e.slug}`, title: `Homes for sale in ${e.name}`, names });
+    if (Array.isArray(names) && names.length) wanted.push({ linkName: `ccd-${e.slug}`, title: plain(`Homes for sale in ${e.name}`), names });
   }
   const clubSlugs = new Set(JSON.parse(fs.readFileSync(path.join(SRC, 'clubs.json'), 'utf8')).map((c) => c.slug));
   const union = (fn) => [...new Set(entries.filter(fn).flatMap((e) => SUBS[e.slug] || []))];
@@ -153,7 +154,30 @@ async function main() {
     saved = asList(await api('GET', 'clients/savedlinks'));
   }
 
-  if (process.env.CONTEXT === 'deploy-preview' && idxID) {
+  if (process.env.CONTEXT === 'deploy-preview' && idxID && process.env.IDX_PROBE !== '0') {
+    // Try query formats on the Boca West link and report how many results each returns.
+    const bw = byName().get('ccd-boca-west');
+    const variants = [
+      ['pt=sfr a_', { pt: 'sfr', 'a_subdivision[0]': 'BOCA WEST COUNTRY CLUB' }],
+      ['pt=1 a_', { pt: '1', 'a_subdivision[0]': 'BOCA WEST COUNTRY CLUB' }],
+      ['pt=sfr aw_', { pt: 'sfr', 'aw_subdivision[0]': 'BOCA WEST' }],
+      ['nopt a_', { 'a_subdivision[0]': 'BOCA WEST COUNTRY CLUB' }],
+      ['city only', { pt: 'sfr', 'city[0]': '4792' }],
+      ['city only pt1', { pt: '1', 'city[0]': '4792' }],
+    ];
+    if (bw) for (const [label, qv] of variants) {
+      try {
+        const body = new URLSearchParams({ linkName: 'ccd-boca-west', pageTitle: 'Homes for sale in Boca West', linkTitle: 'Homes for sale in Boca West' });
+        body.set('queryString[idxID]', idxID);
+        for (const [k, v] of Object.entries(qv)) body.set(`queryString[${k}]`, v);
+        await api('POST', `clients/savedlinks/${bw.id}`, body.toString());
+        const r = await api('GET', `clients/savedlinks/${bw.id}/results`);
+        log(`VARIANT ${label}: ${asList(r).length} | ${JSON.stringify(r).slice(0, 160)}`);
+      } catch (e) { log(`VARIANT ${label}: ${e.message}`); }
+    }
+  }
+
+  if (false) {
     // One-off lookups for names still to be matched (field values only, no listing data).
     try {
       const subs = asList(await api('GET', `mls/searchfieldvalues/${idxID}?mlsPtID=1&name=subdivision`)).map(String);
