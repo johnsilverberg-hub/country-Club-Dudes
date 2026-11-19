@@ -105,20 +105,7 @@ function layout({ title, description, body }) {
       <li><a href="/clubs/">Clubs</a></li>
       <li class="has-sub">
         <button class="sub-toggle" type="button" aria-expanded="false" aria-controls="sub-search">Search <span aria-hidden="true">▾</span></button>
-        <div class="sub mega" id="sub-search">
-          <div class="mega-col"><p class="mega-h">Find a home</p><ul>
-            <li><a class="sub-all" href="/search/">${esc(SEARCH.all.label)}</a></li>
-            <li><a href="/clubs/">Club communities</a></li>
-            <li><a href="/search/no-club/">${esc(SEARCH.noClub.label)}</a></li>
-            <li><a href="/new-developments/">New developments</a></li>
-          </ul></div>
-          <div class="mega-col"><p class="mega-h">By lifestyle</p><ul>
-${SEARCH.lifestyle.map((c) => `            <li><a href="/search/${c.slug}/">${esc(c.label)}</a></li>`).join('\n')}
-          </ul></div>
-          <div class="mega-col"><p class="mega-h">By membership</p><ul>
-${SEARCH.membership.map((c) => `            <li><a href="/search/${c.slug}/">${esc(c.label)}</a></li>`).join('\n')}
-          </ul></div>
-        </div>
+        ${searchMenu()}
       </li>
       <li><a href="/#front-nine">Buying guide</a></li>
       <li><a href="/#dudes">Meet the Dudes</a></li>
@@ -696,9 +683,43 @@ ${nearby.length ? `
   });
 }
 
+// Search menu entries, keyed the way search.json "menu" refers to them.
+function menuEntry(key) {
+  if (key === 'all') return { key, href: '/search/', label: SEARCH.all.label, group: 'find', cls: 'sub-all' };
+  if (key === 'clubs') return { key, href: '/clubs/', label: 'Club communities', group: 'find' };
+  if (key === 'no-club') return { key, href: '/search/no-club/', label: SEARCH.noClub.label, group: 'find' };
+  if (key === 'new-developments') return { key, href: '/new-developments/', label: 'New developments', group: 'find' };
+  const life = SEARCH.lifestyle.find((c) => c.slug === key);
+  if (life) return { key, href: `/search/${key}/`, label: life.label, group: 'lifestyle' };
+  const mem = SEARCH.membership.find((c) => c.slug === key);
+  if (mem) return { key, href: `/search/${key}/`, label: mem.label, group: 'membership' };
+  return null;
+}
+const MENU = (SEARCH.menu || ['all']).map(menuEntry).filter(Boolean);
+// Only categories in the menu get pages, tags and sitemap entries. The rest wait until they're added back.
+const LIVE = FEATURES.filter((f) => (SEARCH.menu || []).includes(f.slug));
+const isLive = (slug) => LIVE.some((f) => f.slug === slug);
+
+// 6 or fewer items: one simple list. 7 or more: three labeled columns.
+function searchMenu() {
+  const link = (e) => `<li><a${e.cls ? ` class="${e.cls}"` : ''} href="${e.href}">${esc(e.label)}</a></li>`;
+  if (MENU.length <= 6) {
+    return `<div class="sub simple" id="sub-search"><ul>
+            ${MENU.map(link).join('\n            ')}
+          </ul></div>`;
+  }
+  const groups = [['find', 'Find a home'], ['lifestyle', 'By lifestyle'], ['membership', 'By membership']]
+    .map(([g, h]) => [h, MENU.filter((e) => e.group === g)]).filter(([, items]) => items.length);
+  return `<div class="sub mega" id="sub-search">
+${groups.map(([h, items]) => `          <div class="mega-col"><p class="mega-h">${h}</p><ul>
+            ${items.map(link).join('\n            ')}
+          </ul></div>`).join('\n')}
+        </div>`;
+}
+
 function searchNav(active) {
-  const items = [['/search/', 'All homes', 'all'], ['/search/no-club/', 'Without a club', 'no-club'], ...FEATURES.map((c) => [`/search/${c.slug}/`, c.label, c.slug])];
-  return `<nav class="chip-nav" aria-label="Search by">${items.map(([href, label, key]) => `<a href="${href}"${key === active ? ' aria-current="page"' : ''}>${esc(label)}</a>`).join('')}</nav>`;
+  // Same items as the Search menu, so the two always match.
+  return `<nav class="chip-nav" aria-label="Search by">${MENU.map((e) => `<a href="${e.href}"${e.key === active ? ' aria-current="page"' : ''}>${esc(e.key === 'all' ? 'All homes' : e.label)}</a>`).join('')}</nav>`;
 }
 
 function idxBlock(embed, what) {
@@ -776,7 +797,7 @@ function noClubPage() {
     description: `${n.intro} Palm Beach County homes for sale.`,
     hero: pageHero('Search', esc(n.title), esc(n.intro)),
     active: 'no-club',
-    listHead: `<div class="sec-head"><div><p class="eyebrow">${list.length ? `${list.length} communit${list.length === 1 ? 'y' : 'ies'}` : 'Communities'}</p><h2 style="margin-top:12px">Communities</h2></div><p>Not sure you want a club? <a class="text-link" href="/search/optional-membership/">See clubs with optional membership →</a></p></div>`,
+    listHead: `<div class="sec-head"><div><p class="eyebrow">${list.length ? `${list.length} communit${list.length === 1 ? 'y' : 'ies'}` : 'Communities'}</p><h2 style="margin-top:12px">Communities</h2></div>${isLive('optional-membership') ? '<p>Not sure you want a club? <a class="text-link" href="/search/optional-membership/">See clubs with optional membership →</a></p>' : ''}</div>`,
     list: list.length ? mixedCards(list) : emptyList("We're putting this list together now."),
     idx: n.idx, idxWhat: 'communities without a club',
   });
@@ -833,7 +854,7 @@ ${matchSection(null)}`,
 }
 
 function tagRow(c) {
-  const tags = FEATURES.filter((f) => (c.tags || []).includes(f.tag));
+  const tags = LIVE.filter((f) => (c.tags || []).includes(f.tag));
   return tags.length ? `      <div class="tag-row">${tags.map((f) => `<a class="tag" href="/search/${f.slug}/">${esc(f.label)}</a>`).join('')}</div>` : '';
 }
 
@@ -865,12 +886,12 @@ write('new-developments/index.html', developmentsIndex());
 for (const dev of developments) write(`new-developments/${dev.slug}/index.html`, clubPage(dev, DEVS));
 write('search/index.html', searchAllPage());
 write('search/no-club/index.html', noClubPage());
-for (const cat of SEARCH.lifestyle) write(`search/${cat.slug}/index.html`, featurePage(cat, false));
-for (const cat of SEARCH.membership) write(`search/${cat.slug}/index.html`, featurePage(cat, true));
+for (const cat of SEARCH.lifestyle.filter((c) => isLive(c.slug))) write(`search/${cat.slug}/index.html`, featurePage(cat, false));
+for (const cat of SEARCH.membership.filter((c) => isLive(c.slug))) write(`search/${cat.slug}/index.html`, featurePage(cat, true));
 for (const c of communities) write(`communities/${c.slug}/index.html`, communityPage(c));
 write('thanks/index.html', thanksPage());
 const SITE = 'https://countryclubdudes.com';
-const urls = ['/', '/clubs/', '/search/', '/search/no-club/', ...FEATURES.map((c) => `/search/${c.slug}/`), ...communities.map((c) => `/communities/${c.slug}/`), ...clubs.map((c) => `/clubs/${c.slug}/`), '/new-developments/', ...developments.map((d) => `/new-developments/${d.slug}/`)];
+const urls = ['/', '/clubs/', '/search/', '/search/no-club/', ...LIVE.map((c) => `/search/${c.slug}/`), ...communities.map((c) => `/communities/${c.slug}/`), ...clubs.map((c) => `/clubs/${c.slug}/`), '/new-developments/', ...developments.map((d) => `/new-developments/${d.slug}/`)];
 write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${SITE}${u}</loc></url>`).join('\n')}\n</urlset>\n`);
 write('robots.txt', `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
 console.log(`Built ${clubs.length} club pages and ${developments.length} new development pages into dist/`);
