@@ -156,48 +156,14 @@ async function main() {
   }
 
   if (process.env.CONTEXT === 'deploy-preview' && idxID && process.env.IDX_PROBE !== '0') {
-    // Find which query field IDX uses for subdivision: create small test links and count results.
-    const kp = byName().get('ccd-kings-point');
-    if (kp) log(`KP stored query: ${kp.queryString}`);
-    const tests = [
-      ['city', { pt: 'sfr', 'city[]': '4792' }],
-      ['a_subdivision', { pt: 'sfr', 'a_subdivision[]': 'KINGS POINT' }],
-      ['aw_subdivision', { pt: 'sfr', 'aw_subdivision[]': 'KINGS POINT' }],
-      ['subdivision', { pt: 'sfr', 'subdivision[]': 'KINGS POINT' }],
-      ['sub', { pt: 'sfr', 'sub[]': 'KINGS POINT' }],
-      ['a_subdivisionName', { pt: 'sfr', 'a_subdivisionName[]': 'KINGS POINT' }],
-    ];
-    const have = byName();
-    for (const [label, qv] of tests) {
-      const linkName = `ccd-test-${label.toLowerCase().replace(/[^a-z]/g, '')}`;
-      try {
-        let link = have.get(linkName);
-        if (!link) {
-          const body = new URLSearchParams({ linkName, pageTitle: 'Test', linkTitle: 'Test' });
-          body.set('queryString[idxID]', idxID);
-          for (const [k, v] of Object.entries(qv)) body.set(`queryString[${k}]`, v);
-          const r = await api('PUT', 'clients/savedlinks', body.toString());
-          link = { id: r && r.newID };
-        }
-        const res = asList(await api('GET', `clients/savedlinks/${link.id}/results`));
-        const subsSeen = [...new Set(res.map((x) => x.subdivision).filter(Boolean))].slice(0, 5).join(' ; ');
-        log(`TEST ${label}: ${res.length} [${subsSeen}]`);
-        try { await api('DELETE', `clients/savedlinks/${link.id}`); log(`TEST ${label}: deleted`); } catch (e) { log(`TEST ${label}: delete ${e.message}`); }
-      } catch (e) { log(`TEST ${label}: ${e.message}`); }
-    }
-  }
-
-  if (false) {
-    // One-off lookups for names still to be matched (field values only, no listing data).
+    // One-off: city IDs for every town we cover (one call), so the hero search can filter by town.
     try {
-      const subs = asList(await api('GET', `mls/searchfieldvalues/${idxID}?mlsPtID=1&name=subdivision`)).map(String);
-      for (const [label, re] of [['oaks', /^(THE )?OAKS( AT| OF)? ?(BOCA)?/i], ['preserve', /^(THE )?PRESERVE( AT| OF)? ?(BOCA)?/i], ['orchard', /ORCHARD/i], ['broken sound', /BROKEN SOUND|BOCA RATON.*(COUNTRY|GOLF)/i], ['delaire', /DELAIRE/i], ['century boca', /CENTURY VILLAGE/i]]) {
-        const hits = subs.filter((v) => re.test(v));
-        log(`LOOKUP ${label} ${hits.length}: ${hits.slice(0, 80).join(' ; ')}`);
+      const seen = new Map();
+      for (const c of asList(await api('GET', `mls/cities/${idxID}`))) {
+        if (/^(boca raton|delray beach|boynton beach|west palm beach|jupiter|palm beach gardens|wellington|tequesta|lake worth.*|westlake|highland beach|palm beach|north palm beach|juno beach|lantana|loxahatchee.*|greenacres|royal palm beach)$/i.test(c.cityName) && !seen.has(c.cityID)) seen.set(c.cityID, c.cityName);
       }
-      const cities = asList(await api('GET', `mls/cities/${idxID}`));
-      log(`CITIES ${cities.length}: ${cities.filter((c) => /boca|delray|boynton|jupiter|palm beach gardens|wellington|tequesta|west palm|lake worth|westlake/i.test(JSON.stringify(c))).map((c) => JSON.stringify(c)).join(' ; ').slice(0, 2500)}`);
-    } catch (e) { log(`Lookups: ${e.message}`); }
+      log(`CITYIDS ${[...seen].map(([id, n]) => `${n}=${id}`).join('; ')}`);
+    } catch (e) { log(`Cities: ${e.message}`); }
   }
 
   const links = byName();
