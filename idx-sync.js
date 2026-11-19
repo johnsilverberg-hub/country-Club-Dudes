@@ -100,8 +100,7 @@ async function main() {
   const system = asList(await api('GET', 'clients/systemlinks'));
   const results = system.find((s) => /results/i.test(`${s.name} ${s.url}`)) || {};
   const search = system.find((s) => /^(basic|advanced)?\s*search$/i.test(String(s.name || ''))) || {};
-  log(`Connected. System links: ${system.map((s) => `${s.name} <${s.url}>`).join(', ') || 'none'}`);
-  try { const info = asList(await api('GET', 'clients/accountinfo'))[0] || {}; log(`Account fields: ${Object.keys(info).join(', ')}`); } catch (e) { log(`Account info: ${e.message}`); }
+  log(`Connected. Results page: ${results.url || 'none'}`);
 
   let idxID = process.env.IDX_ID;
   let disclaimer = '';
@@ -109,61 +108,69 @@ async function main() {
     const mls = asList(await api('GET', 'mls/approvedmls'));
     if (!idxID && mls.length) idxID = mls[0].id || mls[0].idxID;
     log(`Approved MLS: ${mls.map((m) => `${m.name || ''} (${m.id || m.idxID})`).join(', ')}`);
-    if (idxID) {
-      const d = asList(await api('GET', `mls/disclaimer/${idxID}`))[0] || {};
-      disclaimer = String(d.disclaimer || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-    }
   } catch (e) { log(`MLS info: ${e.message}`); }
 
-  if (process.env.CONTEXT === 'deploy-preview' && idxID) {
-    // Field discovery for setting up saved links and the hero search (field names only).
-    const probe = async (ep, fn) => { try { log(`${ep}: ${fn(await api('GET', ep))}`); } catch (e) { log(`${ep}: ${e.message}`); } };
-    await probe(`mls/searchfields/${idxID}`, (r) => asList(r).filter((f) => /subdiv|city|zip|hopa|gate|water|commun|area|develop/i.test(JSON.stringify(f))).map((f) => JSON.stringify(f)).join(' | ').slice(0, 2500));
-    await probe(`mls/propertytypes/${idxID}`, (r) => JSON.stringify(r).slice(0, 800));
-    await probe(`mls/disclaimer?idxID=${idxID}`, (r) => JSON.stringify(r).slice(0, 300));
-    let subs = [];
-    try { subs = asList(await api('GET', `mls/searchfieldvalues/${idxID}?mlsPtID=1&name=subdivision`)).map(String); log(`Subdivision values: ${subs.length}`); }
-    catch (e) { log(`searchfieldvalues: ${e.message}`); }
-    const core = (n) => n.toUpperCase().replace(/&/g, 'AND').replace(/\b(THE|COUNTRY CLUB|GOLF AND COUNTRY CLUB|GOLF CLUB|BEACH AND COUNTRY CLUB|YACHT AND COUNTRY CLUB|CLUB)\b/g, '').replace(/[^A-Z0-9 ]/g, '').replace(/\s+/g, ' ').trim();
-    for (const e of entries) {
-      const k = core(e.name);
-      const hits = subs.filter((v) => v.toUpperCase().replace(/[^A-Z0-9 ]/g, '').includes(k));
-      log(`SUB ${e.slug} [${k}] ${hits.length}: ${hits.slice(0, 60).join(' ; ')}`);
-    }
-    if (false) try {
-      const q = new URLSearchParams({ linkName: 'ccd-boca-west', pageTitle: 'Homes for sale in Boca West', linkTitle: 'Homes for sale in Boca West' });
-      q.set('queryString[idxID]', idxID); q.set('queryString[pt]', '1'); q.append('queryString[a_subdivision][]', 'BOCA WEST');
-      log(`PUT test: ${JSON.stringify(await api('PUT', 'clients/savedlinks', q.toString())).slice(0, 300)}`);
-    } catch (e) { log(`PUT test: ${e.message}`); }
+  // MLS subdivision names per club / community (src/idx-subdivisions.json), kept in sync with
+  // one IDX saved link each, named "ccd-<slug>". Links are only written from deploy previews
+  // (or with IDX_CREATE_LINKS=1), so production builds only read.
+  const SUBS = JSON.parse(fs.readFileSync(path.join(SRC, 'idx-subdivisions.json'), 'utf8'));
+  const query = (names) => {
+    const q = new URLSearchParams();
+    q.set('idxID', idxID);
+    q.set('pt', '1');
+    names.forEach((n, i) => q.set(`a_subdivision[${i}]`, n));
+    return q;
+  };
+  const wanted = [];
+  for (const e of entries) {
+    const names = SUBS[e.slug];
+    if (Array.isArray(names) && names.length) wanted.push({ linkName: `ccd-${e.slug}`, title: `Homes for sale in ${e.name}`, names });
   }
-  let saved = asList(await api('GET', 'clients/savedlinks'));
-  log(`Existing saved links (${saved.length}): ${saved.slice(0, 30).map((l) => l.linkName).join(', ')}`);
-  if (saved[0]) log(`Saved link fields: ${Object.keys(saved[0]).join(', ')}; first query: ${JSON.stringify(saved[0].queryString || {})}`);
-  const byName = () => new Map(saved.map((s) => [String(s.linkName || '').toLowerCase(), s]));
+  const clubSlugs = new Set(JSON.parse(fs.readFileSync(path.join(SRC, 'clubs.json'), 'utf8')).map((c) => c.slug));
+  const union = (fn) => [...new Set(entries.filter(fn).flatMap((e) => SUBS[e.slug] || []))];
+  wanted.push({ linkName: 'ccd-search-club', title: 'Homes for sale in club communities', names: union((e) => clubSlugs.has(e.slug)) });
+  wanted.push({ linkName: 'ccd-search-noclub', title: 'Homes for sale in communities without a club', names: union((e) => !clubSlugs.has(e.slug)) });
 
-  if (process.env.IDX_CREATE_LINKS === '1' && idxID) {
+  let saved = asList(await api('GET', 'clients/savedlinks'));
+  const byName = () => new Map(saved.map((s) => [String(s.linkName || '').toLowerCase(), s]));
+  const canWrite = (process.env.CONTEXT === 'deploy-preview' || process.env.IDX_CREATE_LINKS === '1') && idxID;
+
+  if (canWrite) {
     const have = byName();
-    for (const e of entries) {
-      const linkName = `ccd-${e.slug}`;
-      if (have.has(linkName)) continue;
-      const q = new URLSearchParams();
-      q.set('linkName', linkName);
-      q.set('pageTitle', `Homes for sale in ${e.name}`);
-      q.set('linkTitle', `Homes for sale in ${e.name}`);
-      q.set('queryString[idxID]', idxID);
-      q.set('queryString[pt]', 'sfr');
-      q.append('queryString[a_subdivisionName][]', e.subdivision || e.name);
-      if (e.town) q.set('queryString[city][]', e.town);
-      try { await api('PUT', 'clients/savedlinks', q.toString()); log(`Created saved link ${linkName}`); }
-      catch (err) { log(`Could not create ${linkName}: ${err.message}`); }
+    let made = 0, updated = 0;
+    for (const w of wanted) {
+      const qs = query(w.names);
+      const body = new URLSearchParams({ linkName: w.linkName, pageTitle: w.title, linkTitle: w.title });
+      for (const [k, v] of qs) body.set(`queryString[${k}]`, v);
+      const cur = have.get(w.linkName);
+      const want = `page=listings&${qs.toString()}`;
+      try {
+        if (!cur) { await api('PUT', 'clients/savedlinks', body.toString()); made++; }
+        else if (String(cur.queryString) !== want) { await api('POST', `clients/savedlinks/${cur.id}`, body.toString()); updated++; }
+      } catch (err) { log(`Saved link ${w.linkName}: ${err.message}`); }
     }
+    log(`Saved links created: ${made}, updated: ${updated}, wanted: ${wanted.length}`);
     saved = asList(await api('GET', 'clients/savedlinks'));
+  }
+
+  if (process.env.CONTEXT === 'deploy-preview' && idxID) {
+    // One-off lookups for names still to be matched (field values only, no listing data).
+    try {
+      const subs = asList(await api('GET', `mls/searchfieldvalues/${idxID}?mlsPtID=1&name=subdivision`)).map(String);
+      for (const [label, re] of [['oaks', /^(THE )?OAKS( AT| OF)? ?(BOCA)?/i], ['preserve', /^(THE )?PRESERVE( AT| OF)? ?(BOCA)?/i], ['orchard', /ORCHARD/i], ['broken sound', /BROKEN SOUND|BOCA RATON.*(COUNTRY|GOLF)/i], ['delaire', /DELAIRE/i], ['century boca', /CENTURY VILLAGE/i]]) {
+        const hits = subs.filter((v) => re.test(v));
+        log(`LOOKUP ${label} ${hits.length}: ${hits.slice(0, 80).join(' ; ')}`);
+      }
+      const cities = asList(await api('GET', `mls/cities/${idxID}`));
+      log(`CITIES ${cities.length}: ${cities.filter((c) => /boca|delray|boynton|jupiter|palm beach gardens|wellington|tequesta|west palm|lake worth|westlake/i.test(JSON.stringify(c))).map((c) => JSON.stringify(c)).join(' ; ').slice(0, 2500)}`);
+    } catch (e) { log(`Lookups: ${e.message}`); }
   }
 
   const links = byName();
   const config = { resultsUrl: results.url || '', searchUrl: search.url || '', links: {} };
   const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'America/New_York' });
   let filled = 0;
+  const counts = [];
 
   for (const e of entries) {
     const link = links.get(`ccd-${e.slug}`);
@@ -171,7 +178,7 @@ async function main() {
     config.links[e.slug] = link.url;
     try {
       const raw = asList(await api('GET', `clients/savedlinks/${link.id}/results`));
-      log(`Results ${e.slug}: ${raw.length}`);
+      counts.push(`${e.slug}=${raw.length}`);
       if (!filled && raw[0]) log(`Listing fields: ${Object.keys(raw[0]).join(', ')} | sample subdivision/city/status/price/office: ${['subdivision', 'cityName', 'propStatus', 'listingPrice', 'listingOfficeName', 'propSubType'].map((k) => raw[0][k]).join(' / ')}`);
       const items = raw.map(card).filter((c) => c.price && c.address);
       fs.writeFileSync(path.join(OUT_DIR, `${e.slug}.json`), JSON.stringify({
@@ -186,6 +193,7 @@ async function main() {
     if (l) config.links[`search-${key}`] = l.url;
   }
 
+  log(`RESULTS ${counts.join(' ')}`);
   fs.writeFileSync(path.join(SRC, 'idx.json'), JSON.stringify(config, null, 2));
   log(`Saved links found: ${saved.length}. Listing files written: ${filled} of ${entries.length}.`);
 }

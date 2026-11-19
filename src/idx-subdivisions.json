@@ -1,0 +1,799 @@
+{
+ "_howto": "MLS subdivision names (exact, as BeachesMLS spells them) used to build each club or community's IDX saved link \"ccd-<slug>\". Edit a list, then run a deploy preview with IDX_RESET_LINKS=1 to rebuild links.",
+ "old-palm": [
+  "OLD PALM 2",
+  "OLD PALM 3",
+  "OLD PALM PL 2"
+ ],
+ "boca-pointe": [
+  "EL VIENTO AT BOCA POINTE CONDO NOS I AND II DECLS",
+  "LA CORNICHE AT BOCA POINTE",
+  "LA MIRADA AT BOCA POINTE",
+  "LA MIRADA AT BOCA POINTE CONDOS",
+  "LA PAZ AT BOCA POINTE",
+  "MERIDIANA AT BOCA POINTE",
+  "MONTEGO BAY AT BOCA POINTE",
+  "MONTEGO BAY AT BOCA POINTE CONDO",
+  "PALMS AT BOCA POINTE",
+  "PANACHE AT BOCA POINTE",
+  "PANACHE AT BOCA POINTE CO",
+  "PANACHE AT BOCA POINTE CONDO",
+  "PLUM AT BOCA POINTE CONDO",
+  "PLUM AT BOCA POINTE CONDOS ONE THRU 15 FILED IN OR",
+  "PROMENADE AT BOCA POINTE",
+  "PROMENADE AT BOCA POINTE CONDOS 1,2 AND 3 IN OR413",
+  "Palms at Boca Pointe",
+  "Palomar at Boca Pointe",
+  "Plum At Boca Pointe",
+  "Promenade at Boca Pointe",
+  "REGENCY AT BOCA POINTE CONDO",
+  "SOUTHWINDS AT BOCA POINTE",
+  "SOUTHWINDS AT BOCA POINTE CONDO",
+  "VILLA FLORA AT BOCA POINTE"
+ ],
+ "bocaire": [
+  "BOCAIRE GOLF CLUB",
+  "BOCAIRE GOLF CLUB 1",
+  "BOCAIRE GOLF CLUB 2",
+  "BOCAIRE GOLF CLUB 3",
+  "BOCAIRE GOLF CLUB NO 2",
+  "BOCAIRE GOLF CLUB NO 7 PUD",
+  "Bocaire Country Club"
+ ],
+ "boca-grove": [
+  "BOCA GROVE",
+  "BOCA GROVE PLANTATION",
+  "CHATEAU AT BOCA GROVE PLA",
+  "CHATEAU AT BOCA GROVE PLANTATION CONDO"
+ ],
+ "stonebridge": [
+  "STONEBRIDGE 1",
+  "STONEBRIDGE 2",
+  "STONEBRIDGE COUNTRY CLUB",
+  "STONEBRIDGE ESTATES 1 ADD",
+  "STONEBRIDGE GARDENS CONDO",
+  "STONEBRIDGE GARDENS SECTI",
+  "STONEBRIDGE GARDENS SECTION",
+  "STONEBRIDGE GARDENS SECTION ONE",
+  "STONEBRIDGE PHASE 1",
+  "STONEBRIDGE RESERVE CONDOM",
+  "STONEBRIDGE SUB PHASE II",
+  "Stonebridge Country Club",
+  "Stonebridge Gardens"
+ ],
+ "woodfield": [
+  "BRIARCLIFF AT WOODFIELD COUNTRY CLUB",
+  "CLUBSIDE AT WOODFIELD COUNTRY CLUB",
+  "KENSINGTON AT WOODFIELD COUNTRY CLUB",
+  "MAYFAIR AT WOODFIELD COUNTRY CLUB",
+  "THE HAMPTONS at WOODFIELD COUNTRY CLUB",
+  "The Hamptons in Woodfield Country Club",
+  "WOODFIELD COUNTRY CLUB - CARLTON ESTATES",
+  "WOODFIELD PD PHASE 1",
+  "WOODFIELD PD PHASE 2",
+  "WOODFIELD PD PHASE 3",
+  "WOODFIELD PD PHASE 4",
+  "Woodfield Country Club"
+ ],
+ "royal-palm": [
+  "ROYAL PALM YACHT & COUNTRY CLUB",
+  "Royal Palm Yacht & Country Club"
+ ],
+ "frenchmans-creek": [
+  "FRENCHMANS CREEK",
+  "FRENCHMANS CREEK PAR B",
+  "FRENCHMANS CREEK PAR C-2",
+  "FRENCHMANS CREEK PAR E-5",
+  "FRENCHMANS CREEK PAR G-4",
+  "Frenchmans Creek"
+ ],
+ "st-andrews": [
+  "ST ANDREWS COUNTRY CLUB",
+  "ST ANDREWS COUNTRY CLUB 10",
+  "ST ANDREWS COUNTRY CLUB 14",
+  "ST ANDREWS COUNTRY CLUB 2",
+  "ST ANDREWS COUNTRY CLUB 4",
+  "St Andrews Country Club"
+ ],
+ "boca-woods": [
+  "BOCA WOODS",
+  "BOCA WOODS COUNTRY CLUB",
+  "BOCA WOODS COUNTRY CLUB 4",
+  "BOCA WOODS COUNTRY CLUB 6",
+  "BOCA WOODS COUNTRY CLUB 8",
+  "BOCA WOODS COUNTRY CLUB PH 1",
+  "BOCA WOODS COUNTRY CLUB PH 2",
+  "BOCA WOODS COUNTRY CLUB PH 3A",
+  "BOCA WOODS COUNTRY CLUB PH 3B",
+  "Boca Woods Country Club",
+  "Boca Woods Country Club 10"
+ ],
+ "boca-greens": [
+  "BOCA GREENS",
+  "BOCA GREENS 1",
+  "BOCA GREENS 2",
+  "BOCA GREENS 3",
+  "BOCA GREENS 4",
+  "BOCA GREENS 5",
+  "BOCA GREENS 6",
+  "BOCA GREENS 7",
+  "BOCA GREENS 8"
+ ],
+ "boca-west": [
+  "BOCA WEST COUNTRY CLUB",
+  "CEDARWOOD OF BOCA WEST",
+  "FAIRWAY OAKS AT BOCA WEST"
+ ],
+ "broken-sound": [
+  "BROKEN SOUND PAR 13-B",
+  "WILLOW GREENS AT BROKEN SOUND"
+ ],
+ "polo-club": [
+  "CATALINA / POLO CLUB",
+  "COQUINA / POLO CLUB",
+  "CYPRESS ISLE AT POLO CLUB CONDO",
+  "HOLLOWS / POLO CLUB",
+  "KNIGHTSBRIDGE / POLO CLUB",
+  "LAURELS / POLO CLUB",
+  "MANCHESTER / POLO CLUB",
+  "POLO CLUB / LAURELS",
+  "POLO CLUB / VILLE DE CAPRI",
+  "POLO CLUB ESTATES",
+  "POLO CLUB ESTATES 3",
+  "ST ANDREWS AT POLO CLUB C",
+  "ST ANDREWS AT POLO CLUB CONDO",
+  "STEEPLECHASE / POLO CLUB",
+  "VILLE DE CAPRI  / POLO CLUB",
+  "VILLE DE CAPRI / POLO CLUB",
+  "WINDSOR PARKE / POLO CLUB"
+ ],
+ "boca-lago": [
+  "BOCA LAGO",
+  "BOCA LAGO VISTAS",
+  "Boca Lago Fairways",
+  "CYPRESSES OF BOCA LAGO",
+  "CYPRESSES OF BOCA LAGO CO",
+  "CYPRESSES OF BOCA LAGO CONDO",
+  "FAIRWAYS OF BOCA LAGO",
+  "FAIRWAYS OF BOCA LAGO CON",
+  "FAIRWAYS OF BOCA LAGO CONDO",
+  "GLADES OF BOCA LAGO",
+  "GLADES OF BOCA LAGO CONDO",
+  "GREENS OF BOCA LAGO CONDO",
+  "HORIZONS OF BOCA LAGO CON",
+  "HORIZONS OF BOCA LAGO CONDO",
+  "PALMS OF BOCA LAGO CONDO",
+  "PINES OF BOCA LAGO",
+  "PINES OF BOCA LAGO CONDO",
+  "VISTAS OF BOCA LAGO CONDO"
+ ],
+ "delaire": [
+  "Delaire Country Club"
+ ],
+ "addison-reserve": [
+  "ADDISON RESERVE",
+  "ADDISON RESERVE PARS 1 AND 2",
+  "ADDISON RESERVE PARS 7 AND 8",
+  "Addison Reserve",
+  "Addison Reserve Country Club - Bella Verde"
+ ],
+ "gleneagles": [
+  "GLENEAGLES 2",
+  "GLENEAGLES 6",
+  "GLENEAGLES 9",
+  "GLENEAGLES CONDO I",
+  "GLENEAGLES CONDO III",
+  "GLENEAGLES CONDO IV",
+  "GLENEAGLES CONDO V",
+  "GLENEAGLES CONDO VI"
+ ],
+ "wycliffe": [
+  "ANDOVER AT WYCLIFFE CONDO",
+  "Andover at Wycliffe Golf and Country Club",
+  "Bayclay at Wycliffe Golf and Country Club",
+  "WYCLIFFE - Huntington",
+  "WYCLIFFE PAR B",
+  "WYCLIFFE PAR C",
+  "WYCLIFFE TR C",
+  "WYCLIFFE TR E",
+  "WYCLIFFE TR F",
+  "WYCLIFFE TR G",
+  "WYCLIFFE TR H",
+  "WYCLIFFE TR I",
+  "WYCLIFFE TR J",
+  "WYCLIFFE TR K",
+  "WYCLIFFE TR N",
+  "Wycliffe",
+  "Wycliffe Golf & Country Club",
+  "Wycliffe- Andover",
+  "Wycliffe- Cambridge"
+ ],
+ "aberdeen": [
+  "ABERDEEN",
+  "ABERDEEN / OXFORD PLACE",
+  "ABERDEEN / STRATFORD",
+  "ABERDEEN 12",
+  "ABERDEEN 13",
+  "ABERDEEN 14",
+  "ABERDEEN 15",
+  "ABERDEEN 16",
+  "ABERDEEN 17",
+  "ABERDEEN 18",
+  "ABERDEEN 22",
+  "ABERDEEN 24",
+  "ABERDEEN 25",
+  "ABERDEEN 27",
+  "ABERDEEN 3",
+  "ABERDEEN 4",
+  "ABERDEEN 7",
+  "ABERDEEN 8",
+  "ABERDEEN COUNTRY CLUB",
+  "ABERDEEN EAST / HARBOURS",
+  "ABERDEEN ESTATES",
+  "ABERDEEN PL 4",
+  "ABERDEEN/ Stratford CONDO",
+  "Aberdeen",
+  "Aberdeen Cambridge",
+  "Aberdeen Hamptons",
+  "Aberdeen/ Addison Green",
+  "Cambridge at Aberdeen",
+  "HARBOURS AT ABERDEEN CONDO",
+  "Isles of Aberdeen / ABERDEEN 22",
+  "STRATFORD AT ABERDEEN CON",
+  "Stratford at Aberdeen",
+  "The Moorings at Aberdeen East"
+ ],
+ "indian-spring": [
+  "BRIARWOOD AT INDIAN SPRINGS",
+  "BRIARWOOD AT INDIAN SPRINGS CONDO",
+  "GREENSPOINTE   INDIAN SPRING",
+  "INDIAN SPRING",
+  "INDIAN SPRING 1",
+  "INDIAN SPRING 7",
+  "INDIAN SPRING 9",
+  "INDIAN SPRING HAMPTON FAIRWAYS",
+  "INDIAN SPRINGS",
+  "Indian Spring",
+  "Indian Spring - The Mews",
+  "Indian Springs",
+  "VILLAS OF MONTEREY AT INDIAN SPRING"
+ ],
+ "hunters-run": [
+  "EASTGATE AT HUNTERS RUN CONDO",
+  "EASTGATE II AT HUNTERS RUN CONDO",
+  "Eastgate II at Hunters Run",
+  "GLENS WEST AT HUNTERS RUN",
+  "HUNTER'S RUN",
+  "HUNTERS RUN",
+  "Hunters Run 154-29 B",
+  "SOUTHPORT AT HUNTERS RUN CONDO",
+  "STRATFORD AT HUNTERS RUN",
+  "STRATFORD AT HUNTERS RUN CONDO",
+  "WESTGATE AT HUNTERS RUN CONDO"
+ ],
+ "bear-lakes": [
+  "BEAR LAKES ESTATES NORTH",
+  "Villas of Bear Lakes  Estates North"
+ ],
+ "the-bears-club": [
+  "BEARS CLUB",
+  "BEARS CLUB ADDN PUD",
+  "BEARS CLUB GOLF VILLAS CONDO",
+  "BEARS CLUB PUD",
+  "Bears Club Repl PUD"
+ ],
+ "eastpointe": [
+  "EASTPOINTE",
+  "EASTPOINTE COUNTRY CLUB",
+  "EASTPOINTE COUNTRY CLUB 4",
+  "EASTPOINTE COUNTRY CLUB 6",
+  "EASTPOINTE COUNTRY CLUB 7",
+  "EASTPOINTE COUNTRY CLUB 7A",
+  "EASTPOINTE COUNTRY CLUB 7C",
+  "EASTPOINTE COUNTRY CLUB 8",
+  "EASTPOINTE SUB 10-A",
+  "EASTPOINTE SUB 12 B",
+  "EASTPOINTE SUB 12-A",
+  "EASTPOINTE SUB 13A",
+  "EASTPOINTE SUB PL 9-A IN PB49P3 LT 22",
+  "Eastpointe",
+  "Eastpointe Country Club",
+  "Eastpointe Country Club 0",
+  "Eastpointe Country Club PL 8",
+  "The Reserve at Eastpointe"
+ ],
+ "ibis": [
+  "IBIS -  MONTE VERDE",
+  "IBIS GOLF & COUNTRY CLUB",
+  "IBIS GOLF AND COUNTRY CLUB - Hawk's Landing",
+  "IBIS GOLF AND COUNTRY CLUB - Heritage Club",
+  "IBIS GOLF AND COUNTRY CLUB - Legend Club",
+  "IBIS GOLF AND COUNTRY CLUB - Sandpiper Cove",
+  "IBIS GOLF AND COUNTRY CLUB - Terra Lago",
+  "IBIS GOLF AND COUNTRY CLUB - The Preserve",
+  "IBIS GOLF AND COUNTRY CLUB - The Woodlands",
+  "IBIS GOLF AND COUNTRY CLUB 11",
+  "IBIS GOLF AND COUNTRY CLUB 12A",
+  "IBIS GOLF AND COUNTRY CLUB 16",
+  "IBIS GOLF AND COUNTRY CLUB 18",
+  "IBIS GOLF AND COUNTRY CLUB 19",
+  "IBIS GOLF AND COUNTRY CLUB 22",
+  "IBIS GOLF AND COUNTRY CLUB 24",
+  "IBIS GOLF AND COUNTRY CLUB 29",
+  "IBIS GOLF AND COUNTRY CLUB 30",
+  "IBIS GOLF AND COUNTRY CLUB 31",
+  "IBIS GOLF AND COUNTRY CLUB 33",
+  "IBIS GOLF AND COUNTRY CLUB 34",
+  "IBIS GOLF AND COUNTRY CLUB 4",
+  "IBIS GOLF AND COUNTRY CLUB 5",
+  "IBIS GOLF AND COUNTRY CLUB 5 - OSPREY CREEK",
+  "IBIS GOLF AND COUNTRY CLUB 6",
+  "IBIS GOLF AND COUNTRY CLUB 7",
+  "Ibis - ORCHID RESERVE",
+  "Ibis - Orchid Reserve",
+  "Ibis - The Grande",
+  "Ibis Gof & Country Club",
+  "Ibis Golf & Country Club - Orchid Hammock",
+  "Ibis Golf & Country Club - Quail Meadow",
+  "Ibis Golf & Country Club - The Woodlands",
+  "Ibis Golf and Country Club - Quail Meadow Way",
+  "Ibis-Orchid Reserve",
+  "ORCHID HAMMOCK AT IBIS GOLF AND COUNTRY CLUB CONDO",
+  "ORCHID RESERVE - IBIS"
+ ],
+ "jonathans-landing": [
+  "ANCHORAGE EAST AT JONATHANS LANDING CONDO",
+  "ANCHORAGE NORTH AT JONATHANS LANDING CONDO",
+  "BARROW ISLAND AT JONATHANS LANDING",
+  "Baytowne at Jonathans Landing",
+  "CAPE POINTE OF JONATHANS LANDING",
+  "CROSSWINDS AT JONATHANS LANDING",
+  "Casseekey Island At Jonathans Landing",
+  "GREENS CAY OF JONATHANS LANDING",
+  "HARBOUR AT JONATHANS LANDING",
+  "JONATHANS LANDING-PASSAGE ISLANDS 5",
+  "LONGSHORE AT JONATHANS LANDING",
+  "RIVERWIND AT JONATHANS LANDING",
+  "SHEARWATER AT JONATHANS LANDING",
+  "SOUTHPORTE ONE AT JONATHANS LANDING CONDO",
+  "TRADERS CROSSING AT JONATHANS LANDING",
+  "Traders Crossing at Jonathan's Landing",
+  "WATERBEND AT JONATHANS LANDING",
+  "WATERBEND AT JONATHANS LANDING CONDO",
+  "WEST BAY AT JONATHANS LANDING CONDO",
+  "WINDWARD AT JONATHANS LANDING",
+  "Waterbend at Jonathans Landing",
+  "Windward At Jonathans Landing"
+ ],
+ "ballenisles": [
+  "BALLENISLES",
+  "BALLENISLES POD 16B",
+  "BALLENISLES POD 24",
+  "BallenIsles",
+  "Ballenisles",
+  "SABAL POINTE AT BALLENISLES"
+ ],
+ "mirasol": [
+  "MIRABELLA AT MIRASOL",
+  "MIRABELLA AT MIRASOL A",
+  "MIRABELLA AT MIRASOL PL C",
+  "MIRASOL",
+  "MIRASOL PAR 10",
+  "MIRASOL PAR 14",
+  "MIRASOL PAR 16",
+  "MIRASOL PAR 20",
+  "MIRASOL PAR 23",
+  "MIRASOL PAR F",
+  "MIRASOL PARS H AND I",
+  "Mirasol"
+ ],
+ "frenchmans-reserve": [
+  "FRENCHMANS RESERVE",
+  "FRENCHMANS RESERVE PCD A",
+  "FRENCHMANS RESERVE PCD B",
+  "FRENCHMANS RESERVE PCD D",
+  "FRENCHMANS RESERVE PCD E",
+  "FRENCHMANS RESERVE PCD F",
+  "FRENCHMANS RESERVE PCD G",
+  "FRENCHMANS RESERVE POD C",
+  "Frenchmans Reserve"
+ ],
+ "boca-teeca": [
+  "BOCA TEECA 7 CONDO",
+  "BOCA TEECA CONDO 10",
+  "BOCA TEECA CONDO 2",
+  "BOCA TEECA CONDO 3",
+  "BOCA TEECA CONDO 4",
+  "BOCA TEECA CONDO 5",
+  "BOCA TEECA CONDO 6",
+  "BOCA TEECA CONDO 8",
+  "BOCA TEECA CONDO 9",
+  "BOCA TEECA CONDOMINIUM UNIT THREE S1/2 OF LT 3 ALL",
+  "BOCA TEECA SEC 5",
+  "Boca Teeca",
+  "Boca Teeca Condo Unit 03",
+  "Boca teeca",
+  "SABAL GARDENS AT BOCA TEECA 2"
+ ],
+ "admirals-cove": [
+  "ADMIRALS COVE",
+  "ADMIRALS COVE PAR C",
+  "Admirals Cove",
+  "GOLF VILLAGE AT ADMIRALS COVE PAR B",
+  "SPYGLASS AT ADMIRALS COVE CONDO"
+ ],
+ "pga-national": [
+  "BRISTOL CLUB AT PGA NATIONAL",
+  "Club Cottages at PGA National",
+  "Cypress Point at PGA National",
+  "Fairway Villas at PGA National",
+  "Legends at PGA National",
+  "Marlwood Estates at PGA National",
+  "Masters at Eagleton at PGA National",
+  "PGA NATIONAL GOLF CLUB ESTATES 1",
+  "PGA NATIONAL GOLF CLUB ESTATES 2",
+  "PGA National",
+  "PGA National - Barclay Club",
+  "Patio Homes of PGA National",
+  "Pga National Golf Club Estates 2",
+  "Preston at PGA National",
+  "Prestwick Chase at PGA National",
+  "Resort Villas/PGA National",
+  "The Island at PGA National",
+  "Townhomes of Marlwood at PGA National",
+  "Villa D Este at PGA National",
+  "Windermere at PGA National"
+ ],
+ "abacoa": [
+  "ABACOA TOWN CENTER 3",
+  "Abacoa NewHaven",
+  "Abacoa Town Center 03",
+  "CAMBRIDGE AT ABACOA",
+  "CHARLESTON COURT AT ABACOA",
+  "CHARLESTON COURT AT ABACOA PH 2",
+  "Island at Abacoa",
+  "MALLORY CREEK AT ABACOA 2",
+  "MARTINIQUE AT ABACOA 1",
+  "Mallory Creek At Abacoa 01",
+  "Newhaven 07b Ph 01 At Abacoa",
+  "SOMERSET AT ABACOA CONDO",
+  "TUSCANY AT ABACOA",
+  "TUSCANY AT ABACOA 2",
+  "VALENCIA AT ABACOA",
+  "VILLAGE AT ABACOA CONDO",
+  "WINDSOR PARK AT ABACOA PL",
+  "WINDSOR PARK AT ABACOA PL NO 3"
+ ],
+ "tequesta": [
+  "TEQUESTA COUNTRY CLUB",
+  "Tequesta Country Club"
+ ],
+ "panther-national": [
+  "PANTHER NATIONAL AT AVENIR",
+  "PANTHER NATIONAL AT AVENIR POD"
+ ],
+ "jupiter-hills": [
+  "JUPITER HILLS VILLAGE",
+  "Jupiter Hills Village Ph 02"
+ ],
+ "quail-ridge": [
+  "QUAIL RIDGE",
+  "QUAIL RIDGE CONDO 3A",
+  "QUAIL RIDGE CONDO 8",
+  "QUAIL RIDGE PATIO HOMES",
+  "Quail Ridge",
+  "Quail Ridge - Sandpiper"
+ ],
+ "delray-dunes": [
+  "DELRAY DUNES",
+  "DELRAY DUNES 2ND SEC",
+  "DELRAY DUNES BAHIA VILLA CONDO DELRAY DUNES 2ND SE",
+  "DELRAY DUNES BONSAI VILLA CONDO",
+  "DELRAY DUNES FIRST SEC",
+  "DELRAY DUNES HOLLY VILLAS CONDO",
+  "DELRAY DUNES PARCEL 8",
+  "DELRAY DUNES SLASH PINE VILLAS CONDO"
+ ],
+ "seagate": [
+  "Hamlet at Seagate",
+  "SEAGATE GOLF AT THE HAMLET",
+  "SEAGATE GOLF CLUB",
+  "SEAGATE GOLF CLUB AT THE HAMLET",
+  "Seagate Country Club",
+  "Seagate Country Club at The Hamlet",
+  "Seagate Golf Club",
+  "Seagate Golf Club at The Hamlet",
+  "Seagate Golf at The Hamlet",
+  "Seagate at The Hamlet"
+ ],
+ "bellaggio": [
+  "BELLAGGIO",
+  "BELLAGGIO TOWNE PARK 1",
+  "BELLAGGIO, TOWNE PARK",
+  "Bellaggio"
+ ],
+ "boca-flores": [
+  "BOCA FLORES",
+  "BOCA FLORES CONDO",
+  "Boca Flores"
+ ],
+ "cascade-lakes": [
+  "CASCADE LAKES",
+  "CASCADE LAKES LESTER PUD 4"
+ ],
+ "century-village": [
+  "CENTURY VILLAGE BOCA RATON"
+ ],
+ "coral-lakes": [
+  "CORAL LAKES",
+  "CORAL LAKES - REGAL SHORES CONDO",
+  "CORAL LAKES - Royal Landings",
+  "CORAL LAKES / CRYSTAL POINTE",
+  "CORAL LAKES 12",
+  "CORAL LAKES 2",
+  "CORAL LAKES III",
+  "CORAL LAKES IV",
+  "CORAL LAKES KINGDOM",
+  "CORAL LAKES/CORAL COVE CONDO",
+  "CORAL LAKES/REGAL SHORES NORTH",
+  "Coral Lakes",
+  "Coral Lakes 2/Regency Cove",
+  "Coral Lakes/Crystal Pointe",
+  "REGAL SHORES / CORAL LAKES"
+ ],
+ "cresswind-palm-beach": [
+  "CRESSWIND PALM BEACH",
+  "CRESSWIND PALM BEACH PHASE 3"
+ ],
+ "fieldbrook-estates": [
+  "FIELDBROOK ESTATES",
+  "Fieldbrook Estates"
+ ],
+ "floral-lakes": [
+  "FLORAL LAKES",
+  "FLORAL LAKES 2",
+  "FLORAL LAKES PH 3 AND 4",
+  "Floral Lakes"
+ ],
+ "huntington-pointe": [
+  "HUNTINGTON POINTE",
+  "Huntington Pointe"
+ ],
+ "kings-point": [
+  "BELFORT KINGS POINT",
+  "KINGS POINT",
+  "KINGS POINT  NORMANDY  I",
+  "KINGS POINT - SEVILLE",
+  "KINGS POINT / SOUTHAMPTON",
+  "KINGS POINT 13",
+  "KINGS POINT 3",
+  "KINGS POINT BRITTANY COND",
+  "KINGS POINT BRITTANY CONDOS",
+  "KINGS POINT BURGUNDY",
+  "KINGS POINT BURGUNDY CONDOS",
+  "KINGS POINT CAPRI",
+  "KINGS POINT CAPRI CONDOS",
+  "KINGS POINT FLANDERS COND",
+  "KINGS POINT FLANDERS CONDOS",
+  "KINGS POINT IMPERIAL COND",
+  "KINGS POINT IMPERIAL CONDO",
+  "KINGS POINT MONACO B",
+  "KINGS POINT MONACO B THRU P CONDOS",
+  "KINGS POINT MONACO CONDOS",
+  "KINGS POINT NORMANDY",
+  "KINGS POINT NORMANDY A THR",
+  "KINGS POINT NORMANDY COND",
+  "KINGS POINT NORMANDY CONDOS",
+  "KINGS POINT PIEDMONT",
+  "KINGS POINT PIEDMONT COND",
+  "KINGS POINT PIEDMONT CONDOS",
+  "KINGS POINT SAXONY CONDOS",
+  "KINGS POINT SAXONY F CONDOS",
+  "KINGS POINT SEVILLE CONDO",
+  "KINGS POINT SEVILLE CONDOS",
+  "KINGS POINT TRENT \"B\"",
+  "KINGS POINT TUSCANY CONDO",
+  "KINGS POINT TUSCANY CONDOS",
+  "KINGS POINT VALENCIA COND",
+  "KINGS POINT VALENCIA CONDOS",
+  "KINGS POINT VALENCIA CONDOS Par 116",
+  "KINGS POINT WATERFORD CONDOS",
+  "Kings Point",
+  "Kings Point Brittany",
+  "Kings Point Flanders",
+  "Kings Point Monaco",
+  "Kings Point Valencia Condos",
+  "Kings Point, Flanders E",
+  "Kings Pointe",
+  "Kings point",
+  "Malvern/Kings Point",
+  "SAXONY B/KINGS POINT",
+  "kings point"
+ ],
+ "lakes-of-delray": [
+  "LAKES OF DELRAY",
+  "Lakes of Delray",
+  "Lakes of Delray Watersedge",
+  "Lakes of Delray-ASHLAND B",
+  "WATERSEDGE AT THE LAKES OF DELRAY",
+  "WATERSEDGE AT THE LAKES OF DELRAY CONDO",
+  "WATERSEDGE AT THE LAKES OF DELRAY CONDO A THRU H",
+  "lakes of delray"
+ ],
+ "le-lac": [
+  "LE LAC"
+ ],
+ "les-jardins": [
+  "LES JARDINS CONDO"
+ ],
+ "long-lake-estates": [
+  "LONG LAKE ESTATES",
+  "LONG LAKE ESTATES 1 AS",
+  "Long Lake Estates"
+ ],
+ "lotus": [
+  "LOTUS",
+  "LOTUS BOCA RATON",
+  "LOTUS EDGE",
+  "LOTUS GARDENS CONDO",
+  "LOTUS PALM",
+  "Lotus",
+  "Lotus Edge",
+  "Lotus Palm"
+ ],
+ "majestic-isles": [
+  "MAJESTIC ISLES",
+  "MAJESTIC ISLES 1",
+  "MAJESTIC ISLES 2",
+  "MAJESTIC ISLES 3"
+ ],
+ "mizners-preserve": [
+  "MIZNER'S PRESERVE",
+  "MIZNERS PRESERVE",
+  "Mizners Preserve"
+ ],
+ "palm-isles": [
+  "PALM ISLES",
+  "PALM ISLES I, II AND III CONDOS",
+  "PALM ISLES WEST",
+  "Palm Isles"
+ ],
+ "ponte-vecchio": [
+  "LONG LAKE PALMS/ PONTE VECCHIO",
+  "PONTE VECCHIO WEST",
+  "Ponte Vecchio",
+  "Ponte Vecchio / Tuscany",
+  "TUSCANY PAR A/B PONTE VECCHIO WEST"
+ ],
+ "regency-at-avenir": [
+  "REGENCY at AVENIR SITE PLAN 2 POD",
+  "Regency at Avenir"
+ ],
+ "stone-creek-ranch": [
+  "Stone Creek Ranch"
+ ],
+ "the-bridges": [
+  "BRIDGES",
+  "BRIDGES PL 1",
+  "BRIDGES PL 3",
+  "BRIDGES PL 4",
+  "BRIDGES PL 7",
+  "THE BRIDGES",
+  "The Bridges"
+ ],
+ "the-cascades": [
+  "CASCADES",
+  "CASCADES - Wedgewood",
+  "Cascades",
+  "Cascades Phase 3",
+  "The Cascades"
+ ],
+ "tuscany-bay": [
+  "TUSCANY BAY"
+ ],
+ "valencia-bay": [
+  "VALENCIA BAY",
+  "Valencia Bay"
+ ],
+ "valencia-cove": [
+  "VALENCIA COVE",
+  "VALENCIA COVE AGR PUD PL",
+  "VALENCIA COVE AGR PUD PL 8",
+  "Valencia Cove"
+ ],
+ "valencia-falls": [
+  "VALENCIA FALLS",
+  "VALENCIA FALLS 4",
+  "VALENCIA FALLS 8",
+  "VALENCIA FALLS 9",
+  "Valencia Falls",
+  "Valencia Falls PL 10"
+ ],
+ "valencia-grand": [
+  "Valencia Grand",
+  "Valencia Grand Coastline"
+ ],
+ "valencia-isles": [
+  "VALENCIA ISLES",
+  "VALENCIA ISLES 1",
+  "VALENCIA ISLES 2",
+  "VALENCIA ISLES 3"
+ ],
+ "valencia-lakes": [
+  "VALENCIA LAKES",
+  "VALENCIA LAKES 1",
+  "VALENCIA LAKES 2",
+  "VALENCIA LAKES 3",
+  "Valencia Lakes"
+ ],
+ "valencia-palms": [
+  "VALENCIA PALMS",
+  "VALENCIA PALMS 1",
+  "VALENCIA PALMS 3",
+  "VALENCIA PALMS 4",
+  "VALENCIA PALMS 6",
+  "Valencia Palms",
+  "Valencia Palms 01"
+ ],
+ "valencia-pointe": [
+  "VALENCIA POINTE",
+  "VALENCIA POINTE 1",
+  "VALENCIA POINTE 2",
+  "Valencia Pointe",
+  "Valencia Pointe PL 1"
+ ],
+ "valencia-reserve": [
+  "VALENCIA RESERVE",
+  "Valencia Reserve"
+ ],
+ "valencia-shores": [
+  "VALENCIA SHORES",
+  "VALENCIA SHORES 1",
+  "Valencia Shores",
+  "Valencia Shores 04"
+ ],
+ "valencia-sound": [
+  "VALENCIA SOUND",
+  "Valencia Sound"
+ ],
+ "valencia-del-mar": [
+  "VALENCIA DEL MAR",
+  "Valencia Del Mar"
+ ],
+ "venetian-isles": [
+  "MELROSE PUD VENETIAN ISLES",
+  "Siena Lakes at Venetian Isles",
+  "VENETIAN ISLES",
+  "VENETIAN ISLES 1ST SEC",
+  "VENETIAN ISLES 2ND SEC",
+  "VENETIAN ISLES 3RD SEC",
+  "VENETIAN ISLES CO-OP",
+  "Venetian Isles",
+  "Venetian Isles 2nd Sec 45",
+  "Venetian Isles 3rd Sec.",
+  "Venetian Isles MELROSE PUD POD F"
+ ],
+ "villa-borghese": [
+  "Villa Borghese"
+ ],
+ "villaggio-reserve": [
+  "VILLAGGIO RESERVE"
+ ],
+ "vizcaya": [
+  "VIZCAYA 1",
+  "VIZCAYA 2",
+  "VIZCAYA 3",
+  "VIZCAYA 4"
+ ],
+ "whisper-walk": [
+  "WHISPER WALK",
+  "WHISPER WALK  PARKSHORE",
+  "WHISPER WALK CONDOS",
+  "WHISPER WALK PARKLANE",
+  "WHISPER WALK SEC C CONDO",
+  "WHISPER WALK SEC E CONDO",
+  "WHISPER WALK SECTION C",
+  "WHISPER WALK/SUMMERWINDS",
+  "Whisper Walk"
+ ]
+}
