@@ -12,8 +12,22 @@ const developments = readList('developments.json');
 // The Search menu and its pages (see src/search.json).
 const SEARCH = JSON.parse(fs.readFileSync(path.join(SRC, 'search.json'), 'utf8'));
 const FEATURES = [...SEARCH.lifestyle, ...SEARCH.membership];
-// Written by idx-sync.js at build time when the IDX API key is set (results URL and saved-link URLs).
+// Optional src/idx.json (results URL and saved-link URLs) from an IDX sync step; not used by default.
 const IDX = fs.existsSync(path.join(SRC, 'idx.json')) ? JSON.parse(fs.readFileSync(path.join(SRC, 'idx.json'), 'utf8')) : { links: {} };
+// MLS subdivision names per club / community, used to link each page to its live IDX search.
+const SUBS = fs.existsSync(path.join(SRC, 'idx-subdivisions.json')) ? JSON.parse(fs.readFileSync(path.join(SRC, 'idx-subdivisions.json'), 'utf8')) : {};
+// A link to the IDX Broker results page with these search fields (plus heroSearch.fixed).
+function idxUrl(pairs) {
+  const hs = SEARCH.heroSearch || {};
+  const base = hs.action || IDX.resultsUrl;
+  if (!base) return '';
+  const u = new URL(base);
+  Object.entries(hs.fixed || {}).forEach(([k, v]) => u.searchParams.append(k, v));
+  pairs.forEach(([k, v]) => u.searchParams.append(k, v));
+  return u.toString();
+}
+const communityUrl = (slug) => (Array.isArray(SUBS[slug]) && SUBS[slug].length ? idxUrl(SUBS[slug].map((v) => ['a_subdivision[]', v])) : '');
+const allHomesUrl = () => idxUrl(Object.values((SEARCH.heroSearch || {}).cityIds || {}).map((id) => ['city[]', id]));
 // Communities without a club: same fields as a club (name, slug, town, blurb, tags, idx, photo).
 const communities = readList('communities.json');
 const COMMS = { base: '/communities/', label: 'Communities' };
@@ -193,11 +207,12 @@ ${body}
       function submit() {
         var type = hs.querySelector('input[name="hs-type"]:checked').value;
         var price = hs.querySelector('#hs-price').value, beds = hs.querySelector('#hs-beds').value, where = q.value.trim();
-        var base = (type !== 'all' && cfg.tabs[type]) || cfg.action;
+        var base = type === 'all' ? cfg.action : cfg.tabs[type];
         if (!base) { location.href = type === 'club' ? '/clubs/' : type === 'noClub' ? '/search/no-club/' : '/search/'; return; }
         var u = new URL(base, location.href);
         Object.keys(cfg.fixed).forEach(function (k) { u.searchParams.append(k, cfg.fixed[k]); });
-        if (where && cfg.params.location) u.searchParams.append(cfg.params.location, where);
+        if (/^\d{5}$/.test(where)) u.searchParams.append('zipcode[]', where);
+        else if (where) { var cid = cfg.cityIds[Object.keys(cfg.cityIds).filter(function (t) { return norm(t) === norm(where); })[0]]; if (cid) u.searchParams.append('city[]', cid); }
         if (price && cfg.params.maxPrice) u.searchParams.append(cfg.params.maxPrice, price);
         if (beds && cfg.params.minBeds) u.searchParams.append(cfg.params.minBeds, beds);
         location.href = u.toString();
@@ -358,7 +373,7 @@ function heroSearch() {
   ];
   const towns = [...new Set([...clubs, ...communities].map((c) => c.town))].sort();
   const tabs = { club: (hs.tabs || {}).club || IDX.links['search-club'] || '', noClub: (hs.tabs || {}).noClub || IDX.links['search-noClub'] || '' };
-  const cfg = { action: hs.action || IDX.resultsUrl || '', params: hs.params || {}, tabs, fixed: hs.fixed || {}, places, towns };
+  const cfg = { action: hs.action || IDX.resultsUrl || '', params: hs.params || {}, tabs, fixed: hs.fixed || {}, cityIds: hs.cityIds || {}, places, towns };
   return `<form class="hero-search" role="search" action="/search/" method="get" novalidate>
         <div class="hs-tabs" role="radiogroup" aria-label="Type of community">
           <label><input type="radio" name="hs-type" value="all" checked><span>All homes</span></label>
@@ -598,6 +613,13 @@ ${items.map((l) => `      <a class="listing" href="${esc(l.url || data.url || '#
     }
   }
   if (c.idx) return `${head(0)}\n    <div id="listings" class="idx">${c.idx}</div>`;
+  const live = communityUrl(c.slug);
+  if (live) return `${head(0)}
+    <div class="listings" id="listings">
+        <p class="pending">See every home for sale in ${esc(c.name)} right now, live from the MLS.</p>
+        <p>Find one you like? Ask us what the club and HOA costs are before you book a showing.</p>
+        <div class="cta-row"><a class="btn solid" href="${esc(live)}" target="_blank" rel="noopener">See homes for sale in ${esc(c.name)}</a><a class="btn outline" href="#match">Get alerts for new listings</a></div>
+      </div>`;
   return `${head(0)}
     <div class="listings" id="listings">
         <p class="pending">Live listings for ${esc(c.name)} are coming soon.</p>
@@ -722,9 +744,15 @@ function searchNav(active) {
   return `<nav class="chip-nav" aria-label="Search by">${MENU.map((e) => `<a href="${e.href}"${e.key === active ? ' aria-current="page"' : ''}>${esc(e.key === 'all' ? 'All homes' : e.label)}</a>`).join('')}</nav>`;
 }
 
-function idxBlock(embed, what) {
+function idxBlock(embed, what, note) {
+  const live = allHomesUrl();
   return embed
     ? `<div class="idx">${embed}</div>`
+    : live ? `<div class="listings" id="listings">
+        <p class="pending">${note || 'Search every home for sale across the towns we cover, live from the MLS.'}</p>
+        <p>Filter by price, beds, and town on the search page. Questions about a club or HOA? Ask us anytime.</p>
+        <div class="cta-row"><a class="btn solid" href="${esc(live)}" target="_blank" rel="noopener">Search homes for sale</a><a class="btn outline" href="/#match">Send a Club Match</a></div>
+      </div>`
     : `<div class="listings" id="listings">
         <p class="pending">Live listings for ${esc(what)} are coming soon.</p>
         <p>Want to see what's for sale today? Send a Club Match and John will send you every active listing that fits.</p>
@@ -762,7 +790,7 @@ ${hero}
 <section class="band sand">
   <div class="wrap">
     <div class="sec-head"><div><p class="eyebrow">For sale now</p><h2 style="margin-top:12px">Homes for sale</h2></div></div>
-    ${idxBlock(idx, idxWhat)}
+    ${idxBlock(idx, idxWhat, 'Open any community above to see just its homes, or search every home for sale across the towns we cover.')}
   </div>
 </section>
 ${matchSection(null)}`,
@@ -878,7 +906,6 @@ fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT, { recursive: true });
 fs.copyFileSync(path.join(SRC, 'styles.css'), path.join(OUT, 'styles.css'));
 if (fs.existsSync(path.join(SRC, 'images'))) fs.cpSync(path.join(SRC, 'images'), path.join(OUT, 'images'), { recursive: true });
-if (process.env.CONTEXT === 'deploy-preview' && fs.existsSync(path.join(SRC, 'idx-status.txt'))) fs.copyFileSync(path.join(SRC, 'idx-status.txt'), path.join(OUT, 'idx-status.txt'));
 write('index.html', homePage());
 write('clubs/index.html', clubsIndex());
 for (const club of clubs) write(`clubs/${club.slug}/index.html`, clubPage(club));
