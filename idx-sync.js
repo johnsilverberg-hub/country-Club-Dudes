@@ -157,23 +157,19 @@ async function main() {
   if (process.env.CONTEXT === 'deploy-preview' && idxID && process.env.IDX_PROBE !== '0') {
     // Try query formats on the Boca West link and report how many results each returns.
     const bw = byName().get('ccd-boca-west');
-    const variants = [
-      ['pt=sfr a_', { pt: 'sfr', 'a_subdivision[0]': 'BOCA WEST COUNTRY CLUB' }],
-      ['pt=1 a_', { pt: '1', 'a_subdivision[0]': 'BOCA WEST COUNTRY CLUB' }],
-      ['pt=sfr aw_', { pt: 'sfr', 'aw_subdivision[0]': 'BOCA WEST' }],
-      ['nopt a_', { 'a_subdivision[0]': 'BOCA WEST COUNTRY CLUB' }],
-      ['city only', { pt: 'sfr', 'city[0]': '4792' }],
-      ['city only pt1', { pt: '1', 'city[0]': '4792' }],
-    ];
-    if (bw) for (const [label, qv] of variants) {
+    const bwUrl = bw && bw.url;
+    for (const ep of ['clients/featured', 'clients/soldpending', 'clients/supplemental', 'clients/listingcount', 'mls/listingcount/' + idxID, 'clients/apiversion', 'mls/approvedmls']) {
+      try { const r = await api('GET', ep); log(`EP ${ep}: ${asList(r).length} | ${JSON.stringify(r).slice(0, 220)}`); } catch (e) { log(`EP ${ep}: ${e.message}`); }
+    }
+    for (const u of [bwUrl, `${(results.url || '')}?idxID=${idxID}&pt=sfr&city[]=4792`].filter(Boolean)) {
       try {
-        const body = new URLSearchParams({ linkName: 'ccd-boca-west', pageTitle: 'Homes for sale in Boca West', linkTitle: 'Homes for sale in Boca West' });
-        body.set('queryString[idxID]', idxID);
-        for (const [k, v] of Object.entries(qv)) body.set(`queryString[${k}]`, v);
-        await api('POST', `clients/savedlinks/${bw.id}`, body.toString());
-        const r = await api('GET', `clients/savedlinks/${bw.id}/results`);
-        log(`VARIANT ${label}: ${asList(r).length} | ${JSON.stringify(r).slice(0, 160)}`);
-      } catch (e) { log(`VARIANT ${label}: ${e.message}`); }
+        const res = await fetch(u, { headers: { 'user-agent': 'Mozilla/5.0 (site build check)' } });
+        const html = await res.text();
+        const cells = (html.match(/IDX-resultsCell/g) || []).length;
+        const count = (html.match(/IDX-resultsCount[^>]*>([^<]*)/) || [])[1];
+        const noRes = /no (listings|properties|results)[^<]{0,80}/i.exec(html);
+        log(`PAGE ${u.slice(0, 160)} -> ${res.status} cells=${cells} count=${count || ''} ${noRes ? 'msg=' + noRes[0] : ''} len=${html.length}`);
+      } catch (e) { log(`PAGE ${u}: ${e.message}`); }
     }
   }
 
