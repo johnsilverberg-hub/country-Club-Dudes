@@ -211,8 +211,13 @@ ${body}
         if (!base) { location.href = type === 'club' ? '/clubs/' : type === 'noClub' ? '/search/no-club/' : '/search/'; return; }
         var u = new URL(base, location.href);
         Object.keys(cfg.fixed).forEach(function (k) { u.searchParams.append(k, cfg.fixed[k]); });
-        if (/^\d{5}$/.test(where)) u.searchParams.append('zipcode[]', where);
-        else if (where) { var cid = cfg.cityIds[Object.keys(cfg.cityIds).filter(function (t) { return norm(t) === norm(where); })[0]]; if (cid) u.searchParams.append('city[]', cid); }
+        // A 5-digit ZIP filters by ZIP; a known town filters by that town; anything else (or blank)
+        // searches all of our towns, matching the "Search homes for sale" buttons.
+        if (/^\\d{5}$/.test(where)) u.searchParams.append('zipcode[]', where);
+        else {
+          var cid = where && cfg.cityIds[Object.keys(cfg.cityIds).filter(function (t) { return norm(t) === norm(where); })[0]];
+          (cid ? [cid] : Object.keys(cfg.cityIds).map(function (t) { return cfg.cityIds[t]; })).forEach(function (id) { u.searchParams.append('city[]', id); });
+        }
         if (price && cfg.params.maxPrice) u.searchParams.append(cfg.params.maxPrice, price);
         if (beds && cfg.params.minBeds) u.searchParams.append(cfg.params.minBeds, beds);
         location.href = u.toString();
