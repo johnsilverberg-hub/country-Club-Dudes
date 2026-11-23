@@ -633,6 +633,15 @@ ${items.map((l) => `      <a class="listing" href="${esc(l.url || data.url || '#
       </div>`;
 }
 
+// Hero "See homes for sale" button: opens the live IDX search for this club or community when there is
+// one, otherwise scrolls to the listings section on the page.
+function heroListingsBtn(c) {
+  const live = !c.idx && communityUrl(c.slug);
+  return live
+    ? `<a class="btn gold" href="${esc(live)}" target="_blank" rel="noopener">See homes for sale</a>`
+    : `<a class="btn gold" href="#listings">See homes for sale</a>`;
+}
+
 function clubPage(club, section = CLUBS) {
   const sc = club.scorecard || {};
   const ask = '<span class="ph-text">Ask the Dudes</span>';
@@ -651,7 +660,7 @@ function clubPage(club, section = CLUBS) {
       <p class="lede">${esc(club.blurb)}</p>
 ${tagRow(club)}
       <div class="cta-row">
-        <a class="btn gold" href="#listings">See homes for sale</a>
+        ${heroListingsBtn(club)}
         <a class="btn outline" href="#match">Ask about this club</a>
       </div>
     </div>
@@ -872,7 +881,7 @@ function communityPage(c) {
       <h1>${esc(c.name)}</h1>
       <p class="lede">${esc(c.blurb)}</p>
 ${tagRow(c)}
-      <div class="cta-row"><a class="btn gold" href="#listings">See homes for sale</a><a class="btn outline" href="#match">Ask about this community</a></div>
+      <div class="cta-row">${heroListingsBtn(c)}<a class="btn outline" href="#match">Ask about this community</a></div>
     </div>
     ${photo(c.photo, c.name, `${c.name}: entrance, streetscape or aerial`)}
   </div>
