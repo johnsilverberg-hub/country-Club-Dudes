@@ -146,6 +146,86 @@ and any category slug in `search.json` (`55-plus`, `gated`, `waterfront`, `racqu
 
 ---
 
+### Club photos from Google Drive
+
+Club pages show a photo slot in the hero until a photo is added. The source photos are in Google Drive:
+**CountryClubDudes Content Bank** (shared by Premier Listings),
+https://drive.google.com/drive/folders/1p_5NedXzl69oAa6vPO4yL2lwTb_YVQwh, organized as
+`Town / Club / Photo-####.jpg`. The folders also hold videos (`.mp4`) and small Mac system files whose
+names start with `._`; skip both.
+
+**Don't link to Drive from the site.** Drive isn't a web host (its image links are slow, rate-limited
+and can stop working), the originals are 7 to 39 MB each, and the folder's sharing is controlled by
+another account. Instead, make a web copy of each chosen photo and commit it to the repo; Netlify
+serves it from its CDN.
+
+**Steps for each club**
+
+1. Open the club's folder (table below) and choose **one** hero photo.
+2. Make a web copy: landscape, 2000px wide, JPEG quality about 80 (aim for 250 to 450 KB), and remove
+   the photo's metadata (EXIF, including GPS). Keep the Drive original untouched.
+3. Save it as `src/images/clubs/<club-slug>.jpg`.
+4. In `src/clubs.json`, set `"photo": "clubs/<club-slug>.jpg"` on that club.
+5. Run `node build.js`, check the club page on the deploy preview (desktop and phone), and open a pull
+   request. A batch of clubs per pull request is fine.
+
+**Choosing the photo (design direction)**
+
+- The clubhouse, a signature hole, the entrance or an aerial. The club page frame is taller than wide
+  on desktop (about 3:4) and wide on phones, so the photo is cropped to fit: keep the main subject in
+  the center third, with some sky or fairway around it.
+- Bright, daytime or golden hour; level horizon; sharp. Skip dark, hazy or tilted shots.
+- No identifiable members or staff, no other brokerages' signs, no cars or construction in front.
+- Real photos only. Color correction and straightening are fine; don't use AI to add, remove or change
+  anything in the scene.
+- If a folder only has video, a sharp frame from the video can be used (export at full resolution,
+  then follow step 2).
+
+**Drive folder → club page**
+
+| Drive folder (Town / Club) | Club page slug |
+|---|---|
+| Boca Raton / Boca Grove | `boca-grove` |
+| Boca Raton / Boca West | `boca-west` |
+| Boca Raton / Boca Woods | `boca-woods` |
+| Boca Raton / Bocaire | `bocaire` |
+| Boca Raton / Broken Sound | `broken-sound` |
+| Boca Raton / Royal Palm Yacht Club | `royal-palm` |
+| Boca Raton / St. Andrews | `st-andrews` |
+| Boca Raton / Stonebridge | `stonebridge` |
+| Boca Raton / Woodfield County Club | `woodfield` |
+| Delray Beach / Addison Reserve | `addison-reserve` |
+| Delray Beach / Delaire | `delaire` |
+| Delray Beach / Glen Eagles | `gleneagles` |
+| Delray Beach / Polo Club | `polo-club` |
+| Boynton / Delray Dunes | `delray-dunes` |
+| Boynton / Hunters Run (also West Palm Beach / Hunter's Run) | `hunters-run` |
+| Boynton / Quail Ridge | `quail-ridge` |
+| Boynton / Wycliffe (also West Palm Beach / Wycliffe) | `wycliffe` |
+| West Palm Beach / Admirals Cove | `admirals-cove` |
+| West Palm Beach / BALLEN ISLES | `ballenisles` |
+| West Palm Beach / FRENCHMENS CREEK | `frenchmans-creek` |
+| West Palm Beach / FRENCHMENS RESERVE | `frenchmans-reserve` |
+| West Palm Beach / IBIS | `ibis` |
+| West Palm Beach / Mirasol | `mirasol` |
+| West Palm Beach / PGA NATIONAL | `pga-national` |
+| Jupiter / EASTPOINT | `eastpointe` |
+| Jupiter / JOHNATHANS LANDING | `jonathans-landing` |
+| Jupiter / Jupiter Hills | `jupiter-hills` |
+| Jupiter / Old Palm | `old-palm` |
+
+**Folders with no club page yet:** Delray Beach / Minzer (Mizner Country Club) and Jupiter / Palm Trail.
+Leave them until those pages exist.
+
+**Club pages with no Drive folder yet** (they keep the photo slot until photos are shot):
+`aberdeen`, `abacoa`, `bear-lakes`, `boca-greens`, `boca-lago`, `boca-pointe`, `boca-teeca`,
+`indian-spring`, `panther-national`, `seagate`, `tequesta`, `the-bears-club`.
+
+Communities without a club (`src/communities.json`) use the same `"photo"` field and the same steps,
+saved under `src/images/communities/<slug>.jpg`.
+
+---
+
 ## Setup guides for John's Claude
 
 ### 1. Hero search bar → IDX Broker
