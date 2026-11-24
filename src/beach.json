@@ -1,0 +1,1486 @@
+{
+ "_howto": "Beach condo buildings, listed south to north. \"towns\" sets the order on /beach/ and the ZIP that limits each live search. Each building gets a page at /beach/<slug>/. \"address\" is shown on the page. Its \"See units for sale\" button searches IDX for listings whose address contains any of the \"search\" strings (aw_address[]) inside the town ZIP, so keep those short (number and street, no Blvd/Dr). To use exact MLS subdivision names instead, list them in \"mls\" and they take over. Paste an IDX widget into \"idx\" to show it as-is. Drafted from public listing sites on 2026-11-24; check names and addresses.",
+ "towns": [
+  {
+   "town": "Deerfield Beach",
+   "zip": "33441",
+   "intro": "Broward County's northernmost beach town, with a fishing pier, a walkable beachfront and a string of mid-rise condos along A1A and SE 21st Avenue."
+  },
+  {
+   "town": "Boca Raton",
+   "zip": "33432",
+   "intro": "High-rise and boutique towers on the sand along South Ocean Boulevard (A1A), from the Boca Inlet south to the Hillsboro line."
+  },
+  {
+   "town": "Highland Beach",
+   "zip": "33487",
+   "intro": "A quiet three-mile strip of A1A between Boca and Delray, almost entirely condos and estates, with no commercial strip."
+  },
+  {
+   "town": "Delray Beach",
+   "zip": "33483",
+   "intro": "Mostly single-family homes and small buildings on the beach, a short walk or bike ride from Atlantic Avenue."
+  },
+  {
+   "town": "Gulf Stream",
+   "zip": "33483",
+   "intro": "A small, quiet town of estates north of Delray, with a handful of oceanfront condos."
+  },
+  {
+   "town": "Ocean Ridge",
+   "zip": "33435",
+   "intro": "A low-rise barrier island town east of Boynton Beach, with boutique oceanfront buildings and no high-rises."
+  },
+  {
+   "town": "South Palm Beach",
+   "zip": "33480",
+   "intro": "A half-mile town of oceanfront and Intracoastal condos between Lantana and Palm Beach."
+  },
+  {
+   "town": "Palm Beach",
+   "zip": "33480",
+   "intro": "The oceanfront condos on the south end of the island, along South Ocean Boulevard."
+  },
+  {
+   "town": "Singer Island",
+   "zip": "33404",
+   "intro": "Riviera Beach's barrier island, with the tallest oceanfront towers in the county along North Ocean Drive and the beaches of John D. MacArthur State Park to the north."
+  },
+  {
+   "town": "Juno Beach",
+   "zip": "33408",
+   "intro": "A short stretch of Ocean Drive (A1A) lined with mid-rise condos, next to the Juno Beach Pier and Loggerhead Marinelife Center."
+  },
+  {
+   "town": "Jupiter",
+   "zip": "33477",
+   "intro": "Most Jupiter condos sit across the road from the beach. Ocean Trail is the one condo community directly on the sand."
+  },
+  {
+   "town": "Tequesta and Jupiter Island",
+   "zip": "33469",
+   "intro": "The south end of Jupiter Island along Beach Road, across the bridge from Tequesta, with quieter beaches and a mix of classic and new buildings."
+  }
+ ],
+ "buildings": [
+  {
+   "name": "Cove Beach Club",
+   "slug": "cove-beach-club",
+   "town": "Deerfield Beach",
+   "address": [
+    "500 SE 21st Ave"
+   ],
+   "search": [
+    "500 SE 21st"
+   ],
+   "blurb": "Gated beachfront building east of A1A, just south of Hillsboro Boulevard. 55+.",
+   "tags": [
+    "55-plus"
+   ],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Island Point",
+   "slug": "island-point",
+   "town": "Deerfield Beach",
+   "address": [
+    "665 SE 21st Ave"
+   ],
+   "search": [
+    "665 SE 21st"
+   ],
+   "blurb": "Condo on SE 21st Avenue across from the beach.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Orchid Beach",
+   "slug": "orchid-beach",
+   "town": "Deerfield Beach",
+   "address": [
+    "701 SE 21st Ave"
+   ],
+   "search": [
+    "701 SE 21st"
+   ],
+   "blurb": "Many units have direct ocean views and big balconies, with beach access across the street.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Ocean Harbor",
+   "slug": "ocean-harbor",
+   "town": "Deerfield Beach",
+   "address": [
+    "800 SE 20th Ave"
+   ],
+   "search": [
+    "800 SE 20th"
+   ],
+   "blurb": "Oceanfront condo on SE 20th Avenue.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Ocean Plaza",
+   "slug": "ocean-plaza",
+   "town": "Deerfield Beach",
+   "address": [
+    "2051 SE 3rd St"
+   ],
+   "search": [
+    "2051 SE 3rd"
+   ],
+   "blurb": "Boutique complex with one-floor condos and two-story townhouse-style units.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "One Ocean Boulevard",
+   "slug": "one-ocean-boulevard",
+   "town": "Deerfield Beach",
+   "address": [
+    "191 SE 20th Ave",
+    "101 S Ocean Dr"
+   ],
+   "search": [
+    "191 SE 20th",
+    "101 S Ocean"
+   ],
+   "blurb": "A six-story building finished in 2004, with 81 units.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Kinsale by the Sea",
+   "slug": "kinsale-by-the-sea",
+   "town": "Deerfield Beach",
+   "address": [
+    "233 SE 21st Ave"
+   ],
+   "search": [
+    "233 SE 21st"
+   ],
+   "blurb": "Small building on SE 21st Avenue near the beach.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Ocean Club",
+   "slug": "ocean-club",
+   "town": "Deerfield Beach",
+   "address": [
+    "2080 E Hillsboro Blvd"
+   ],
+   "search": [
+    "2080 E Hillsboro",
+    "2080 Hillsboro"
+   ],
+   "blurb": "Built in 2005, just 29 units, each with a balcony facing the beach.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Tiara East",
+   "slug": "tiara-east",
+   "town": "Deerfield Beach",
+   "address": [
+    "333 NE 21st Ave"
+   ],
+   "search": [
+    "333 NE 21st"
+   ],
+   "blurb": "On A1A across from the beach, with its own beach clubhouse on the sand.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Venetian Villas",
+   "slug": "venetian-villas",
+   "town": "Deerfield Beach",
+   "address": [
+    "550 NE 21st Ave"
+   ],
+   "search": [
+    "550 NE 21st"
+   ],
+   "blurb": "Low-rise condo on NE 21st Avenue near the beach.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Beresford",
+   "slug": "beresford",
+   "town": "Boca Raton",
+   "address": [
+    "350 S Ocean Blvd"
+   ],
+   "search": [
+    "350 S Ocean"
+   ],
+   "blurb": "Oceanfront building at the north end of the South Ocean Boulevard strip.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Excelsior",
+   "slug": "excelsior",
+   "town": "Boca Raton",
+   "address": [
+    "400 S Ocean Blvd"
+   ],
+   "search": [
+    "400 S Ocean"
+   ],
+   "blurb": "Luxury oceanfront tower on South Ocean Boulevard.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Chalfonte",
+   "slug": "chalfonte",
+   "town": "Boca Raton",
+   "address": [
+    "500 S Ocean Blvd",
+    "550 S Ocean Blvd"
+   ],
+   "search": [
+    "500 S Ocean",
+    "550 S Ocean"
+   ],
+   "blurb": "Two oceanfront towers at 500 and 550 South Ocean Boulevard.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Sabal Shores",
+   "slug": "sabal-shores",
+   "town": "Boca Raton",
+   "address": [
+    "600 S Ocean Blvd"
+   ],
+   "search": [
+    "600 S Ocean"
+   ],
+   "blurb": "Oceanfront condo next to Sabal Point.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Sabal Point",
+   "slug": "sabal-point",
+   "town": "Boca Raton",
+   "address": [
+    "700 S Ocean Blvd"
+   ],
+   "search": [
+    "700 S Ocean"
+   ],
+   "blurb": "One of Boca's best-known boutique oceanfront buildings.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Boca Beach Residences",
+   "slug": "boca-beach-residences",
+   "town": "Boca Raton",
+   "address": [
+    "725 S Ocean Blvd"
+   ],
+   "search": [
+    "725 S Ocean"
+   ],
+   "blurb": "Condo on South Ocean Boulevard near Sabal Point.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Presidential Place",
+   "slug": "presidential-place",
+   "town": "Boca Raton",
+   "address": [
+    "800 S Ocean Blvd"
+   ],
+   "search": [
+    "800 S Ocean"
+   ],
+   "blurb": "Oceanfront condo on South Ocean Boulevard.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "One Thousand Ocean",
+   "slug": "one-thousand-ocean",
+   "town": "Boca Raton",
+   "address": [
+    "1000 S Ocean Blvd"
+   ],
+   "search": [
+    "1000 S Ocean"
+   ],
+   "blurb": "Built in 2009, with 52 residences over seven stories, just north of Camino Real.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Cloister Beach Towers",
+   "slug": "cloister-beach-towers",
+   "town": "Boca Raton",
+   "address": [
+    "1200 S Ocean Blvd"
+   ],
+   "search": [
+    "1200 S Ocean"
+   ],
+   "blurb": "Well-kept oceanfront towers just south of Camino Real.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Addison on the Ocean",
+   "slug": "addison-on-the-ocean",
+   "town": "Boca Raton",
+   "address": [
+    "1400 S Ocean Blvd",
+    "1500 S Ocean Blvd"
+   ],
+   "search": [
+    "1400 S Ocean",
+    "1500 S Ocean"
+   ],
+   "blurb": "Two luxury towers on the sand at 1400 and 1500 South Ocean Boulevard.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Placide",
+   "slug": "placide",
+   "town": "Boca Raton",
+   "address": [
+    "1800 S Ocean Blvd"
+   ],
+   "search": [
+    "1800 S Ocean"
+   ],
+   "blurb": "Nine floors and 54 oceanfront condos, built in 1979.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Aragon",
+   "slug": "aragon",
+   "town": "Boca Raton",
+   "address": [
+    "2494 S Ocean Blvd"
+   ],
+   "search": [
+    "2494 S Ocean"
+   ],
+   "blurb": "Ultra-luxury building on the ocean side of A1A.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Luxuria on the Ocean",
+   "slug": "luxuria-on-the-ocean",
+   "town": "Boca Raton",
+   "address": [
+    "2500 S Ocean Blvd"
+   ],
+   "search": [
+    "2500 S Ocean"
+   ],
+   "blurb": "Oceanfront condo next to Aragon.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Ocean Towers",
+   "slug": "ocean-towers",
+   "town": "Boca Raton",
+   "address": [
+    "2800 S Ocean Blvd"
+   ],
+   "search": [
+    "2800 S Ocean"
+   ],
+   "blurb": "Twin high-rises on the beach, built in 1976. Also called Whitehall South.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Three Thousand South",
+   "slug": "three-thousand-south",
+   "town": "Boca Raton",
+   "address": [
+    "3000 S Ocean Blvd"
+   ],
+   "search": [
+    "3000 S Ocean"
+   ],
+   "blurb": "Fifteen floors and 80 oceanfront condos, built in 1970.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Villa Magna",
+   "slug": "villa-magna",
+   "town": "Highland Beach",
+   "address": [
+    "2727 S Ocean Blvd"
+   ],
+   "search": [
+    "2727 S Ocean"
+   ],
+   "blurb": "Oceanfront condo at the north end of Highland Beach.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Wiltshire House",
+   "slug": "wiltshire-house",
+   "town": "Highland Beach",
+   "address": [
+    "2909 S Ocean Blvd"
+   ],
+   "search": [
+    "2909 S Ocean"
+   ],
+   "blurb": "Oceanfront condo on South Ocean Boulevard.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Highland Towers",
+   "slug": "highland-towers",
+   "town": "Highland Beach",
+   "address": [
+    "2921 S Ocean Blvd"
+   ],
+   "search": [
+    "2921 S Ocean"
+   ],
+   "blurb": "Eight stories and 48 units, built in 1959.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Ocean Pines",
+   "slug": "ocean-pines",
+   "town": "Highland Beach",
+   "address": [
+    "3009 S Ocean Blvd"
+   ],
+   "search": [
+    "3009 S Ocean"
+   ],
+   "blurb": "Oceanfront condo on the east side of A1A.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Ocean Dunes",
+   "slug": "ocean-dunes",
+   "town": "Highland Beach",
+   "address": [
+    "3015 S Ocean Blvd"
+   ],
+   "search": [
+    "3015 S Ocean"
+   ],
+   "blurb": "Oceanfront condo next to Ocean Pines.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Penthouse Towers",
+   "slug": "penthouse-towers",
+   "town": "Highland Beach",
+   "address": [
+    "3101 S Ocean Blvd"
+   ],
+   "search": [
+    "3101 S Ocean"
+   ],
+   "blurb": "Oceanfront tower on South Ocean Boulevard.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Beach Walk East",
+   "slug": "beach-walk-east",
+   "town": "Highland Beach",
+   "address": [
+    "3201 S Ocean Blvd"
+   ],
+   "search": [
+    "3201 S Ocean"
+   ],
+   "blurb": "Oceanfront condo on South Ocean Boulevard.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Ambassadors East",
+   "slug": "ambassadors-east",
+   "town": "Highland Beach",
+   "address": [
+    "3215 S Ocean Blvd",
+    "3221 S Ocean Blvd"
+   ],
+   "search": [
+    "3215 S Ocean",
+    "3221 S Ocean"
+   ],
+   "blurb": "Oceanfront condo buildings at 3215 and 3221 South Ocean Boulevard.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Coronado",
+   "slug": "coronado",
+   "town": "Highland Beach",
+   "address": [
+    "3400 S Ocean Blvd",
+    "3420 S Ocean Blvd"
+   ],
+   "search": [
+    "3400 S Ocean",
+    "3420 S Ocean"
+   ],
+   "blurb": "Two high-rises, one facing the ocean and one facing the Intracoastal.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Le Sanctuaire",
+   "slug": "le-sanctuaire",
+   "town": "Highland Beach",
+   "address": [
+    "3425 S Ocean Blvd"
+   ],
+   "search": [
+    "3425 S Ocean"
+   ],
+   "blurb": "A four-story luxury oceanfront building.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Toscana",
+   "slug": "toscana",
+   "town": "Highland Beach",
+   "address": [
+    "3700 S Ocean Blvd",
+    "3720 S Ocean Blvd",
+    "3740 S Ocean Blvd"
+   ],
+   "search": [
+    "3700 S Ocean",
+    "3720 S Ocean",
+    "3740 S Ocean"
+   ],
+   "blurb": "Three towers with resort amenities, between the ocean and the Intracoastal.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "45 Ocean",
+   "slug": "45-ocean",
+   "town": "Highland Beach",
+   "address": [
+    "4505 S Ocean Blvd",
+    "4511 S Ocean Blvd"
+   ],
+   "search": [
+    "4505 S Ocean",
+    "4511 S Ocean"
+   ],
+   "blurb": "Two buildings on the ocean side of A1A. Formerly Ambassador's South.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Boca Cove Villas",
+   "slug": "boca-cove-villas",
+   "town": "Highland Beach",
+   "address": [
+    "4513 S Ocean Blvd"
+   ],
+   "search": [
+    "4513 S Ocean"
+   ],
+   "blurb": "Right on the beach, on the east side of A1A.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Parker Highland",
+   "slug": "parker-highland",
+   "town": "Highland Beach",
+   "address": [
+    "4605 S Ocean Blvd"
+   ],
+   "search": [
+    "4605 S Ocean"
+   ],
+   "blurb": "Eight floors and 28 units.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Ocean Place",
+   "slug": "ocean-place",
+   "town": "Delray Beach",
+   "address": [
+    "2155 S Ocean Blvd"
+   ],
+   "search": [
+    "2155 S Ocean"
+   ],
+   "blurb": "A small building of 29 residences overlooking the ocean, south of Atlantic Avenue.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Gulfstream Shores",
+   "slug": "gulfstream-shores",
+   "town": "Gulf Stream",
+   "address": [
+    "3851 N Ocean Blvd"
+   ],
+   "search": [
+    "3851 N Ocean"
+   ],
+   "blurb": "Oceanfront condo community on North Ocean Boulevard.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Portofino of Ocean Ridge",
+   "slug": "portofino-of-ocean-ridge",
+   "town": "Ocean Ridge",
+   "address": [
+    "5833 N Ocean Blvd",
+    "5841 N Ocean Blvd"
+   ],
+   "search": [
+    "5833 N Ocean",
+    "5841 N Ocean"
+   ],
+   "blurb": "Gated oceanfront community with just 18 residences.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Wellington Arms",
+   "slug": "wellington-arms",
+   "town": "Ocean Ridge",
+   "address": [
+    "6530 N Ocean Blvd"
+   ],
+   "search": [
+    "6530 N Ocean"
+   ],
+   "blurb": "Condo on North Ocean Boulevard near the Boynton Inlet.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "3200 South Ocean",
+   "slug": "3200-south-ocean",
+   "town": "South Palm Beach",
+   "address": [
+    "3200 S Ocean Blvd"
+   ],
+   "search": [
+    "3200 S Ocean"
+   ],
+   "blurb": "Five stories and 81 units, built in 1977.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Winthrop House",
+   "slug": "winthrop-house",
+   "town": "South Palm Beach",
+   "address": [
+    "3360 S Ocean Blvd"
+   ],
+   "search": [
+    "3360 S Ocean"
+   ],
+   "blurb": "Condo on South Ocean Boulevard.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "La Bonne Vie",
+   "slug": "la-bonne-vie",
+   "town": "South Palm Beach",
+   "address": [
+    "3475 S Ocean Blvd"
+   ],
+   "search": [
+    "3475 S Ocean"
+   ],
+   "blurb": "Oceanfront condo on South Ocean Boulevard.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Palm Sea",
+   "slug": "palm-sea",
+   "town": "South Palm Beach",
+   "address": [
+    "3520 S Ocean Blvd"
+   ],
+   "search": [
+    "3520 S Ocean"
+   ],
+   "blurb": "One of South Palm Beach's best-known oceanfront buildings.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "3550 South Ocean",
+   "slug": "3550-south-ocean",
+   "town": "South Palm Beach",
+   "address": [
+    "3550 S Ocean Blvd"
+   ],
+   "search": [
+    "3550 S Ocean"
+   ],
+   "blurb": "A newer seven-story building on the beach, finished in 2018.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Mayfair House",
+   "slug": "mayfair-house",
+   "town": "South Palm Beach",
+   "address": [
+    "3601 S Ocean Blvd"
+   ],
+   "search": [
+    "3601 S Ocean"
+   ],
+   "blurb": "Condo on South Ocean Boulevard.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Sloan's Curve",
+   "slug": "sloans-curve",
+   "town": "Palm Beach",
+   "address": [
+    "2000 S Ocean Blvd",
+    "2100 S Ocean Blvd"
+   ],
+   "search": [
+    "2000 S Ocean",
+    "2100 S Ocean"
+   ],
+   "blurb": "Four seven-story buildings at 2000 and 2100 South Ocean Boulevard.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Twenty Five Hundred South Ocean",
+   "slug": "twenty-five-hundred-south-ocean",
+   "town": "Palm Beach",
+   "address": [
+    "2500 S Ocean Blvd"
+   ],
+   "search": [
+    "2500 S Ocean"
+   ],
+   "blurb": "Three five-story buildings.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Beach Point",
+   "slug": "beach-point",
+   "town": "Palm Beach",
+   "address": [
+    "2660 S Ocean Blvd"
+   ],
+   "search": [
+    "2660 S Ocean"
+   ],
+   "blurb": "Seven stories and 105 units, built in 1979.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Bellaria",
+   "slug": "bellaria",
+   "town": "Palm Beach",
+   "address": [
+    "3000 S Ocean Blvd"
+   ],
+   "search": [
+    "3000 S Ocean"
+   ],
+   "blurb": "Two buildings with about 36 residences in total.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Ritz-Carlton Residences",
+   "slug": "ritz-carlton-residences",
+   "town": "Singer Island",
+   "address": [
+    "2700 N Ocean Dr"
+   ],
+   "search": [
+    "2700 N Ocean"
+   ],
+   "blurb": "241 residences over 26 stories, built in 2008.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Phoenix Towers",
+   "slug": "phoenix-towers",
+   "town": "Singer Island",
+   "address": [
+    "2800 N Ocean Dr"
+   ],
+   "search": [
+    "2800 N Ocean"
+   ],
+   "blurb": "Built in 1973, with ocean and Intracoastal views.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Tiara",
+   "slug": "tiara",
+   "town": "Singer Island",
+   "address": [
+    "3000 N Ocean Dr"
+   ],
+   "search": [
+    "3000 N Ocean"
+   ],
+   "blurb": "43 stories and 320 residences, built in 1977.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Amrit Ocean Resort and Residences",
+   "slug": "amrit-ocean-resort-and-residences",
+   "town": "Singer Island",
+   "address": [
+    "3100 N Ocean Dr"
+   ],
+   "search": [
+    "3100 N Ocean"
+   ],
+   "blurb": "Resort and residences on North Ocean Drive.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Ocean Tree",
+   "slug": "ocean-tree",
+   "town": "Singer Island",
+   "address": [
+    "3400 N Ocean Dr"
+   ],
+   "search": [
+    "3400 N Ocean"
+   ],
+   "blurb": "Oceanfront condo on North Ocean Drive.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Villas on the Ocean",
+   "slug": "villas-on-the-ocean",
+   "town": "Singer Island",
+   "address": [
+    "3600 N Ocean Dr"
+   ],
+   "search": [
+    "3600 N Ocean"
+   ],
+   "blurb": "55+ condo community on the ocean.",
+   "tags": [
+    "55-plus"
+   ],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Vistablue Singer Island",
+   "slug": "vistablue-singer-island",
+   "town": "Singer Island",
+   "address": [
+    "3730 N Ocean Dr"
+   ],
+   "search": [
+    "3730 N Ocean"
+   ],
+   "blurb": "Oceanfront condo on North Ocean Drive.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "The Resort at Singer Island",
+   "slug": "the-resort-at-singer-island",
+   "town": "Singer Island",
+   "address": [
+    "3800 N Ocean Dr"
+   ],
+   "search": [
+    "3800 N Ocean"
+   ],
+   "blurb": "Built by WCI in 2007.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Oasis Singer Island",
+   "slug": "oasis-singer-island",
+   "town": "Singer Island",
+   "address": [
+    "3920 N Ocean Dr"
+   ],
+   "search": [
+    "3920 N Ocean"
+   ],
+   "blurb": "Oceanfront condo on North Ocean Drive.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Martinique",
+   "slug": "martinique",
+   "town": "Singer Island",
+   "address": [
+    "3966 N Ocean Dr",
+    "3970 N Ocean Dr",
+    "3972 N Ocean Dr",
+    "4000 N Ocean Dr"
+   ],
+   "search": [
+    "3966 N Ocean",
+    "3970 N Ocean",
+    "3972 N Ocean",
+    "4000 N Ocean"
+   ],
+   "blurb": "Oceanfront condo buildings on North Ocean Drive.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Beach Front at Singer Island",
+   "slug": "beach-front-at-singer-island",
+   "town": "Singer Island",
+   "address": [
+    "4600 N Ocean Dr"
+   ],
+   "search": [
+    "4600 N Ocean"
+   ],
+   "blurb": "A 19-story oceanfront building finished in 2007.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "5000 North Ocean",
+   "slug": "5000-north-ocean",
+   "town": "Singer Island",
+   "address": [
+    "5000 N Ocean Dr"
+   ],
+   "search": [
+    "5000 N Ocean"
+   ],
+   "blurb": "Kolter's 19-story luxury tower, the newest on the island.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Ocean's Edge",
+   "slug": "oceans-edge",
+   "town": "Singer Island",
+   "address": [
+    "5050 N Ocean Dr"
+   ],
+   "search": [
+    "5050 N Ocean"
+   ],
+   "blurb": "Private beach access, oceanfront heated pool and covered parking.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "One Singer Island",
+   "slug": "one-singer-island",
+   "town": "Singer Island",
+   "address": [
+    "5310 N Ocean Dr"
+   ],
+   "search": [
+    "5310 N Ocean"
+   ],
+   "blurb": "Luxury oceanfront building on North Ocean Drive.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Eastpointe",
+   "slug": "eastpointe",
+   "town": "Singer Island",
+   "address": [
+    "5380 N Ocean Dr"
+   ],
+   "search": [
+    "5380 N Ocean"
+   ],
+   "blurb": "Oceanfront condo on North Ocean Drive.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Dunes Tower",
+   "slug": "dunes-tower",
+   "town": "Singer Island",
+   "address": [
+    "5480 N Ocean Dr"
+   ],
+   "search": [
+    "5480 N Ocean"
+   ],
+   "blurb": "Oceanfront condo on North Ocean Drive.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Water Glades",
+   "slug": "water-glades",
+   "town": "Singer Island",
+   "address": [
+    "5540 N Ocean Dr"
+   ],
+   "search": [
+    "5540 N Ocean"
+   ],
+   "blurb": "The northernmost condo community on Singer Island.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Juno Ocean Club",
+   "slug": "juno-ocean-club",
+   "town": "Juno Beach",
+   "address": [
+    "450 Ocean Dr"
+   ],
+   "search": [
+    "450 Ocean D"
+   ],
+   "blurb": "Twelve floors with six condos per floor, built in 1982.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Brigadoon",
+   "slug": "brigadoon",
+   "town": "Juno Beach",
+   "address": [
+    "500 Ocean Dr"
+   ],
+   "search": [
+    "500 Ocean D"
+   ],
+   "blurb": "Twin 12-story buildings, built in 1977.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Beachfront at Juno Beach",
+   "slug": "beachfront-at-juno-beach",
+   "town": "Juno Beach",
+   "address": [
+    "530 Ocean Dr"
+   ],
+   "search": [
+    "530 Ocean D"
+   ],
+   "blurb": "A 12-story building finished in 1993.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "The Oceanfront",
+   "slug": "the-oceanfront",
+   "town": "Juno Beach",
+   "address": [
+    "570 Ocean Dr"
+   ],
+   "search": [
+    "570 Ocean D"
+   ],
+   "blurb": "A 12-story building from 1995.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Juno by the Sea",
+   "slug": "juno-by-the-sea",
+   "town": "Juno Beach",
+   "address": [
+    "630 Ocean Dr"
+   ],
+   "search": [
+    "630 Ocean D"
+   ],
+   "blurb": "A five-story oceanfront condo, built in 1971.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Ocean Royale",
+   "slug": "ocean-royale",
+   "town": "Juno Beach",
+   "address": [
+    "700 Ocean Dr"
+   ],
+   "search": [
+    "700 Ocean"
+   ],
+   "blurb": "A 13-story building finished in 2000.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Waterfront",
+   "slug": "waterfront",
+   "town": "Juno Beach",
+   "address": [
+    "800 Ocean Dr",
+    "840 Ocean Dr"
+   ],
+   "search": [
+    "800 Ocean D",
+    "840 Ocean D"
+   ],
+   "blurb": "One of Juno's newer boutique condos on the sand.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "The Surf",
+   "slug": "the-surf",
+   "town": "Juno Beach",
+   "address": [
+    "900 Ocean Dr"
+   ],
+   "search": [
+    "900 Ocean D"
+   ],
+   "blurb": "A seven-story oceanfront condo, built in 1974.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Ocean Trail",
+   "slug": "ocean-trail",
+   "town": "Jupiter",
+   "address": [
+    "100 Ocean Trail Way",
+    "200 Ocean Trail Way",
+    "300 Ocean Trail Way",
+    "400 Ocean Trail Way"
+   ],
+   "search": [
+    "100 Ocean Trail",
+    "200 Ocean Trail",
+    "300 Ocean Trail",
+    "400 Ocean Trail"
+   ],
+   "blurb": "Five buildings and about 600 units on the only direct-beachfront condo land in Jupiter.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Ocean Towers",
+   "slug": "ocean-towers-tequesta-and-jupiter-island",
+   "town": "Tequesta and Jupiter Island",
+   "address": [
+    "100 Beach Rd"
+   ],
+   "search": [
+    "100 Beach R"
+   ],
+   "blurb": "Private beach access, a heated oceanfront pool and on-site management.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Island House",
+   "slug": "island-house",
+   "town": "Tequesta and Jupiter Island",
+   "address": [
+    "325 S Beach Rd",
+    "350 S Beach Rd"
+   ],
+   "search": [
+    "325 S Beach",
+    "350 S Beach"
+   ],
+   "blurb": "Two buildings on South Beach Road.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Tequesta Towers",
+   "slug": "tequesta-towers",
+   "town": "Tequesta and Jupiter Island",
+   "address": [
+    "400 Beach Rd"
+   ],
+   "search": [
+    "400 Beach R"
+   ],
+   "blurb": "Eleven floors with four units per floor, half a mile across the bridge.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Cliveden",
+   "slug": "cliveden",
+   "town": "Tequesta and Jupiter Island",
+   "address": [
+    "425 S Beach Rd"
+   ],
+   "search": [
+    "425 S Beach"
+   ],
+   "blurb": "Building on South Beach Road.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Seaglass",
+   "slug": "seaglass",
+   "town": "Tequesta and Jupiter Island",
+   "address": [
+    "1500 S Beach Rd"
+   ],
+   "search": [
+    "1500 S Beach",
+    "1500 Beach"
+   ],
+   "blurb": "Only 21 residences, with ocean and Intracoastal views.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Seawatch",
+   "slug": "seawatch",
+   "town": "Tequesta and Jupiter Island",
+   "address": [
+    "19670 Beach Rd"
+   ],
+   "search": [
+    "19670 Beach"
+   ],
+   "blurb": "Oceanfront building on Beach Road.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  },
+  {
+   "name": "Passages of Jupiter Island",
+   "slug": "passages-of-jupiter-island",
+   "town": "Tequesta and Jupiter Island",
+   "address": [
+    "19750 S Beach Rd"
+   ],
+   "search": [
+    "19750 S Beach",
+    "19750 Beach"
+   ],
+   "blurb": "Oceanfront building on South Beach Road.",
+   "tags": [],
+   "mls": [],
+   "photo": "",
+   "idx": ""
+  }
+ ]
+}

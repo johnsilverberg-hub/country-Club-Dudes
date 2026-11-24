@@ -41,6 +41,23 @@ const communities = readList('communities.json');
 const COMMS = { base: '/communities/', label: 'Communities' };
 const CLUBS = { base: '/clubs/', label: 'Clubs' };
 const DEVS = { base: '/new-developments/', label: 'New developments' };
+// Beach condo buildings, Deerfield Beach to Jupiter Island (src/beach.json). Towns keep their file order (south to north).
+const BEACH = fs.existsSync(path.join(SRC, 'beach.json')) ? JSON.parse(fs.readFileSync(path.join(SRC, 'beach.json'), 'utf8')) : { towns: [], buildings: [] };
+const BEACH_BASE = '/beach/';
+const beachTown = (t) => BEACH.towns.find((x) => x.town === t) || {};
+// Live IDX search for one building: exact MLS subdivision names when given, otherwise an address search inside the town ZIP.
+const buildingUrl = (b) => {
+  if ((b.mls || []).length) return idxUrl([['zipcode[]', beachTown(b.town).zip], ...b.mls.map((v) => ['a_subdivision[]', v])].filter(([, v]) => v));
+  if (!(b.search || []).length) return '';
+  return idxUrl([['zipcode[]', beachTown(b.town).zip], ...b.search.map((v) => ['aw_address[]', v])].filter(([, v]) => v));
+};
+const townBuildings = (t) => BEACH.buildings.filter((b) => b.town === t);
+// Every listed building in a town at once (address search only).
+const townBeachUrl = (t) => {
+  const list = townBuildings(t);
+  const addrs = list.flatMap((b) => b.search || []);
+  return addrs.length ? idxUrl([['zipcode[]', beachTown(t).zip], ...addrs.map((v) => ['aw_address[]', v])]) : '';
+};
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -155,6 +172,7 @@ ${body}
       <a href="/clubs/">Club guides</a>
       <a href="/search/">Search all homes</a>
       <a href="/search/no-club/">Communities without a club</a>
+      ${BEACH.buildings.length ? `<a href="${BEACH_BASE}">Beach condos</a>` : ''}
       <a href="/new-developments/">New developments</a>
       <a href="/#match">Club Match</a>
       <p class="legal">John Silverberg and Shawn Miller, Premier Listings. Licensed real estate professionals. Equal Housing Opportunity. Club fees and membership terms change; verify current details with each club.</p>
@@ -199,7 +217,7 @@ ${body}
         var type = hs.querySelector('input[name="hs-type"]:checked').value;
         var places = cfg.places.filter(function (p) { return norm(p.n).indexOf(v) > -1 && (type === 'all' || (type === 'club') === (p.k === 'Club')); }).slice(0, 5);
         var towns = cfg.towns.filter(function (t) { return norm(t).indexOf(v) > -1; }).slice(0, 3);
-        items = places.map(function (p) { return { label: p.n, sub: p.t + ' · ' + (p.k === 'Club' ? 'Club guide' : 'Community'), url: p.u }; })
+        items = places.map(function (p) { return { label: p.n, sub: p.t + ' · ' + (p.k === 'Club' ? 'Club guide' : p.k === 'Beach condo' ? 'Beach condo' : 'Community'), url: p.u }; })
           .concat(towns.map(function (t) { return { label: 'Homes in ' + t, sub: 'Search listings', town: t }; }));
         if (!items.length) { close(); return; }
         list.innerHTML = items.map(function (it, i) { return '<li role="option" id="hs-o' + i + '" data-i="' + i + '"><b>' + escH(it.label) + '</b><span>' + escH(it.sub) + '</span></li>'; }).join('');
@@ -383,6 +401,7 @@ function heroSearch() {
   const places = [
     ...clubs.map((c) => ({ n: c.name, t: c.town, u: `${CLUBS.base}${c.slug}/`, k: 'Club' })),
     ...communities.map((c) => ({ n: c.name, t: c.town, u: `${COMMS.base}${c.slug}/`, k: 'Community' })),
+    ...BEACH.buildings.map((b) => ({ n: b.name, t: b.town, u: `${BEACH_BASE}${b.slug}/`, k: 'Beach condo' })),
   ];
   const towns = [...new Set([...clubs, ...communities].map((c) => c.town))].sort();
   const tabs = { club: (hs.tabs || {}).club || IDX.links['search-club'] || '', noClub: (hs.tabs || {}).noClub || IDX.links['search-noClub'] || '' };
@@ -732,6 +751,7 @@ function menuEntry(key) {
   if (key === 'all') return { key, href: '/search/', label: SEARCH.all.label, group: 'find', cls: 'sub-all' };
   if (key === 'clubs') return { key, href: '/clubs/', label: 'Club communities', group: 'find' };
   if (key === 'no-club') return { key, href: '/search/no-club/', label: SEARCH.noClub.label, group: 'find' };
+  if (key === 'beach') return { key, href: BEACH_BASE, label: 'Beach condos', group: 'find' };
   if (key === 'new-developments') return { key, href: '/new-developments/', label: 'New developments', group: 'find' };
   const life = SEARCH.lifestyle.find((c) => c.slug === key);
   if (life) return { key, href: `/search/${key}/`, label: life.label, group: 'lifestyle' };
@@ -903,6 +923,89 @@ ${matchSection(null)}`,
   });
 }
 
+// Beach condos: every building, grouped by town from Deerfield Beach north to Jupiter Island.
+function beachIndex() {
+  const towns = BEACH.towns.filter((t) => townBuildings(t.town).length);
+  const n = BEACH.buildings.length;
+  return layout({
+    title: 'Beach Condos, Deerfield Beach to Jupiter Island | Country Club Dudes',
+    description: `${n} oceanfront condo buildings from Deerfield Beach to Jupiter Island, town by town, with live listings for each building.`,
+    body: `
+${pageHero('Beach condos', 'Deerfield Beach to Jupiter Island', `${n} oceanfront condo buildings, town by town from south to north. Pick a building to see what's for sale in it right now.`)}
+<section class="band light">
+  <div class="wrap">
+    ${searchNav('beach')}
+    <nav class="chip-nav town-jump" aria-label="Jump to a town">${towns.map((t) => `<a href="#${slug(t.town)}">${esc(t.town)}</a>`).join('')}</nav>
+${towns.map((t) => {
+    const all = townBeachUrl(t.town);
+    return `    <div class="town-group" id="${slug(t.town)}"><h2>${esc(t.town)}</h2>
+    <div class="sec-head"><p>${esc(t.intro || '')}</p>${all ? `<p><a class="text-link" href="${esc(all)}" target="_blank" rel="noopener">Units for sale in all ${townBuildings(t.town).length} ${esc(t.town)} buildings →</a></p>` : ''}</div>
+    ${beachCards(townBuildings(t.town))}
+    </div>`;
+  }).join('\n')}
+  </div>
+</section>
+${matchSection(null)}`,
+  });
+}
+
+const slug = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+function beachCards(list) {
+  return `<div class="card-grid">
+${list.map((b) => `      <a class="club-card" href="${BEACH_BASE}${b.slug}/"><span class="eyebrow">${esc(b.town)}${(b.address || []).length ? ` · ${esc(b.address[0])}` : ''}</span><h3>${esc(b.name)}</h3><p>${esc(b.blurb)}</p><span class="go">See the building →</span></a>`).join('\n')}
+    </div>`;
+}
+
+function beachPage(b) {
+  const live = !b.idx && buildingUrl(b);
+  const btn = live ? `<a class="btn gold" href="${esc(live)}" target="_blank" rel="noopener">See units for sale</a>` : `<a class="btn gold" href="#listings">See units for sale</a>`;
+  const listings = b.idx ? `<div id="listings" class="idx">${b.idx}</div>` : live
+    ? `<div class="listings" id="listings">
+        <p class="pending">See every unit for sale in ${esc(b.name)} right now, live from the MLS.</p>
+        <p>Find one you like? Ask us about the HOA, assessments and rental rules before you book a showing.</p>
+        <div class="cta-row"><a class="btn solid" href="${esc(live)}" target="_blank" rel="noopener">See units for sale in ${esc(b.name)}</a><a class="btn outline" href="#match">Get alerts for new listings</a></div>
+      </div>`
+    : `<div class="listings" id="listings">
+        <p class="pending">Live listings for ${esc(b.name)} are coming soon.</p>
+        <p>Want to see what's for sale here today? Send us a note below and John will send you every active listing.</p>
+        <a class="btn solid" href="#match">Send me the listings</a>
+      </div>`;
+  const nearby = townBuildings(b.town).filter((x) => x.slug !== b.slug);
+  return layout({
+    title: `${b.name} Condos for Sale, ${b.town} | Country Club Dudes`,
+    description: `${b.name}, an oceanfront condo building in ${b.town}: units for sale and what it's like to live there.`,
+    body: `
+<section class="hero club-hero dark">
+  <div class="wrap">
+    <div class="hero-copy">
+      <p class="crumbs"><a href="${BEACH_BASE}">Beach condos</a> / <a href="${BEACH_BASE}#${slug(b.town)}">${esc(b.town)}</a></p>
+      <p class="eyebrow">${esc(b.town)}${(b.address || []).length ? ` · ${esc(b.address.length > 2 ? `${b.address[0]} and ${b.address.length - 1} more` : b.address.join(', '))}` : ''}</p>
+      <h1>${esc(b.name)}</h1>
+      <p class="lede">${esc(b.blurb)}</p>
+${tagRow(b)}
+      <div class="cta-row">${btn}<a class="btn outline" href="#match">Ask about this building</a></div>
+    </div>
+    ${photo(b.photo, b.name, `${b.name}: building, beach or view`)}
+  </div>
+</section>
+<section class="band sand">
+  <div class="wrap">
+    <div class="sec-head"><div><p class="eyebrow">For sale now</p><h2 style="margin-top:12px">Units for sale in ${esc(b.name)}</h2></div></div>
+    ${listings}
+  </div>
+</section>
+${matchSection(null)}
+${nearby.length ? `
+<section class="band light">
+  <div class="wrap">
+    <div class="sec-head"><h2>More beach buildings in ${esc(b.town)}</h2><p><a class="text-link" href="${BEACH_BASE}">See all beach condos →</a></p></div>
+    ${beachCards(nearby.slice(0, 3))}
+  </div>
+</section>` : ''}`,
+  });
+}
+
 function tagRow(c) {
   const tags = LIVE.filter((f) => (c.tags || []).includes(f.tag));
   return tags.length ? `      <div class="tag-row">${tags.map((f) => `<a class="tag" href="/search/${f.slug}/">${esc(f.label)}</a>`).join('')}</div>` : '';
@@ -938,9 +1041,13 @@ write('search/no-club/index.html', noClubPage());
 for (const cat of SEARCH.lifestyle.filter((c) => isLive(c.slug))) write(`search/${cat.slug}/index.html`, featurePage(cat, false));
 for (const cat of SEARCH.membership.filter((c) => isLive(c.slug))) write(`search/${cat.slug}/index.html`, featurePage(cat, true));
 for (const c of communities) write(`communities/${c.slug}/index.html`, communityPage(c));
+if (BEACH.buildings.length) {
+  write('beach/index.html', beachIndex());
+  for (const b of BEACH.buildings) write(`beach/${b.slug}/index.html`, beachPage(b));
+}
 write('thanks/index.html', thanksPage());
 const SITE = 'https://countryclubdudes.com';
-const urls = ['/', '/clubs/', '/search/', '/search/no-club/', ...LIVE.map((c) => `/search/${c.slug}/`), ...communities.map((c) => `/communities/${c.slug}/`), ...clubs.map((c) => `/clubs/${c.slug}/`), '/new-developments/', ...developments.map((d) => `/new-developments/${d.slug}/`)];
+const urls = ['/', '/clubs/', '/search/', '/search/no-club/', ...LIVE.map((c) => `/search/${c.slug}/`), ...communities.map((c) => `/communities/${c.slug}/`), ...clubs.map((c) => `/clubs/${c.slug}/`), '/new-developments/', ...developments.map((d) => `/new-developments/${d.slug}/`), ...(BEACH.buildings.length ? [BEACH_BASE, ...BEACH.buildings.map((b) => `${BEACH_BASE}${b.slug}/`)] : [])];
 write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${SITE}${u}</loc></url>`).join('\n')}\n</urlset>\n`);
 write('robots.txt', `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
-console.log(`Built ${clubs.length} club pages and ${developments.length} new development pages into dist/`);
+console.log(`Built ${clubs.length} club pages, ${BEACH.buildings.length} beach building pages and ${developments.length} new development pages into dist/`);

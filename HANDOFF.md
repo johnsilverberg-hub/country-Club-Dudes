@@ -20,6 +20,7 @@ DESIGN-HANDOFF.md has the design system and the setup guides for IDX Broker and 
 | `src/clubs.json` | 40 golf clubs, with `tags`, `reel`, `photo`, `idx` | `/clubs/<slug>/` |
 | `src/communities.json` | Communities without a club (55+, gated, etc.), with `tags` | `/communities/<slug>/` |
 | `src/developments.json` | New construction (empty) | `/new-developments/<slug>/` |
+| `src/beach.json` | 86 oceanfront condo buildings, Deerfield Beach to Jupiter Island, grouped by town south to north | `/beach/` and `/beach/<slug>/` |
 | `src/search.json` | Search menu, hero search bar, IDX slots for Search pages | `/search/...` |
 
 Every list can grow with no limit. Adding a line gives that community its own page and puts it on the matching Search pages. Tags in use: `55-plus`, `gated`, `waterfront`, `racquets`, `non-equity`, `optional-membership`.
