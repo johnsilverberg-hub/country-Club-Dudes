@@ -67,7 +67,7 @@ const brandMark = () => LOGO
 
 // Photo slots: shows the image when the file exists, otherwise a labeled placeholder.
 function photo(file, alt, label, cls = 'ph') {
-  if (file && hasImage(file)) return `<div class="${cls === 'ph' ? 'hero-photo' : cls}"><img src="/images/${esc(file)}" alt="${esc(alt)}" loading="lazy"></div>`;
+  if (file && hasImage(file)) return `<div class="${cls === 'ph' ? 'hero-photo' : cls}"><img src="/images/${esc(file)}" alt="${esc(alt)}"${cls === 'ph' ? ' fetchpriority="high"' : ' loading="lazy"'}></div>`;
   return `<div class="ph"><img class="ph-mark" src="/images/ccd-key-gold.png" alt=""><span>[Photo] ${esc(label)}</span></div>`;
 }
 
