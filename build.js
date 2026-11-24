@@ -26,7 +26,15 @@ function idxUrl(pairs) {
   pairs.forEach(([k, v]) => u.searchParams.append(k, v));
   return u.toString();
 }
-const communityUrl = (slug) => (Array.isArray(SUBS[slug]) && SUBS[slug].length ? idxUrl(SUBS[slug].map((v) => ['a_subdivision[]', v])) : '');
+// An entry is a list of names, or { "city": "<town>", "names": [...] } when the names are common
+// enough that the search must also be limited to that town (city IDs from heroSearch.cityIds).
+const communityUrl = (slug) => {
+  const e = SUBS[slug];
+  const names = Array.isArray(e) ? e : (e && e.names) || [];
+  if (!names.length) return '';
+  const cityId = e && e.city && ((SEARCH.heroSearch || {}).cityIds || {})[e.city];
+  return idxUrl([...(cityId ? [['city[]', cityId]] : []), ...names.map((v) => ['a_subdivision[]', v])]);
+};
 const allHomesUrl = () => idxUrl(Object.values((SEARCH.heroSearch || {}).cityIds || {}).map((id) => ['city[]', id]));
 // Communities without a club: same fields as a club (name, slug, town, blurb, tags, idx, photo).
 const communities = readList('communities.json');
