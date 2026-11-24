@@ -435,6 +435,12 @@ footer .brand{margin-bottom:16px;color:var(--cream)}
 .prose strong{color:var(--ink);font-weight:500}
 .prose blockquote{margin:1.6em 0;padding:4px 0 4px 22px;border-left:3px solid var(--gold);font:italic 400 22px/1.5 var(--display);color:var(--ink)}
 .prose img{border-radius:16px;margin:1.4em 0}
+.table-wrap{overflow-x:auto;margin:1.6em 0;border:1px solid var(--line);border-radius:16px;background:#fff}
+.prose table{width:100%;border-collapse:collapse;font-size:15px;line-height:1.5}
+.prose th,.prose td{padding:14px 16px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+.prose thead th{background:var(--green);color:var(--cream);font:600 12px/1.3 var(--label);letter-spacing:.06em;text-transform:uppercase}
+.prose tbody th{font-weight:500;color:var(--ink);white-space:nowrap}
+.prose tbody tr:last-child th,.prose tbody tr:last-child td{border-bottom:0}
 .toc{padding:24px 28px;border:1px solid var(--line);border-radius:16px;background:#fff;font-size:15px;line-height:1.5}
 .toc ul{margin:10px 0 0;padding:0;list-style:none}
 .toc li+li{margin-top:6px}
@@ -446,5 +452,5 @@ footer .brand{margin-bottom:16px;color:var(--cream)}
 .post-cta p{font-size:16px;line-height:1.6;color:var(--on-green-muted)}
 @media (max-width:1080px){.post-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:900px){.post-grid.feature .post-card:first-child{grid-template-columns:1fr}.post-grid.feature .post-card:first-child .post-img{min-height:220px}.post-grid.feature .post-card:first-child .post-body{padding:24px}}
-@media (max-width:640px){.post-grid{grid-template-columns:1fr}.prose{font-size:17px}.post-cover{margin-top:0}.post-cta{padding:26px 22px}}
+@media (max-width:640px){.prose tbody th{white-space:normal;width:34%}.prose th,.prose td{padding:12px 10px;font-size:14px}.prose thead th{font-size:11px}.post-grid{grid-template-columns:1fr}.prose{font-size:17px}.post-cover{margin-top:0}.post-cta{padding:26px 22px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}

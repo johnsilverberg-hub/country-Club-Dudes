@@ -1003,6 +1003,10 @@ function md(src) {
       const id = mm[2].toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
       if (mm[1].length === 2) toc.push([id, mm[2]]);
       out.push(`<h${mm[1].length} id="${id}">${inline(mm[2])}</h${mm[1].length}>`);
+    } else if (lines.length > 1 && lines.every((l) => /^\s*\|.*\|\s*$/.test(l))) {
+      const cells = (l) => l.trim().replace(/^\||\|$/g, '').split('|').map((x) => x.trim());
+      const rows = lines.filter((l) => !/^\s*\|[\s:|-]+\|\s*$/.test(l)).map(cells);
+      out.push(`<div class="table-wrap"><table><thead><tr>${rows[0].map((h) => `<th scope="col">${inline(h)}</th>`).join('')}</tr></thead><tbody>${rows.slice(1).map((r) => `<tr>${r.map((c, i) => (i === 0 ? `<th scope="row">${inline(c)}</th>` : `<td>${inline(c)}</td>`)).join('')}</tr>`).join('')}</tbody></table></div>`);
     } else if (lines.every((l) => /^\s*[-*]\s+/.test(l))) out.push(`<ul>${lines.map((l) => `<li>${inline(l.replace(/^\s*[-*]\s+/, ''))}</li>`).join('')}</ul>`);
     else if (lines.every((l) => /^\s*\d+[.)]\s+/.test(l))) out.push(`<ol>${lines.map((l) => `<li>${inline(l.replace(/^\s*\d+[.)]\s+/, ''))}</li>`).join('')}</ol>`);
     else if (lines.every((l) => /^>\s?/.test(l))) out.push(`<blockquote>${inline(lines.map((l) => l.replace(/^>\s?/, '')).join(' '))}</blockquote>`);

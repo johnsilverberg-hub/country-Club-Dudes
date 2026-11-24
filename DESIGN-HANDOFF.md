@@ -159,7 +159,9 @@ and shows up in the hero search suggestions.
 The **Journal** tab is the site's blog for SEO articles. Each article is one Markdown file in
 `src/journal/`; adding a file adds the article page, its place on `/journal/`, the sitemap entry,
 share previews and Google's article markup. Full template and field list: `src/journal/README.md`.
-The first article, "The Front Nine", is adapted from the Front Nine section already on the home page.
+The Journal launches with four articles: "The Front Nine" (adapted from the home page section),
+"Equity vs. non-equity country clubs", "Mandatory vs. optional club membership" and "How 55+ communities
+work in Palm Beach County". Each cites its sources at the end; fees are quoted with their year and source.
 The home page shows a "From the Journal" row once there are three or more articles.
 
 ### Contact consent and privacy policy

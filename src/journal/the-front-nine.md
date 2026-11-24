@@ -20,7 +20,7 @@ Equity means you own a share of the club. That affects refunds when you leave, h
 
 ## 3. What is the initiation or capital contribution, and is any of it refundable?
 
-This is often a six-figure line item that sits completely outside the purchase price. Ask what it is today, what portion (if any) comes back to you, and when.
+This is often a six-figure line item that sits completely outside the purchase price. Ask what it is for the year you'd join, what portion (if any) comes back to you, and when.
 
 ## 4. What do the annual dues cover?
 
@@ -48,4 +48,4 @@ Applications and board reviews can add weeks to a normal closing timeline. Build
 
 ## Getting the answers
 
-Membership terms change, so confirm current details with the club before you buy. If you're comparing a few clubs, send us a Club Match: we'll get you the answers for the clubs on your list, along with what's for sale inside the gates right now.
+Membership terms change, so confirm current details with the club before you buy. If you're comparing a few clubs, send us a Club Match: we'll get you the answers for the clubs on your list, along with what's for sale inside the gates.
