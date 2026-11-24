@@ -1,5 +1,5 @@
 {
- "_howto": "MLS subdivision names (exact, as BeachesMLS spells them) used to build each club or community's IDX saved link \"ccd-<slug>\". Edit a list, then run a deploy preview with IDX_RESET_LINKS=1 to rebuild links.",
+ "_howto": "MLS subdivision names (exact, as BeachesMLS spells them) used to build each club or community page's live IDX search link. Use {\"city\": \"<town>\", \"names\": [...]} when a name is common to several towns.",
  "old-palm": [
   "OLD PALM 2",
   "OLD PALM 3",
@@ -802,5 +802,16 @@
   "OAKS AT BOCA RATON 5",
   "OAKS AT BOCA RATON 8",
   "THE OAKS BOCA RATON"
+ ],
+ "the-preserve": {
+  "city": "Boca Raton",
+  "names": [
+   "PRESERVE",
+   "The Preserve"
+  ]
+ },
+ "grande-orchid": [
+  "GRANDE ORCHID",
+  "GRAND ORCHID"
  ]
 }
