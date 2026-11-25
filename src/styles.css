@@ -454,3 +454,4 @@ footer .brand{margin-bottom:16px;color:var(--cream)}
 @media (max-width:900px){.post-grid.feature .post-card:first-child{grid-template-columns:1fr}.post-grid.feature .post-card:first-child .post-img{min-height:220px}.post-grid.feature .post-card:first-child .post-body{padding:24px}}
 @media (max-width:640px){.prose tbody th{white-space:normal;width:34%}.prose th,.prose td{padding:12px 10px;font-size:14px}.prose thead th{font-size:11px}.post-grid{grid-template-columns:1fr}.prose{font-size:17px}.post-cover{margin-top:0}.post-cta{padding:26px 22px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+.town-group{scroll-margin-top:110px}
