@@ -9,6 +9,29 @@ const readList = (file) => JSON.parse(fs.readFileSync(path.join(SRC, file), 'utf
 const clubs = readList('clubs.json');
 // New construction communities. Same fields as a club, plus an optional "status" like "Now selling".
 const developments = readList('developments.json');
+// Site-wide settings: live URL, Google Analytics / Search Console, home page bios and client quote.
+const SITE_CFG = JSON.parse(fs.readFileSync(path.join(SRC, 'site.json'), 'utf8'));
+const SITE = SITE_CFG.url.replace(/\/$/, '');
+
+// The Journal: one Markdown file per article in src/journal/ (see src/journal/README.md).
+// Front matter between --- lines: title, description, date (YYYY-MM-DD), author, topic, image, clubs, draft.
+const JOURNAL_DIR = path.join(SRC, 'journal');
+function readPost(file) {
+  const raw = fs.readFileSync(path.join(JOURNAL_DIR, file), 'utf8').replace(/\r\n/g, '\n');
+  const m = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+  const meta = {};
+  if (m) m[1].split('\n').forEach((line) => { const i = line.indexOf(':'); if (i > 0) meta[line.slice(0, i).trim()] = line.slice(i + 1).trim().replace(/^["']|["']$/g, ''); });
+  const body = m ? m[2] : raw;
+  const words = body.split(/\s+/).filter(Boolean).length;
+  return {
+    slug: file.replace(/\.md$/, ''), title: meta.title || file, description: meta.description || '',
+    date: meta.date || '', author: meta.author || 'The Country Club Dudes', topic: meta.topic || 'Buying guide',
+    image: meta.image || '', clubs: (meta.clubs || '').split(',').map((x) => x.trim()).filter(Boolean),
+    draft: /^(true|yes)$/i.test(meta.draft || ''), minutes: Math.max(1, Math.round(words / 230)), body,
+  };
+}
+const POSTS = (fs.existsSync(JOURNAL_DIR) ? fs.readdirSync(JOURNAL_DIR).filter((f) => f.endsWith('.md') && f !== 'README.md') : [])
+  .map(readPost).filter((p) => !p.draft && p.date).sort((a, b) => b.date.localeCompare(a.date));
 // The Search menu and its pages (see src/search.json).
 const SEARCH = JSON.parse(fs.readFileSync(path.join(SRC, 'search.json'), 'utf8'));
 const FEATURES = [...SEARCH.lifestyle, ...SEARCH.membership];
@@ -45,6 +68,9 @@ const DEVS = { base: '/new-developments/', label: 'New developments' };
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 function write(rel, html) {
+  // Canonical and share-preview URL for this page, from its path in dist/.
+  const urlPath = '/' + rel.replace(/index\.html$/, '').replace(/^\/+/, '');
+  if (typeof html === 'string') html = html.split('__PAGE_URL__').join(SITE + (rel === '404.html' ? '/' : urlPath));
   const file = path.join(OUT, rel);
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, html);
@@ -66,10 +92,13 @@ const brandMark = () => LOGO
   : `<span class="wordmark">Country Club Dudes<small>Premier Listings</small></span>`;
 
 // Photo slots: shows the image when the file exists, otherwise a labeled placeholder.
+// Photo slot: shows the image when the file exists. With no photo, nothing is shown (the hero goes
+// single-column via heroClass), so no placeholder ever appears on the live site.
 function photo(file, alt, label, cls = 'ph') {
-  if (file && hasImage(file)) return `<div class="${cls === 'ph' ? 'hero-photo' : cls}"><img src="/images/${esc(file)}" alt="${esc(alt)}" loading="lazy"></div>`;
-  return `<div class="ph"><img class="ph-mark" src="/images/ccd-key-gold.png" alt=""><span>[Photo] ${esc(label)}</span></div>`;
+  if (file && hasImage(file)) return `<div class="${cls === 'ph' ? 'hero-photo' : cls}"><img src="/images/${esc(file)}" alt="${esc(alt)}"${cls === 'ph' ? ' fetchpriority="high"' : ' loading="lazy"'}></div>`;
+  return '';
 }
+const heroClass = (file) => (file && hasImage(file) ? '' : ' no-photo');
 
 // Instagram feed for "Inside the gates". Sign up at behold.so, connect @countryclubdudes,
 // create a JSON feed, and paste its feed ID here. Leave empty to show the linked reel tiles only.
@@ -103,7 +132,9 @@ function byTown(list) {
   return Object.entries(groups).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
 }
 
-function layout({ title, description, body }) {
+function layout({ title, description, body, image, type = 'website', noindex = false, jsonld = '' }) {
+  const shareImg = SITE + '/images/' + (image && hasImage(image) ? image : 'share/ccd-share.jpg');
+  const ga = SITE_CFG.googleAnalyticsId;
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -111,6 +142,18 @@ function layout({ title, description, body }) {
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
+${noindex ? '<meta name="robots" content="noindex">' : '<link rel="canonical" href="__PAGE_URL__">'}
+<meta property="og:site_name" content="Country Club Dudes">
+<meta property="og:type" content="${type}">
+<meta property="og:title" content="${esc(title)}">
+<meta property="og:description" content="${esc(description)}">
+<meta property="og:url" content="__PAGE_URL__">
+<meta property="og:image" content="${shareImg}">
+<meta name="twitter:card" content="summary_large_image">
+${SITE_CFG.googleSiteVerification ? `<meta name="google-site-verification" content="${esc(SITE_CFG.googleSiteVerification)}">` : ''}
+${ga ? `<script async src="https://www.googletagmanager.com/gtag/js?id=${esc(ga)}"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${esc(ga)}');</script>` : ''}
+${jsonld ? `<script type="application/ld+json">${jsonld.replace(/</g, '\\u003c')}</script>` : ''}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Poppins:wght@300;400;500&family=Archivo:wght@500;600&display=swap">
@@ -129,7 +172,7 @@ function layout({ title, description, body }) {
         <button class="sub-toggle" type="button" aria-expanded="false" aria-controls="sub-search">Search <span aria-hidden="true">▾</span></button>
         ${searchMenu()}
       </li>
-      <li><a href="/#front-nine">Buying guide</a></li>
+      ${POSTS.length ? '<li><a href="/journal/">Journal</a></li>' : '<li><a href="/#front-nine">Buying guide</a></li>'}
       <li><a href="/#dudes">Meet the Dudes</a></li>
       <li><a class="btn gold sm" href="/#match">Get my Club Match</a></li>
     </ul></nav>
@@ -155,8 +198,8 @@ ${body}
       <a href="/clubs/">Club guides</a>
       <a href="/search/">Search all homes</a>
       <a href="/search/no-club/">Communities without a club</a>
-      <a href="/new-developments/">New developments</a>
-      <a href="/#match">Club Match</a>
+${developments.length ? '      <a href="/new-developments/">New developments</a>\n' : ''}${POSTS.length ? '      <a href="/journal/">Journal</a>\n' : ''}      <a href="/#match">Club Match</a>
+      <a href="/privacy/">Privacy policy</a>
       <p class="legal">John Silverberg and Shawn Miller, Premier Listings. Licensed real estate professionals. Equal Housing Opportunity. Club fees and membership terms change; verify current details with each club.</p>
     </div>
   </div>
@@ -242,6 +285,16 @@ ${body}
       hs.addEventListener('change', function (e) { if (e.target.name === 'hs-type') render(); });
       hs.addEventListener('submit', function (e) { e.preventDefault(); submit(); });
     }
+
+    // Journal topic filter.
+    document.querySelectorAll('.journal-filter').forEach(function (seg) {
+      seg.addEventListener('click', function (e) {
+        var b = e.target.closest('button'); if (!b) return;
+        var t = b.getAttribute('data-topic');
+        seg.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        document.querySelectorAll('.post-card').forEach(function (c) { c.hidden = !(t === 'all' || c.getAttribute('data-topic') === t); });
+      });
+    });
 
     // All / With a club / Without a club toggle on lifestyle pages.
     document.querySelectorAll('.seg').forEach(function (seg) {
@@ -330,6 +383,8 @@ function matchForm(club) {
         <div class="field"><label for="${id}-phone">Mobile</label><input id="${id}-phone" name="phone" type="tel" autocomplete="tel" required></div>
       </div>
       <div class="field"><label for="${id}-email">Email</label><input id="${id}-email" name="email" type="email" autocomplete="email" required></div>
+      <label class="consent" for="${id}-consent"><input type="checkbox" id="${id}-consent" name="consent" value="Agreed to calls, texts and email" required>
+        <span>By checking this box, I agree that Country Club Dudes and Premier Listings may contact me by phone call, text message and email at the number and email above about real estate, including calls and texts sent using automated technology. Consent isn't a condition of buying or selling. Message and data rates may apply; message frequency varies. Reply STOP to opt out of texts or HELP for help. See our <a href="/privacy/">Privacy Policy</a>.</span></label>
       <button class="btn gold" type="submit">Send my Club Match</button>
       <p class="form-msg">John gets this right away. No spam, ever.</p>
     </form>`;
@@ -464,7 +519,7 @@ ${doors.map(([h, p, cta, href, style]) => `      <div class="door"><h3>${h}</h3>
       <h2>The Front Nine</h2>
       <hr class="rule">
       <p>Nine questions to answer before you buy in any club. Listing sites cover none of them. We can answer all nine for the clubs we cover.</p>
-      <div class="cta-row"><a class="btn cream sm" href="#match">Ask us about a specific club</a></div>
+      <div class="cta-row"><a class="btn cream sm" href="#match">Ask us about a specific club</a>${POSTS.find((p) => p.slug === 'the-front-nine') ? '<a class="text-link" href="/journal/the-front-nine/">Read the full guide →</a>' : ''}</div>
     </div>
     <table class="card-table">
       <caption class="hidden-field">Nine questions to ask before buying in a country club</caption>
@@ -490,7 +545,14 @@ ${list.map((c) => `        <a href="/clubs/${c.slug}/">${esc(c.name)}</a>`).join
   </div>
 </section>
 
-${matchSection(null)}
+${POSTS.length >= 3 ? `<section class="band sand" id="journal">
+  <div class="wrap">
+    <div class="sec-head"><div><p class="eyebrow">The Journal</p><h2 style="margin-top:12px">Club guides and buying advice</h2></div><p><a class="text-link" href="/journal/">See all articles →</a></p></div>
+    ${postCards(POSTS.slice(0, 3))}
+  </div>
+</section>
+
+` : ''}${matchSection(null)}
 
 <section class="band light" id="reels">
   <div class="wrap">
@@ -520,15 +582,15 @@ ${[['Shawn Miller', 'shawn', 'shawn.jpg', 'Shawn, candid on course'], ['John Sil
         <div class="dude-copy">
           <h3>${name}</h3>
           <p class="role">REALTOR®, Premier Listings</p>
-          <p class="ph-text">[Two sentences on ${name.split(' ')[0]}'s background, and the club detail he always checks first.]</p>
+          ${(SITE_CFG.bios || {})[key] ? `<p>${esc(SITE_CFG.bios[key])}</p>` : ''}
           <a class="text-link" href="tel:${PHONES[key][1]}">${PHONES[key][0]}</a>
         </div>
       </article>`).join('\n')}
     </div>
-    <figure class="quote">
-      <blockquote class="ph-text">“[Client quote that mentions the club guidance, not just the house.]”</blockquote>
-      <figcaption>[Client first name], bought in [Club name], [Town]</figcaption>
-    </figure>
+${(SITE_CFG.clientQuote || {}).text ? `    <figure class="quote">
+      <blockquote>“${esc(SITE_CFG.clientQuote.text)}”</blockquote>
+      <figcaption>${esc([SITE_CFG.clientQuote.name, SITE_CFG.clientQuote.club && `bought in ${SITE_CFG.clientQuote.club}`, SITE_CFG.clientQuote.town].filter(Boolean).join(', '))}</figcaption>
+    </figure>` : ''}
   </div>
 </section>`,
   });
@@ -650,16 +712,62 @@ function heroListingsBtn(c) {
     : `<a class="btn gold" href="#listings">See homes for sale</a>`;
 }
 
-function clubPage(club, section = CLUBS) {
+// Membership at a glance: only the facts that are filled in. Hidden entirely when there are none
+// (the reel strip still shows on its own).
+function glanceSection(club) {
+  const facts = [['Membership with the home', club.membership], ['Equity structure', club.equity], ['Details last verified', club.verified]].filter(([, v]) => v);
+  const reel = club.reel ? `    <div class="reel-strip"${facts.length ? '' : ' style="margin-top:0"'}><div><p class="eyebrow" style="color:var(--gold)">Watch</p><h3 style="margin-top:8px">See ${esc(club.name)} through our camera</h3></div><a class="btn gold" href="${esc(club.reel)}" target="_blank" rel="noopener">Watch the reel</a></div>` : '';
+  if (!facts.length && !reel) return '';
+  return `<section class="band light">
+  <div class="wrap">
+${facts.length ? `    <div class="sec-head">
+      <div><p class="eyebrow">The first two holes</p><h2 style="margin-top:12px">Membership at a glance</h2></div>
+      <p>Membership terms change, so confirm current details with us or the club before you buy.</p>
+    </div>
+    <div class="glance" style="grid-template-columns:repeat(${facts.length},minmax(0,1fr))">
+${facts.map(([k, v]) => `      <div><span class="eyebrow">${k}</span><strong>${esc(v)}</strong></div>`).join('\n')}
+    </div>
+` : ''}${reel}
+  </div>
+</section>
+`;
+}
+
+// The Scorecard: only amenities that are filled in, plus the bottom line. Hidden when none are filled.
+function scorecardSection(club) {
   const sc = club.scorecard || {};
-  const ask = '<span class="ph-text">Ask the Dudes</span>';
+  const rows = AMENITIES.filter((a) => sc[a]);
+  if (!rows.length) return '';
+  return `<section class="band light"${club.membership || club.equity || club.verified || club.reel ? ' style="padding-top:0"' : ''}>
+  <div class="wrap split">
+    <div class="split-intro">
+      <h2>The Scorecard</h2>
+      <hr class="rule">
+      <p>Amenities at a glance, hole by hole. Offerings change, so confirm before you buy.</p>
+      <div class="cta-row"><a class="btn solid sm" href="#match">Ask us how it compares</a></div>
+    </div>
+    <table class="card-table">
+      <caption class="hidden-field">${esc(club.name)} amenities</caption>
+      <thead><tr><th scope="col">Hole</th><th scope="col">Amenity</th><th scope="col">What's here</th></tr></thead>
+      <tbody>
+${rows.map((a, i) => `        <tr><td class="n">${i + 1}</td><td class="q">${a}</td><td class="why">${esc(sc[a])}</td></tr>`).join('\n')}
+        <tr><td class="n">${rows.length + 1}</td><td class="q">The bottom line</td><td class="why">${esc(club.blurb)}</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+`;
+}
+
+function clubPage(club, section = CLUBS) {
   const listings = listingsBlock(club);
   const nearby = (section === DEVS ? developments : clubs).filter((c) => c.town === club.town && c.slug !== club.slug);
   return layout({
     title: `${club.name} Homes for Sale, ${club.town} | Country Club Dudes`,
     description: `${club.name} in ${club.town}: homes for sale, membership, and what it's like to live there.`,
+    image: club.photo,
     body: `
-<section class="hero club-hero dark">
+<section class="hero club-hero dark${heroClass(club.photo)}">
   <div class="wrap">
     <div class="hero-copy">
       <p class="crumbs"><a href="${section.base}">${section.label}</a> / ${esc(club.town)}</p>
@@ -676,40 +784,7 @@ ${tagRow(club)}
   </div>
 </section>
 
-<section class="band light">
-  <div class="wrap">
-    <div class="sec-head">
-      <div><p class="eyebrow">The first two holes</p><h2 style="margin-top:12px">Membership at a glance</h2></div>
-      <p>Membership terms change, so confirm current details with us or the club before you buy.</p>
-    </div>
-    <div class="glance">
-      <div><span class="eyebrow">Membership with the home</span><strong>${club.membership ? esc(club.membership) : ask}</strong></div>
-      <div><span class="eyebrow">Equity structure</span><strong>${club.equity ? esc(club.equity) : ask}</strong></div>
-      <div><span class="eyebrow">Details last verified</span><strong>${club.verified ? esc(club.verified) : ask}</strong></div>
-    </div>
-${club.reel ? `    <div class="reel-strip"><div><p class="eyebrow" style="color:var(--gold)">Watch</p><h3 style="margin-top:8px">See ${esc(club.name)} through our camera</h3></div><a class="btn gold" href="${esc(club.reel)}" target="_blank" rel="noopener">Watch the reel</a></div>` : ''}
-  </div>
-</section>
-
-<section class="band light" style="padding-top:0">
-  <div class="wrap split">
-    <div class="split-intro">
-      <h2>The Scorecard</h2>
-      <hr class="rule">
-      <p>Amenities at a glance, hole by hole. Offerings change, so confirm before you buy.</p>
-      <div class="cta-row"><a class="btn solid sm" href="#match">Ask us how it compares</a></div>
-    </div>
-    <table class="card-table">
-      <caption class="hidden-field">${esc(club.name)} amenities</caption>
-      <thead><tr><th scope="col">Hole</th><th scope="col">Amenity</th><th scope="col">What's here</th></tr></thead>
-      <tbody>
-${AMENITIES.map((a, i) => `        <tr><td class="n">${i + 1}</td><td class="q">${a}</td><td class="why">${sc[a] ? esc(sc[a]) : ask}</td></tr>`).join('\n')}
-        <tr><td class="n">9</td><td class="q">The bottom line</td><td class="why">${esc(club.blurb)}</td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
+${glanceSection(club)}${scorecardSection(club)}
 <section class="band sand">
   <div class="wrap">
     ${listings}
@@ -732,7 +807,7 @@ function menuEntry(key) {
   if (key === 'all') return { key, href: '/search/', label: SEARCH.all.label, group: 'find', cls: 'sub-all' };
   if (key === 'clubs') return { key, href: '/clubs/', label: 'Club communities', group: 'find' };
   if (key === 'no-club') return { key, href: '/search/no-club/', label: SEARCH.noClub.label, group: 'find' };
-  if (key === 'new-developments') return { key, href: '/new-developments/', label: 'New developments', group: 'find' };
+  if (key === 'new-developments') return developments.length ? { key, href: '/new-developments/', label: 'New developments', group: 'find' } : null;
   const life = SEARCH.lifestyle.find((c) => c.slug === key);
   if (life) return { key, href: `/search/${key}/`, label: life.label, group: 'lifestyle' };
   const mem = SEARCH.membership.find((c) => c.slug === key);
@@ -880,8 +955,9 @@ function communityPage(c) {
   return layout({
     title: `${c.name} Homes for Sale, ${c.town} | Country Club Dudes`,
     description: `${c.name} in ${c.town}: homes for sale and what it's like to live there.`,
+    image: c.photo,
     body: `
-<section class="hero club-hero dark">
+<section class="hero club-hero dark${heroClass(c.photo)}">
   <div class="wrap">
     <div class="hero-copy">
       <p class="crumbs"><a href="/search/no-club/">Communities without a club</a> / ${esc(c.town)}</p>
@@ -908,10 +984,186 @@ function tagRow(c) {
   return tags.length ? `      <div class="tag-row">${tags.map((f) => `<a class="tag" href="/search/${f.slug}/">${esc(f.label)}</a>`).join('')}</div>` : '';
 }
 
+// ---- Journal -------------------------------------------------------------------------------
+
+// Small Markdown converter (no installs): ## and ### headings, paragraphs, - and 1. lists,
+// > quotes, **bold**, *italic*, [links](url), ![images](src), and raw HTML lines.
+function md(src) {
+  const inline = (t) => esc(t)
+    .replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, (_, a, u) => `<img src="${u}" alt="${a}" loading="lazy">`)
+    .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, a, u) => `<a href="${u}"${/^https?:/.test(u) && !u.includes('countryclubdudes.com') ? ' target="_blank" rel="noopener"' : ''}>${a}</a>`)
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>').replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+  const out = [], toc = [];
+  const blocks = src.trim().split(/\n{2,}/);
+  for (const b of blocks) {
+    const lines = b.split('\n');
+    let mm;
+    if (/^</.test(b.trim())) out.push(b);
+    else if ((mm = b.match(/^(#{2,3})\s+(.+)$/))) {
+      const id = mm[2].toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      if (mm[1].length === 2) toc.push([id, mm[2]]);
+      out.push(`<h${mm[1].length} id="${id}">${inline(mm[2])}</h${mm[1].length}>`);
+    } else if (lines.length > 1 && lines.every((l) => /^\s*\|.*\|\s*$/.test(l))) {
+      const cells = (l) => l.trim().replace(/^\||\|$/g, '').split('|').map((x) => x.trim());
+      const rows = lines.filter((l) => !/^\s*\|[\s:|-]+\|\s*$/.test(l)).map(cells);
+      out.push(`<div class="table-wrap"><table><thead><tr>${rows[0].map((h) => `<th scope="col">${inline(h)}</th>`).join('')}</tr></thead><tbody>${rows.slice(1).map((r) => `<tr>${r.map((c, i) => (i === 0 ? `<th scope="row">${inline(c)}</th>` : `<td>${inline(c)}</td>`)).join('')}</tr>`).join('')}</tbody></table></div>`);
+    } else if (lines.every((l) => /^\s*[-*]\s+/.test(l))) out.push(`<ul>${lines.map((l) => `<li>${inline(l.replace(/^\s*[-*]\s+/, ''))}</li>`).join('')}</ul>`);
+    else if (lines.every((l) => /^\s*\d+[.)]\s+/.test(l))) out.push(`<ol>${lines.map((l) => `<li>${inline(l.replace(/^\s*\d+[.)]\s+/, ''))}</li>`).join('')}</ol>`);
+    else if (lines.every((l) => /^>\s?/.test(l))) out.push(`<blockquote>${inline(lines.map((l) => l.replace(/^>\s?/, '')).join(' '))}</blockquote>`);
+    else out.push(`<p>${inline(lines.join(' '))}</p>`);
+  }
+  return { html: out.join('\n'), toc };
+}
+
+const fmtDate = (d) => (d ? new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : '');
+
+function postCards(list, feature = false) {
+  return `<div class="post-grid${feature ? ' feature' : ''}">
+${list.map((p) => `      <a class="post-card" href="/journal/${p.slug}/" data-topic="${esc(p.topic)}">
+        <div class="post-img">${p.image && hasImage(p.image) ? `<img src="/images/${esc(p.image)}" alt="" loading="lazy">` : '<img class="post-mark" src="/images/ccd-key-gold.png" alt="">'}</div>
+        <div class="post-body"><span class="eyebrow">${esc(p.topic)}</span><h3>${esc(p.title)}</h3><p>${esc(p.description)}</p><span class="post-meta">${fmtDate(p.date)} · ${p.minutes} min read</span></div>
+      </a>`).join('\n')}
+    </div>`;
+}
+
+function journalIndex() {
+  const topics = [...new Set(POSTS.map((p) => p.topic))];
+  return layout({
+    title: 'The Journal: Country Club Buying Guides | Country Club Dudes',
+    description: 'Guides to Palm Beach County country clubs: membership costs, club comparisons, and what to ask before you buy in a club community.',
+    body: `
+${pageHero('The Journal', 'Club guides and buying advice', 'What we learn inside Palm Beach County&#39;s clubs: membership costs, club comparisons, and the questions to ask before you buy.')}
+<section class="band light">
+  <div class="wrap">
+${topics.length > 1 ? `    <div class="seg journal-filter" role="group" aria-label="Topic"><button type="button" data-topic="all" aria-pressed="true">All</button>${topics.map((t) => `<button type="button" data-topic="${esc(t)}" aria-pressed="false">${esc(t)}</button>`).join('')}</div>\n` : ''}    ${postCards(POSTS, true)}
+  </div>
+</section>
+${matchSection(null)}`,
+  });
+}
+
+function postPage(p) {
+  const { html, toc } = md(p.body);
+  const related = POSTS.filter((x) => x.slug !== p.slug).sort((a, b) => (b.topic === p.topic) - (a.topic === p.topic)).slice(0, 3);
+  const mentioned = p.clubs.map((slug) => clubs.find((c) => c.slug === slug) || communities.find((c) => c.slug === slug)).filter(Boolean);
+  const url = `${SITE}/journal/${p.slug}/`;
+  const jsonld = JSON.stringify([
+    { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: p.title, description: p.description, datePublished: p.date, dateModified: p.date,
+      author: { '@type': p.author === 'The Country Club Dudes' ? 'Organization' : 'Person', name: p.author },
+      publisher: { '@type': 'Organization', name: 'Country Club Dudes', logo: { '@type': 'ImageObject', url: `${SITE}/images/ccd-logo-stacked-dark.png` } },
+      image: `${SITE}/images/${p.image && hasImage(p.image) ? p.image : 'share/ccd-share.jpg'}`, mainEntityOfPage: url },
+    { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Journal', item: `${SITE}/journal/` },
+      { '@type': 'ListItem', position: 2, name: p.title, item: url }] },
+  ]);
+  return layout({
+    title: `${p.title} | Country Club Dudes`, description: p.description, image: p.image, type: 'article', jsonld,
+    body: `
+<section class="page-hero dark post-hero">
+  <div class="wrap">
+    <p class="crumbs"><a href="/journal/">Journal</a> / ${esc(p.topic)}</p>
+    <h1>${esc(p.title)}</h1>
+    ${p.description ? `<p class="lede">${esc(p.description)}</p>` : ''}
+    <p class="post-byline">${esc(p.author)} · ${fmtDate(p.date)} · ${p.minutes} min read</p>
+  </div>
+</section>
+${p.image && hasImage(p.image) ? `<div class="post-cover wrap"><img src="/images/${esc(p.image)}" alt="" fetchpriority="high"></div>` : ''}
+<section class="band light post-band">
+  <div class="wrap post-layout">
+    <article class="prose">
+${toc.length >= 3 ? `      <nav class="toc" aria-label="In this article"><p class="eyebrow">In this article</p><ul>${toc.map(([id, t]) => `<li><a href="#${id}">${esc(t)}</a></li>`).join('')}</ul></nav>\n` : ''}${html}
+      <aside class="post-cta"><p class="eyebrow">Club Match</p><h3>Want this for the clubs you're considering?</h3><p>Tell us how you play and what you want to spend. We'll send two or three clubs that fit, with real dues and what's for sale today.</p><a class="btn gold" href="#match">Get my Club Match</a></aside>
+    </article>
+  </div>
+</section>
+${mentioned.length ? `<section class="band sand">
+  <div class="wrap">
+    <div class="sec-head"><div><p class="eyebrow">In this article</p><h2 style="margin-top:12px">Clubs and communities mentioned</h2></div></div>
+    ${clubCards(mentioned)}
+  </div>
+</section>` : ''}
+${related.length ? `<section class="band light">
+  <div class="wrap">
+    <div class="sec-head"><h2>Keep reading</h2><p><a class="text-link" href="/journal/">All articles →</a></p></div>
+    ${postCards(related)}
+  </div>
+</section>` : ''}
+${matchSection(null)}`,
+  });
+}
+
+// ---- Privacy policy (template: John and Premier Listings should review before launch) ------------
+function privacyPage() {
+  const updated = 'November 24, 2026';
+  const sec = (h, ...ps) => `<h2>${h}</h2>\n${ps.map((x) => (x.startsWith('<') ? x : `<p>${x}</p>`)).join('\n')}`;
+  return layout({
+    title: 'Privacy Policy | Country Club Dudes',
+    description: 'How Country Club Dudes and Premier Listings collect, use and protect your information, including phone calls, texts and email.',
+    body: `
+${pageHero('Legal', 'Privacy policy', `Last updated ${updated}`)}
+<section class="band light post-band">
+  <div class="wrap post-layout">
+    <article class="prose">
+<p>This policy explains how Country Club Dudes, a team of licensed real estate agents with Premier Listings ("we", "us"), collects, uses and protects information when you use countryclubdudes.com (the "site").</p>
+${sec('Information we collect',
+  '<ul><li><strong>Information you give us:</strong> your name, mobile number, email address and anything you share in our forms, such as the areas, budget, clubs and amenities you&#39;re interested in.</li><li><strong>Information collected automatically:</strong> basic technical and usage information, such as pages viewed, device and browser type, approximate location and how you arrived at the site, collected through cookies and similar tools (for example Google Analytics).</li></ul>')}
+${sec('How we use your information',
+  '<ul><li>To respond to your inquiry and send the clubs, communities and listings you asked about.</li><li>To contact you by phone call, text message and email about real estate, as you agreed when you submitted a form.</li><li>To improve the site and understand which pages are useful.</li><li>To meet legal, licensing and record-keeping requirements.</li></ul>')}
+${sec('Calls, text messages and email',
+  'When you check the consent box on our form, you agree that Country Club Dudes and Premier Listings may contact you by phone, text message and email at the number and address you provided, including calls and texts sent using automated technology. Consent isn&#39;t a condition of buying or selling a home.',
+  'Message and data rates may apply, and message frequency varies. You can reply <strong>STOP</strong> to any text to opt out, or <strong>HELP</strong> for help. You can unsubscribe from emails using the link in any email, or ask us to stop calling at any time.',
+  '<strong>We do not sell, rent or share your mobile number or text messaging consent with third parties or affiliates for their marketing purposes.</strong>')}
+${sec('How we share information',
+  'We share information only as needed to run the site and serve you:',
+  '<ul><li><strong>Our brokerage,</strong> Premier Listings, and the agents on our team.</li><li><strong>Service providers</strong> that work on our behalf, such as website hosting and forms (Netlify), our customer relationship manager (Follow Up Boss), listing search (IDX Broker), email and texting tools, and analytics (Google). They may use your information only to provide their services to us.</li><li><strong>When required by law,</strong> or to protect our rights, our clients or others.</li></ul>',
+  'We do not sell your personal information.')}
+${sec('Cookies and analytics',
+  'We use cookies and similar tools to understand how the site is used and, where enabled, to measure advertising. You can block or delete cookies in your browser settings; the site will still work.')}
+${sec('Listing information and other sites',
+  'Home searches open on our listing search provider&#39;s site, and some links go to Instagram and other sites. Those sites have their own privacy policies. Listing information is provided by the MLS and is deemed reliable but not guaranteed.')}
+${sec('How long we keep information',
+  'We keep your information for as long as needed to serve you and to meet legal and brokerage record-keeping requirements.')}
+${sec('Your choices',
+  'You can ask us to update or delete your contact information, or to stop contacting you, at any time using the details below.')}
+${sec('Children',
+  'This site is not meant for children under 13, and we don&#39;t knowingly collect their information.')}
+${sec('Changes to this policy',
+  'We may update this policy from time to time. The date at the top shows when it last changed.')}
+${sec('Contact us',
+  `Country Club Dudes at Premier Listings, Delray Beach, Florida<br>Shawn Miller: <a href="tel:${PHONES.shawn[1]}">${PHONES.shawn[0]}</a><br>John Silverberg: <a href="tel:${PHONES.john[1]}">${PHONES.john[0]}</a>`)}
+    </article>
+  </div>
+</section>`,
+  });
+}
+
+// ---- Page not found (Netlify serves dist/404.html for any missing page) --------------------------
+function notFoundPage() {
+  return layout({
+    title: 'Page not found | Country Club Dudes',
+    description: 'That page could not be found.',
+    noindex: true,
+    body: `
+<section class="hero hero-full dark nf">
+  ${heroMedia()}
+  <div class="wrap">
+    <div class="hero-copy">
+      <p class="hero-kicker">Error 404</p>
+      <h1>That shot went out of bounds.</h1>
+      <p class="lede">The page you were looking for isn&#39;t here. It may have moved, or the link may have a typo. Try a search, or pick up from one of these.</p>
+      ${heroSearch()}
+      <p class="hero-alt"><a class="text-link" href="/">Home</a> <span aria-hidden="true">·</span> <a class="text-link" href="/clubs/">Club guides</a> <span aria-hidden="true">·</span> <a class="text-link" href="/search/">Search all homes</a>${POSTS.length ? ' <span aria-hidden="true">·</span> <a class="text-link" href="/journal/">Journal</a>' : ''} <span aria-hidden="true">·</span> <a class="text-link" href="/#match">Get my Club Match</a></p>
+    </div>
+  </div>
+</section>`,
+  });
+}
+
 function thanksPage() {
   return layout({
     title: 'Thanks | Country Club Dudes',
     description: 'Thanks for reaching out to the Country Club Dudes.',
+    noindex: true,
     body: `
 <section class="page-hero dark" style="min-height:60vh">
   <div class="wrap">
@@ -931,16 +1183,24 @@ if (fs.existsSync(path.join(SRC, 'images'))) fs.cpSync(path.join(SRC, 'images'),
 write('index.html', homePage());
 write('clubs/index.html', clubsIndex());
 for (const club of clubs) write(`clubs/${club.slug}/index.html`, clubPage(club));
-write('new-developments/index.html', developmentsIndex());
-for (const dev of developments) write(`new-developments/${dev.slug}/index.html`, clubPage(dev, DEVS));
+// New Developments is hidden until src/developments.json has at least one entry.
+if (developments.length) {
+  write('new-developments/index.html', developmentsIndex());
+  for (const dev of developments) write(`new-developments/${dev.slug}/index.html`, clubPage(dev, DEVS));
+}
 write('search/index.html', searchAllPage());
 write('search/no-club/index.html', noClubPage());
 for (const cat of SEARCH.lifestyle.filter((c) => isLive(c.slug))) write(`search/${cat.slug}/index.html`, featurePage(cat, false));
 for (const cat of SEARCH.membership.filter((c) => isLive(c.slug))) write(`search/${cat.slug}/index.html`, featurePage(cat, true));
 for (const c of communities) write(`communities/${c.slug}/index.html`, communityPage(c));
 write('thanks/index.html', thanksPage());
-const SITE = 'https://countryclubdudes.com';
-const urls = ['/', '/clubs/', '/search/', '/search/no-club/', ...LIVE.map((c) => `/search/${c.slug}/`), ...communities.map((c) => `/communities/${c.slug}/`), ...clubs.map((c) => `/clubs/${c.slug}/`), '/new-developments/', ...developments.map((d) => `/new-developments/${d.slug}/`)];
+write('privacy/index.html', privacyPage());
+write('404.html', notFoundPage());
+if (POSTS.length) {
+  write('journal/index.html', journalIndex());
+  for (const p of POSTS) write(`journal/${p.slug}/index.html`, postPage(p));
+}
+const urls = ['/', '/clubs/', '/search/', '/search/no-club/', ...LIVE.map((c) => `/search/${c.slug}/`), ...communities.map((c) => `/communities/${c.slug}/`), ...clubs.map((c) => `/clubs/${c.slug}/`), ...(developments.length ? ['/new-developments/', ...developments.map((d) => `/new-developments/${d.slug}/`)] : []), ...(POSTS.length ? ['/journal/', ...POSTS.map((p) => `/journal/${p.slug}/`)] : []), '/privacy/'];
 write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${SITE}${u}</loc></url>`).join('\n')}\n</urlset>\n`);
 write('robots.txt', `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
 console.log(`Built ${clubs.length} club pages and ${developments.length} new development pages into dist/`);

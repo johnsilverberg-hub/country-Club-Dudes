@@ -82,6 +82,27 @@ in `src/images/`, and this document. `src/clubs.json`, `src/developments.json`, 
 
 ---
 
+## Hidden until filled
+
+To get the site launch-ready, anything that only had placeholder content is **hidden**, not deleted.
+Each item comes back on its own as soon as its content is added (no design changes needed):
+
+| Hidden | Where | How it comes back |
+|---|---|---|
+| Hero photo on all 40 club pages and 42 community pages (the "[Photo]" box) | Club and community pages | Add a photo and set `"photo"` on the club or community (see "Club photos from Google Drive"). Until then the hero is a single column. |
+| Membership at a glance (membership, equity, last verified) | Club pages | Fill in `membership`, `equity` and/or `verified` in `clubs.json`. Only the filled-in facts show. |
+| The Scorecard (amenities) | Club pages | Fill in `scorecard` in `clubs.json`. Only filled-in amenities show, then "The bottom line". |
+| Shawn's and John's bios | Home page, Meet the Dudes | Fill in `bios.shawn` / `bios.john` in `src/site.json`. |
+| Client quote | Home page, Meet the Dudes | Fill in `clientQuote` in `src/site.json` (`text`, `name`, `club`, `town`). |
+| New Developments page, its footer link and sitemap entry | Site-wide | Add an entry to `src/developments.json`. The page, footer link and sitemap entry return automatically. |
+
+Club reels still show on club pages where a `reel` link exists.
+
+**Content to review before launch (John):** club towns and blurbs in `src/clubs.json` and all 42
+entries in `src/communities.json` (towns, blurbs and tags such as `55-plus` and `gated`) are drafts.
+
+---
+
 ## Content slots
 
 All optional. Add them whenever they're ready; the site fills them in on the next build.
@@ -109,7 +130,7 @@ All optional. Add them whenever they're ready; the site fills them in on the nex
 | `featuredReel` | `true` | Puts the club's reel in "Inside the gates" (only needed if Behold isn't set up) |
 | `idx`, `reel`, `status` | (existing) | Unchanged. `idx` is now the fallback when there's no `src/listings/<slug>.json` |
 
-Empty fields show "Ask the Dudes", which works as a soft prompt to get in touch.
+Empty fields are hidden (see "Hidden until filled").
 
 ### Communities without a club (`src/communities.json`)
 
@@ -123,10 +144,45 @@ Starts empty. Each entry uses the same fields as a club:
 Each one gets its own page, appears on Communities without a club and the matching lifestyle pages,
 and shows up in the hero search suggestions.
 
-### Home page copy
+### Site settings and home page copy (`src/site.json`)
 
-Bios ("Two sentences on Shawn's background...") and the client quote are in `homePage()` in
-`build.js`, marked with square brackets.
+| Field | What it does |
+|---|---|
+| `url` | The live address. Used for canonical links, share previews and the sitemap. |
+| `googleAnalyticsId` | Google Analytics measurement ID (`G-XXXXXXX`). Adds the tracking tag to every page when filled in. |
+| `googleSiteVerification` | Only if Search Console is verified with the HTML-tag method. The DNS method doesn't need this. |
+| `bios.shawn`, `bios.john` | Two sentences each for Meet the Dudes. |
+| `clientQuote` | `text`, `name`, `club`, `town`. Shown under Meet the Dudes. |
+
+### Journal (`src/journal/`)
+
+The **Journal** tab is the site's blog for SEO articles. Each article is one Markdown file in
+`src/journal/`; adding a file adds the article page, its place on `/journal/`, the sitemap entry,
+share previews and Google's article markup. Full template and field list: `src/journal/README.md`.
+The Journal launches with four articles: "The Front Nine" (adapted from the home page section),
+"Equity vs. non-equity country clubs", "Mandatory vs. optional club membership" and "How 55+ communities
+work in Palm Beach County". Each cites its sources at the end; fees are quoted with their year and source.
+The home page shows a "From the Journal" row once there are three or more articles.
+
+### Contact consent and privacy policy
+
+- The Club Match form has a **required consent checkbox** for phone calls, texts (including automated)
+  and email, with STOP/HELP and "not a condition of buying or selling" language. Submissions include a
+  `consent` field so there's a record of each agreement.
+- **`/privacy/`** is a new privacy policy page, linked from the form and the footer. It covers what's
+  collected, calls/texts/email, sharing with service providers, cookies and analytics, and contact details.
+- Both are a standard starting point, not legal advice. **John and Premier Listings should review the
+  wording before launch**, and update the policy if the site adds new tools (for example a Meta Pixel).
+
+### Page not found, share previews and SEO
+
+- **`404.html`**: a branded "out of bounds" page with the search bar and links home. Netlify shows it
+  for any address that doesn't exist.
+- **Share previews**: every page has Open Graph tags. The default image is
+  `src/images/share/ccd-share.jpg` (1200x630); club, community and Journal pages use their own photo
+  when they have one.
+- **Canonical links** on every page, built from `site.json` → `url`. The Thanks and 404 pages are
+  marked `noindex`.
 
 ---
 

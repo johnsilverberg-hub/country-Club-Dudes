@@ -1,0 +1,16 @@
+{
+  "_howto": "Site-wide settings. url is the live address (used for share previews, canonical links and the sitemap). Paste the Google Analytics measurement ID (G-XXXXXXX) and, if using the HTML-tag method, the Google Search Console verification code to switch them on. Bios and the client quote appear on the home page as soon as they're filled in; empty ones stay hidden.",
+  "url": "https://countryclubdudes.com",
+  "googleAnalyticsId": "",
+  "googleSiteVerification": "",
+  "bios": {
+    "shawn": "",
+    "john": ""
+  },
+  "clientQuote": {
+    "text": "",
+    "name": "",
+    "club": "",
+    "town": ""
+  }
+}
