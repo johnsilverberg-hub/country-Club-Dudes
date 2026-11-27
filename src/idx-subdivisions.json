@@ -813,5 +813,32 @@
  "grande-orchid": [
   "GRANDE ORCHID",
   "GRAND ORCHID"
+ ],
+ "trump-national-jupiter": [
+  "RITZ CARLTON GOLF CLUB & SPA",
+  "RITZ CARLTON GOLF CLUB & SPA POD B",
+  "TRUMP NATIONAL JUPITER",
+  "Trump National Jupiter",
+  "EAGLE TREE AT TRUMP NATIONAL JUPITER",
+  "Eagle Tree at Trump National Jupiter"
+ ],
+ "jupiter-country-club": {
+  "city": "Jupiter",
+  "names": [
+   "JUPITER COUNTRY CLUB",
+   "Jupiter Country Club"
+  ]
+ },
+ "country-club-of-florida": [
+  "VILLAGE OF GOLF",
+  "GOLF VILLAGE OF",
+  "Village of Golf",
+  "COUNTRY CLUB OF FLORIDA",
+  "Country Club of Florida"
+ ],
+ "breakers-west": [
+  "BREAKERS WEST",
+  "Breakers West",
+  "BREAKERS WEST DEVELOPMENT"
  ]
 }
