@@ -42,5 +42,6 @@
   {"slug": "trump-national-jupiter", "name": "Trump National Golf Club Jupiter", "town": "Jupiter", "blurb": "A private Jack Nicklaus course, formerly the Ritz-Carlton Golf Club, with estate homes, villas and the gated Eagle Tree enclave.", "idx": ""},
   {"slug": "jupiter-country-club", "name": "Jupiter Country Club", "town": "Jupiter", "blurb": "A newer community built around a Greg Norman golf course, with a big clubhouse, tennis and a resort-style pool.", "idx": ""},
   {"slug": "boca-raton-resort", "name": "Boca Raton Resort & Club", "town": "Boca Raton", "blurb": "The landmark pink resort on Lake Boca, whose private club membership brings golf, tennis, a marina and a beach club.", "idx": "", "tags": ["waterfront"]},
-  {"slug": "country-club-of-florida", "name": "Country Club of Florida", "town": "Boynton Beach", "blurb": "A quiet private golf club at the heart of the gated Village of Golf, with estate homes on large, wooded lots.", "idx": ""}
+  {"slug": "country-club-of-florida", "name": "Country Club of Florida", "town": "Boynton Beach", "blurb": "A quiet private golf club at the heart of the gated Village of Golf, with estate homes on large, wooded lots.", "idx": ""},
+  {"slug": "breakers-west", "name": "Breakers West Country Club", "town": "West Palm Beach", "blurb": "The Breakers' private inland club, with two golf courses, tennis and pickleball, and access to the famous Palm Beach resort.", "idx": ""}
 ]
